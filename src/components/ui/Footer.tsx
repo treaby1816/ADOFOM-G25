@@ -1,7 +1,5 @@
 "use client";
 
-import { Heart } from "lucide-react";
-
 export default function Footer() {
     const currentYear = new Date().getFullYear();
 
@@ -13,7 +11,7 @@ export default function Footer() {
                 </p>
 
                 <p className="text-xs font-bold text-slate-600 dark:text-zinc-300 mt-1 flex items-center gap-1.5 justify-center">
-                    Designed with <Heart size={14} className="text-red-500 animate-pulse" fill="currentColor" /> by
+                    Engineered by
                     <span className="text-green-600 dark:text-emerald-400 font-black tracking-wider text-sm">
                         Treabyn
                     </span>
