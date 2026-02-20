@@ -112,7 +112,7 @@ export default function Home() {
   );
 
   return (
-    <main className="min-h-screen pb-12">
+    <main className="min-h-screen">
       {/* Header */}
       <header className="relative overflow-hidden text-white shadow-xl min-h-[350px] flex flex-col justify-center">
         {/* Background Slider */}
