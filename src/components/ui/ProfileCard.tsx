@@ -36,18 +36,9 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
                 <p className="text-sm font-bold text-green-700 dark:text-emerald-300 bg-green-50/80 dark:bg-emerald-950/50 inline-block px-4 py-1 rounded-full mb-2 border border-green-100/50 dark:border-emerald-800/50 shadow-sm">
                     {officer.current_mda}
                 </p>
-                <p className="text-xs font-bold text-slate-400 dark:text-zinc-400 mb-4 tracking-wide">
+                <p className="text-xs font-bold text-slate-400 dark:text-zinc-400 tracking-wide">
                     {officer.grade_level}
                 </p>
-                <div className="flex items-center justify-center gap-4 text-xs font-semibold text-slate-500 dark:text-zinc-400">
-                    <span className="flex items-center gap-1.5 bg-slate-50 dark:bg-zinc-800/80 px-2 py-1 rounded-md">
-                        <span className="w-1.5 h-1.5 bg-slate-300 dark:bg-zinc-600 rounded-full group-hover:bg-green-400 dark:group-hover:bg-emerald-500 transition-colors" />
-                        {officer.lga}
-                    </span>
-                    <span className="flex items-center gap-1.5 bg-slate-50 dark:bg-zinc-800/80 px-2 py-1 rounded-md">
-                        🎂 {officer.birth_month_day}
-                    </span>
-                </div>
             </div>
 
             {/* Quick Actions */}
