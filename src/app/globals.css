@@ -19,6 +19,10 @@ body {
   min-height: 100vh;
 }
 
+html.dark body {
+  background: linear-gradient(-45deg, #09090b, #18181b, #064e3b, #022c22);
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

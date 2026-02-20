@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,14 +26,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className="antialiased">
-        {children}
+      <body className="antialiased min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors duration-300 selection:bg-emerald-500/30 selection:text-emerald-900 dark:selection:text-emerald-100">
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange={false}>
+          {children}
+        </ThemeProvider>
 
         {/* Service Worker Registration */}
         <script

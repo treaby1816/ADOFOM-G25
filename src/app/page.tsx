@@ -9,8 +9,9 @@ import ImageSlider from "@/components/ui/ImageSlider";
 import ExportButton from "@/components/ui/ExportButton";
 import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 import ScrollButtons from "@/components/ui/ScrollButtons";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Officer } from "@/types/officer";
-import { Users, Shield } from "lucide-react";
+import { Users, Shield, ChevronLeft, ChevronRight } from "lucide-react";
 
 import officersData from "@/lib/mockData.json";
 
@@ -33,6 +34,12 @@ export default function Home() {
   const [lgaFilter, setLgaFilter] = useState("");
   const [monthFilter, setMonthFilter] = useState("");
   const [mdaFilter, setMdaFilter] = useState("");
+  const [sortOption, setSortOption] = useState("name-asc"); // Default sort
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // Can be adjusted
+
   const [selectedOfficer, setSelectedOfficer] = useState<Officer | null>(null);
   const [birthdayOfficer, setBirthdayOfficer] = useState<Officer | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Added for skeleton demo
@@ -56,9 +63,9 @@ export default function Home() {
     }
   }, [officers]);
 
-  // Filtered officers
-  const filteredOfficers = useMemo(() => {
-    return officers.filter((o) => {
+  // Filtered and Sorted officers
+  const processedOfficers = useMemo(() => {
+    let result = officers.filter((o) => {
       const matchesSearch = o.full_name
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
@@ -68,7 +75,41 @@ export default function Home() {
       const matchesMda = !mdaFilter || o.current_mda === mdaFilter;
       return matchesSearch && matchesLga && matchesMonth && matchesMda;
     });
-  }, [officers, searchQuery, lgaFilter, monthFilter, mdaFilter]);
+
+    // Sort Logic
+    result.sort((a, b) => {
+      if (sortOption === "name-asc") {
+        const aName = a.full_name.split(" ").pop() || "";
+        const bName = b.full_name.split(" ").pop() || "";
+        return aName.localeCompare(bName);
+      } else if (sortOption === "name-desc") {
+        const aName = a.full_name.split(" ").pop() || "";
+        const bName = b.full_name.split(" ").pop() || "";
+        return bName.localeCompare(aName);
+      } else if (sortOption === "level-senior") {
+        // Very simple seniority sort based on Grade Level string (e.g. "GL 14" vs "GL 12")
+        // Assuming higher number = more senior
+        const aLevel = parseInt(a.grade_level.replace(/\D/g, "")) || 0;
+        const bLevel = parseInt(b.grade_level.replace(/\D/g, "")) || 0;
+        return bLevel - aLevel;
+      }
+      return 0;
+    });
+
+    return result;
+  }, [officers, searchQuery, lgaFilter, monthFilter, mdaFilter, sortOption]);
+
+  // Reset page to 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, lgaFilter, monthFilter, mdaFilter, sortOption]);
+
+  // Pagination Logic
+  const totalPages = Math.ceil(processedOfficers.length / itemsPerPage);
+  const paginatedOfficers = processedOfficers.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   return (
     <main className="min-h-screen pb-12">
@@ -76,6 +117,11 @@ export default function Home() {
       <header className="relative overflow-hidden text-white shadow-xl min-h-[350px] flex flex-col justify-center">
         {/* Background Slider */}
         <ImageSlider />
+
+        {/* Controls Overlay */}
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
+          <ThemeToggle />
+        </div>
 
         {/* Content Overlay */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 text-center w-full z-10">
@@ -129,20 +175,23 @@ export default function Home() {
           onMonthChange={setMonthFilter}
           mdaFilter={mdaFilter}
           onMdaChange={setMdaFilter}
+          sortOption={sortOption}
+          onSortChange={setSortOption}
           officers={officers}
         />
 
         {/* Results Count & Export */}
         <div className="flex items-center justify-between mb-4 mt-2">
-          <p className="text-sm text-slate-500 font-medium">
+          <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium">
             Showing{" "}
-            <span className="font-bold text-slate-700">
-              {filteredOfficers.length}
+            <span className="font-bold text-slate-700 dark:text-zinc-300">
+              {paginatedOfficers.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-
+              {Math.min(currentPage * itemsPerPage, processedOfficers.length)}
             </span>{" "}
-            of {officers.length} officers
+            of {processedOfficers.length} officers
           </p>
 
-          <ExportButton officers={filteredOfficers} />
+          <ExportButton officers={processedOfficers} />
         </div>
 
         {/* Profile Grid */}
@@ -154,9 +203,9 @@ export default function Home() {
               </div>
             ))}
           </div>
-        ) : filteredOfficers.length > 0 ? (
+        ) : paginatedOfficers.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-5">
-            {filteredOfficers.map((officer, index) => (
+            {paginatedOfficers.map((officer, index) => (
               <div
                 key={officer.id}
                 className="card-enter h-full"
@@ -174,12 +223,35 @@ export default function Home() {
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 mb-4">
               <Users size={28} className="text-slate-400" />
             </div>
-            <p className="text-lg font-semibold text-slate-600">
+            <p className="text-lg font-semibold text-slate-600 dark:text-zinc-300">
               No officers found
             </p>
-            <p className="text-sm text-slate-400 mt-1">
+            <p className="text-sm text-slate-400 dark:text-zinc-500 mt-1">
               Try adjusting your search or filters.
             </p>
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {!isLoading && totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-12 mb-8">
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-2 rounded-xl bg-white dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 shadow-sm hover:bg-green-50 dark:hover:bg-emerald-900/40 hover:text-green-600 dark:hover:text-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <div className="text-sm font-semibold text-slate-600 dark:text-zinc-400 bg-white dark:bg-zinc-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 shadow-sm">
+              Page <span className="text-green-600 dark:text-emerald-400">{currentPage}</span> of {totalPages}
+            </div>
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-xl bg-white dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 shadow-sm hover:bg-green-50 dark:hover:bg-emerald-900/40 hover:text-green-600 dark:hover:text-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
         )}
       </div>
