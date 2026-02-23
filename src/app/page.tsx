@@ -124,32 +124,44 @@ export default function Home() {
         </div>
 
         {/* Content Overlay */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 text-center w-full z-10">
-          <div className="inline-flex items-center justify-center p-3 sm:p-4 bg-white/10 rounded-3xl backdrop-blur-md mb-6 ring-1 ring-white/20 shadow-2xl animate-float">
-            <Shield className="w-10 h-10 sm:w-12 sm:h-12 text-green-300 drop-shadow-lg" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 text-center w-full z-10 flex flex-col items-center">
+          <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
+            {/* Logo Left */}
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/10 rounded-full backdrop-blur-md flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden">
+              <img src="/ondo-logo.png" alt="Ondo State Logo" className="w-full h-full object-contain drop-shadow-md" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('hidden'); }} />
+            </div>
+
+            <div className="inline-flex items-center justify-center p-3 sm:p-4 bg-white/10 rounded-3xl backdrop-blur-md ring-1 ring-white/20 shadow-2xl animate-float" style={{ animationDelay: "200ms" }}>
+              <Shield className="w-10 h-10 sm:w-12 sm:h-12 text-green-300 drop-shadow-lg" />
+            </div>
+
+            {/* Logo Right (Optional symmetry, hidden by default if not needed, I'll keep just one on left or center. Let's make it a single centered group) */}
           </div>
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight mb-4 drop-shadow-xl leading-tight">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight mb-4 drop-shadow-2xl leading-tight">
             Ondo State <br className="sm:hidden" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-emerald-200 to-teal-200">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-green-100 animate-pulse-slow block sm:inline">
               Admin Directory
             </span>
           </h1>
-          <p className="text-green-100/95 text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-medium mb-8 leading-relaxed px-4 drop-shadow-md">
+          <p className="text-green-50/90 text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-medium mb-10 leading-relaxed px-4 drop-shadow-md">
             The official portal for the Administrative Officers Cadre. Discover, connect, and collaborate with excellence.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 text-green-100 font-semibold bg-black/30 w-fit mx-auto px-6 py-3 rounded-full backdrop-blur-md border border-white/20 shadow-xl text-sm sm:text-base">
+          {/* Stats Glassmorphism Container */}
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-green-50 font-semibold bg-white/10 w-fit mx-auto px-8 py-4 rounded-3xl backdrop-blur-xl border border-white/30 shadow-2xl text-sm sm:text-base transition-all hover:bg-white/15">
             <div className="flex items-center gap-2">
-              <Users size={18} className="text-green-300" />
-              <span className="tracking-wide">{officers.length} Officers</span>
+              <div className="p-2 bg-green-500/30 rounded-lg">
+                <Users size={20} className="text-green-200" />
+              </div>
+              <span className="tracking-wide text-lg">{officers.length} <span className="text-green-200 text-sm opacity-90 font-normal">Officers</span></span>
             </div>
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500/50 hidden sm:block" />
+            <div className="w-1 h-8 rounded-full bg-white/20 hidden sm:block" />
             <div className="flex items-center gap-2">
-              <span className="tracking-wide">{new Set(officers.map((o) => o.current_mda)).size} MDAs</span>
+              <span className="tracking-wide text-lg">{new Set(officers.map((o) => o.current_mda)).size} <span className="text-green-200 text-sm opacity-90 font-normal">MDAs</span></span>
             </div>
-            <div className="w-1.5 h-1.5 rounded-full bg-green-500/50 hidden sm:block" />
+            <div className="w-1 h-8 rounded-full bg-white/20 hidden sm:block" />
             <div className="flex items-center gap-2">
-              <span className="tracking-wide">{new Set(officers.map((o) => o.lga)).size} LGAs</span>
+              <span className="tracking-wide text-lg">{new Set(officers.map((o) => o.lga)).size} <span className="text-green-200 text-sm opacity-90 font-normal">LGAs</span></span>
             </div>
           </div>
         </div>

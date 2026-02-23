@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Phone, Mail, MessageCircle, Eye } from "lucide-react";
 import { Officer } from "@/types/officer";
@@ -10,21 +11,48 @@ interface ProfileCardProps {
 }
 
 export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps) {
+    const [imgError, setImgError] = useState(false);
+
+    const getInitials = (name: string) => {
+        const parts = name.trim().split(" ");
+        if (parts.length >= 2) return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+        return name.substring(0, 2).toUpperCase();
+    };
+
+    const getAvatarColor = (name: string) => {
+        const colors = [
+            "bg-rose-500", "bg-blue-500", "bg-emerald-500",
+            "bg-amber-500", "bg-purple-500", "bg-cyan-500", "bg-indigo-500"
+        ];
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        return colors[Math.abs(hash) % colors.length];
+    };
+
+    const showInitials = imgError || !officer.photo_url || officer.photo_url === '/default-avatar.png';
+
     return (
-        <div className="h-full group relative bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md rounded-3xl border border-white/60 dark:border-zinc-800/80 shadow-lg shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-green-500/20 dark:hover:shadow-emerald-900/20 hover:border-green-300/50 dark:hover:border-emerald-500/50 transition-all duration-500 hover:-translate-y-2 overflow-hidden flex flex-col">
+        <div className="h-full group relative bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl rounded-[2rem] border border-white/80 dark:border-zinc-800/80 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-green-500/20 dark:hover:shadow-emerald-900/20 hover:border-green-300/60 dark:hover:border-emerald-500/60 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col">
             {/* Decorative top accent */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-green-500 via-emerald-400 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-green-500 via-emerald-400 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
             {/* Photo Section */}
             <div className="flex justify-center pt-8 pb-4 relative">
-                <div className="absolute inset-0 bg-gradient-to-b from-green-50/50 dark:from-emerald-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative w-32 h-32 rounded-full overflow-hidden ring-[6px] ring-white dark:ring-zinc-800 shadow-xl group-hover:ring-green-100 dark:group-hover:ring-emerald-800 group-hover:scale-105 transition-all duration-500 z-10">
-                    <Image
-                        src={officer.photo_url}
-                        alt={officer.full_name}
-                        fill
-                        className="object-cover"
-                    />
+                <div className="absolute inset-0 bg-gradient-to-b from-green-50/50 dark:from-emerald-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative w-32 h-32 rounded-full overflow-hidden ring-[6px] ring-white dark:ring-zinc-800 shadow-xl group-hover:ring-green-100 dark:group-hover:ring-emerald-800 group-hover:scale-105 transition-all duration-300 z-10 bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
+                    {showInitials ? (
+                        <div className={`w-full h-full flex items-center justify-center text-4xl font-bold text-white shadow-inner ${getAvatarColor(officer.full_name)}`}>
+                            {getInitials(officer.full_name)}
+                        </div>
+                    ) : (
+                        <Image
+                            src={officer.photo_url}
+                            alt={officer.full_name}
+                            fill
+                            className="object-cover"
+                            onError={() => setImgError(true)}
+                        />
+                    )}
                 </div>
             </div>
 
