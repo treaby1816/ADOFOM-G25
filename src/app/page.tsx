@@ -128,7 +128,7 @@ export default function Home() {
           <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
             {/* Logo Left */}
             <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/10 rounded-full backdrop-blur-md flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden">
-              <img src="/ondo-logo.png" alt="Ondo State Logo" className="w-full h-full object-contain drop-shadow-md" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('hidden'); }} />
+              <img src="/ondo-logo-transparent.png" alt="Ondo State Logo" className="w-full h-full object-contain drop-shadow-md" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('hidden'); }} />
             </div>
 
             <div className="inline-flex items-center justify-center p-3 sm:p-4 bg-white/10 rounded-3xl backdrop-blur-md ring-1 ring-white/20 shadow-2xl animate-float" style={{ animationDelay: "200ms" }}>
