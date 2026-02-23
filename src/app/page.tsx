@@ -12,8 +12,7 @@ import ScrollButtons from "@/components/ui/ScrollButtons";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Officer } from "@/types/officer";
 import { Users, Shield, ChevronLeft, ChevronRight } from "lucide-react";
-
-import officersData from "@/lib/mockData.json";
+import { supabase } from "@/lib/supabase";
 
 // Month names for birthday matching
 const MONTH_NAMES = [
@@ -22,12 +21,7 @@ const MONTH_NAMES = [
 ];
 
 export default function Home() {
-  // Sort officers alphabetically by Last Name
-  const officers: Officer[] = (officersData as Officer[]).sort((a, b) => {
-    const aLastName = a.full_name.split(" ").pop() || "";
-    const bLastName = b.full_name.split(" ").pop() || "";
-    return aLastName.localeCompare(bLastName);
-  });
+  const [officers, setOfficers] = useState<Officer[]>([]);
 
   // State
   const [searchQuery, setSearchQuery] = useState("");
@@ -44,12 +38,33 @@ export default function Home() {
   const [birthdayOfficer, setBirthdayOfficer] = useState<Officer | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Added for skeleton demo
 
-  // Simulate network fetch for the sleek skeleton loading state
+  // Fetch officers from Supabase
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
+    const fetchOfficers = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("administrative_officers")
+          .select("*");
+
+        if (error) {
+          console.error("Error fetching officers:", error);
+        } else if (data) {
+          const sortedData = (data as Officer[]).sort((a, b) => {
+            const aLastName = a.full_name.split(" ").pop() || "";
+            const bLastName = b.full_name.split(" ").pop() || "";
+            return aLastName.localeCompare(bLastName);
+          });
+          setOfficers(sortedData);
+        }
+      } catch (err) {
+        console.error("Unexpected error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOfficers();
   }, []);
 
   // Birthday Engine — matches "Month Day" format (e.g. "February 20")
