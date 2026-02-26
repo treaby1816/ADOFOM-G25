@@ -31,6 +31,7 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [debugInfo, setDebugInfo] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -120,11 +121,12 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 if (!uploadSuccessful) {
                     console.error("Supabase Storage Error:", lastUploadError);
                     const errorMsg = lastUploadError?.message || "Unknown storage error";
+                    setDebugInfo(JSON.stringify(lastUploadError, null, 2));
 
                     if (errorMsg.includes("not found")) {
-                        setError("Error: Storage bucket 'officer-photos' not found. Please verify the bucket name in Supabase.");
-                    } else if (errorMsg.includes("row-level security") || errorMsg.includes("new row violates")) {
-                        setError("Error: Permission denied. Please ensure Storage RLS policies are set to 'Authenticated' for uploads.");
+                        setError("Error: Storage bucket 'officer-photos' not found. Please verify the bucket name in your Supabase storage tab.");
+                    } else if (errorMsg.toLowerCase().includes("row-level security") || errorMsg.toLowerCase().includes("permission") || (lastUploadError as any).status === 403) {
+                        setError("Error: Database permission denied. Your 'authenticated' role doesn't have INSERT permission for this bucket.");
                     } else {
                         setError(`Failed to upload photo: ${errorMsg}`);
                     }
@@ -231,47 +233,40 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                     <p className="relative text-green-100/80 text-sm font-medium">{officer.full_name}</p>
                 </div>
 
-                {/* Photo Upload */}
+                {/* Photo Upload Area */}
                 <div className="flex flex-col items-center -mt-12 relative z-10 mb-6">
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handlePhotoSelect}
-                        accept="image/*"
-                        className="hidden"
-                    />
-                    <div
-                        className="relative w-32 h-32 rounded-full overflow-hidden ring-[6px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 group cursor-pointer hover:scale-105 transition-all duration-300"
-                        onClick={() => fileInputRef.current?.click()}
-                        title="Click to change photo"
-                    >
-                        {currentImageUrl ? (
-                            <img
-                                src={currentImageUrl}
-                                alt={officer.full_name}
-                                className={`w-full h-full object-cover ${form.photo_position}`}
-                            />
-                        ) : (
-                            <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                                <User size={40} className="text-emerald-500" />
+                    <label className="group relative cursor-pointer">
+                        <input
+                            type="file"
+                            onChange={handlePhotoSelect}
+                            accept="image/*"
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
+                        />
+                        <div className="relative w-32 h-32 rounded-full overflow-hidden ring-[6px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 group-hover:scale-105 transition-all duration-300">
+                            {currentImageUrl ? (
+                                <img
+                                    src={currentImageUrl}
+                                    alt={officer.full_name}
+                                    className={`w-full h-full object-cover ${form.photo_position}`}
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                                    <User size={40} className="text-emerald-500" />
+                                </div>
+                            )}
+                            {/* Permanent Overlay for clarity */}
+                            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 flex flex-col items-center justify-center transition-all duration-300">
+                                <Camera size={24} className="text-white mb-1" />
+                                <span className="text-[10px] text-white font-bold uppercase tracking-wider bg-black/20 px-2 py-0.5 rounded">Change</span>
                             </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                            <Camera size={24} className="text-white mb-1" />
-                            <span className="text-[10px] text-white font-bold uppercase tracking-wider">Change</span>
                         </div>
-                    </div>
+                    </label>
 
-                    <div className="flex flex-col items-center gap-3 mt-4">
-                        <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="flex items-center gap-2 px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-full shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5 transition-all duration-300 active:scale-95"
-                        >
-                            <Camera size={14} />
-                            Upload New Profile Picture
-                        </button>
+                    <p className="mt-3 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest">
+                        Click image above to change photo
+                    </p>
 
+                    <div className="mt-4 flex flex-col items-center gap-3">
                         {/* Position Selector */}
                         <div className="flex items-center gap-1.5 p-1.5 bg-slate-100/80 dark:bg-zinc-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-zinc-700/50 shadow-inner">
                             <span className="text-[9px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest px-2">Position:</span>
@@ -433,8 +428,19 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
 
                     {/* Error */}
                     {error && (
-                        <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 text-sm font-medium px-4 py-3 rounded-xl">
-                            {error}
+                        <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 text-sm font-medium px-4 py-3 rounded-xl overflow-hidden">
+                            <div className="flex items-center gap-2 mb-1">
+                                <X size={14} className="text-red-500" />
+                                <span>{error}</span>
+                            </div>
+                            {debugInfo && (
+                                <div className="mt-2 pt-2 border-t border-red-200/50 dark:border-red-800/50">
+                                    <p className="text-[10px] font-bold text-red-400 dark:text-red-500 uppercase tracking-tighter mb-1">Technical Debug Info:</p>
+                                    <pre className="text-[9px] font-mono whitespace-pre-wrap opacity-60">
+                                        {debugInfo}
+                                    </pre>
+                                </div>
+                            )}
                         </div>
                     )}
 
