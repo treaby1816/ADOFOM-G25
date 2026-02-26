@@ -24,6 +24,7 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
         birth_month_day: officer.birth_month_day || "",
         hobbies: officer.hobbies || "",
         about_me: officer.about_me || "",
+        photo_position: officer.photo_position || "object-center",
     });
 
     const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -117,6 +118,7 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 hobbies: form.hobbies.trim(),
                 about_me: form.about_me.trim(),
                 photo_url,
+                photo_position: form.photo_position,
             };
 
             const { error: updateError } = await supabase
@@ -199,7 +201,7 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                             <img
                                 src={currentImageUrl}
                                 alt={officer.full_name}
-                                className="w-full h-full object-cover object-top"
+                                className={`w-full h-full object-cover ${form.photo_position}`}
                             />
                         ) : (
                             <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
@@ -210,13 +212,26 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                             <Camera size={20} className="text-white" />
                         </div>
                     </div>
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handlePhotoSelect}
-                    />
+
+                    {/* Position Selector */}
+                    <div className="mt-2 flex justify-center gap-2">
+                        {[
+                            { id: 'object-top', label: 'Top' },
+                            { id: 'object-center', label: 'Center' },
+                            { id: 'object-bottom', label: 'Bottom' }
+                        ].map((pos) => (
+                            <button
+                                key={pos.id}
+                                onClick={() => handleChange("photo_position", pos.id)}
+                                className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border transition-all ${form.photo_position === pos.id
+                                        ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm'
+                                        : 'bg-white dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-slate-500 dark:text-zinc-400 hover:border-emerald-300'
+                                    }`}
+                            >
+                                {pos.label}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Form */}

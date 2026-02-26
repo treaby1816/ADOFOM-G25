@@ -31,13 +31,13 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
     const showInitials = imgError || !officer.photo_url || officer.photo_url === '/default-avatar.png';
 
     // Most professional headshots look better centered or slightly higher.
-    // Adewole is confirmed "okay" with object-top, so we keep that as reference.
-    const getPhotoPosition = (name: string) => {
+    // If a position is saved in the database, use it. Otherwise, use defaults.
+    const getPhotoPosition = (name: string, savedPos?: string) => {
+        if (savedPos) return savedPos;
+
         const n = name.toUpperCase();
         if (n.includes("ADEWOLE") && n.includes("FELIX")) return "object-top";
 
-        // For the others reported (Sanyade, Olutola, Ajayi, etc.), 
-        // object-center is typically the fix for heads being cut off by object-top.
         return "object-center";
     };
 
@@ -66,7 +66,7 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
                         <img
                             src={getDriveViewUrl(officer.photo_url)}
                             alt={officer.full_name}
-                            className={`w-full h-full object-cover ${getPhotoPosition(officer.full_name)}`}
+                            className={`w-full h-full object-cover ${getPhotoPosition(officer.full_name, officer.photo_position)}`}
                             onError={() => setImgError(true)}
                         />
                     )}

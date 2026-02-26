@@ -3,6 +3,7 @@ export interface Officer {
     full_name: string;
     email_address: string;
     photo_url: string;
+    photo_position?: string; // e.g. 'object-top', 'object-center', 'object-bottom'
     current_mda: string;
     grade_level: string;
     lga: string;
