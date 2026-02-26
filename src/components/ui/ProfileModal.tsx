@@ -131,8 +131,9 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                                 alt={currentOfficer.full_name}
                                 className={`w-full h-full object-cover ${getPhotoPosition(currentOfficer.full_name, currentOfficer.photo_position)} group-hover:brightness-110 transition-all`}
                             />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                <span className="text-white font-medium text-sm bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-md">View Photo</span>
+                            <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <Eye size={24} className="text-white mb-2" />
+                                <span className="text-white font-bold text-xs bg-white/20 px-4 py-2 rounded-full backdrop-blur-md border border-white/30 uppercase tracking-widest shadow-lg">View Full Photo</span>
                             </div>
                         </div>
                     </div>

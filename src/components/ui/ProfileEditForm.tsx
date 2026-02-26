@@ -232,9 +232,16 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 </div>
 
                 {/* Photo Upload */}
-                <div className="flex justify-center -mt-12 relative z-10 mb-4">
+                <div className="flex flex-col items-center -mt-12 relative z-10 mb-6">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handlePhotoSelect}
+                        accept="image/*"
+                        className="hidden"
+                    />
                     <div
-                        className="relative w-24 h-24 rounded-full overflow-hidden ring-4 ring-white dark:ring-zinc-900 shadow-xl bg-white dark:bg-zinc-900 group cursor-pointer hover:scale-105 transition-transform"
+                        className="relative w-32 h-32 rounded-full overflow-hidden ring-[6px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 group cursor-pointer hover:scale-105 transition-all duration-300"
                         onClick={() => fileInputRef.current?.click()}
                         title="Click to change photo"
                     >
@@ -246,32 +253,46 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                             />
                         ) : (
                             <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                                <User size={32} className="text-emerald-500" />
+                                <User size={40} className="text-emerald-500" />
                             </div>
                         )}
-                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Camera size={20} className="text-white" />
+                        <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <Camera size={24} className="text-white mb-1" />
+                            <span className="text-[10px] text-white font-bold uppercase tracking-wider">Change</span>
                         </div>
                     </div>
 
-                    {/* Position Selector */}
-                    <div className="mt-2 flex justify-center gap-2">
-                        {[
-                            { id: 'object-top', label: 'Top' },
-                            { id: 'object-center', label: 'Center' },
-                            { id: 'object-bottom', label: 'Bottom' }
-                        ].map((pos) => (
-                            <button
-                                key={pos.id}
-                                onClick={() => handleChange("photo_position", pos.id)}
-                                className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border transition-all ${form.photo_position === pos.id
-                                    ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm'
-                                    : 'bg-white dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-slate-500 dark:text-zinc-400 hover:border-emerald-300'
-                                    }`}
-                            >
-                                {pos.label}
-                            </button>
-                        ))}
+                    <div className="flex flex-col items-center gap-3 mt-4">
+                        <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex items-center gap-2 px-6 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-full shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5 transition-all duration-300 active:scale-95"
+                        >
+                            <Camera size={14} />
+                            Upload New Profile Picture
+                        </button>
+
+                        {/* Position Selector */}
+                        <div className="flex items-center gap-1.5 p-1.5 bg-slate-100/80 dark:bg-zinc-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-zinc-700/50 shadow-inner">
+                            <span className="text-[9px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest px-2">Position:</span>
+                            {[
+                                { id: 'object-top', label: 'Top' },
+                                { id: 'object-center', label: 'Center' },
+                                { id: 'object-bottom', label: 'Bottom' }
+                            ].map((pos) => (
+                                <button
+                                    key={pos.id}
+                                    type="button"
+                                    onClick={() => handleChange("photo_position", pos.id)}
+                                    className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-xl transition-all ${form.photo_position === pos.id
+                                        ? 'bg-white dark:bg-emerald-500 text-emerald-700 dark:text-white shadow-sm'
+                                        : 'text-slate-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300'
+                                        }`}
+                                >
+                                    {pos.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
