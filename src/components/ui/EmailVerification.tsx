@@ -50,6 +50,7 @@ export default function EmailVerification({
                 email: officerEmail,
                 options: {
                     shouldCreateUser: true,
+                    emailRedirectTo: typeof window !== 'undefined' ? window.location.origin : undefined,
                 },
             });
 
