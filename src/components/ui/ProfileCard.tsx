@@ -56,7 +56,7 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
                         <img
                             src={getDriveViewUrl(officer.photo_url)}
                             alt={officer.full_name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover object-top"
                             onError={() => setImgError(true)}
                         />
                     )}
