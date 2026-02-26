@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, SlidersHorizontal, ArrowUpDown } from "lucide-react";
+import { Search, SlidersHorizontal, ArrowUpDown, X } from "lucide-react";
 import { Officer } from "@/types/officer";
 
 interface SearchAndFilterProps {
@@ -37,7 +37,7 @@ export default function SearchAndFilter({
         "July", "August", "September", "October", "November", "December",
     ];
 
-    const inputClasses = "px-4 py-3 bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl text-sm font-medium text-slate-700 dark:text-zinc-200 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 transition-all duration-300 shadow-sm appearance-none";
+    const baseInputClasses = "bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl text-sm font-medium text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm appearance-none flex-1";
 
     return (
         <div className="bg-white/60 dark:bg-zinc-900/40 backdrop-blur-2xl border border-white/80 dark:border-zinc-800/60 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-black/20 p-3 mb-8">
@@ -46,15 +46,24 @@ export default function SearchAndFilter({
                 <div className="relative flex-1 group">
                     <Search
                         size={18}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 group-focus-within:text-green-500 dark:group-focus-within:text-emerald-400 transition-colors"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 group-focus-within:text-green-500 dark:group-focus-within:text-emerald-400 transition-colors z-10"
                     />
                     <input
                         type="text"
                         placeholder="Search officers by name..."
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className={`w-full pl-11 ${inputClasses}`}
+                        className={`w-full py-3 pr-12 pl-12 ${baseInputClasses}`}
                     />
+                    {searchQuery && (
+                        <button
+                            onClick={() => onSearchChange("")}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all z-10 cursor-pointer"
+                            title="Clear search"
+                        >
+                            <X size={16} />
+                        </button>
+                    )}
                 </div>
 
                 {/* Filters Row 1 */}
@@ -68,7 +77,7 @@ export default function SearchAndFilter({
                         <select
                             value={lgaFilter}
                             onChange={(e) => onLgaChange(e.target.value)}
-                            className={`${inputClasses} cursor-pointer min-w-[150px] w-full pr-10`}
+                            className={`px-4 py-3 cursor-pointer z-10 ${baseInputClasses} min-w-[150px] w-full pr-10`}
                         >
                             <option value="">All LGAs</option>
                             {uniqueLgas.map((lga) => (
@@ -84,7 +93,7 @@ export default function SearchAndFilter({
                         <select
                             value={monthFilter}
                             onChange={(e) => onMonthChange(e.target.value)}
-                            className={`${inputClasses} cursor-pointer min-w-[170px] w-full pr-10`}
+                            className={`px-4 py-3 cursor-pointer z-10 ${baseInputClasses} min-w-[170px] w-full pr-10`}
                         >
                             <option value="">All Birth Months</option>
                             {months.map((m) => (
@@ -103,7 +112,7 @@ export default function SearchAndFilter({
                         <select
                             value={mdaFilter}
                             onChange={(e) => onMdaChange(e.target.value)}
-                            className={`${inputClasses} cursor-pointer min-w-[200px] w-full pr-10`}
+                            className={`px-4 py-3 cursor-pointer z-10 ${baseInputClasses} min-w-[200px] w-full pr-10`}
                         >
                             <option value="">All MDAs</option>
                             {uniqueMdas.map((mda) => (
@@ -119,7 +128,7 @@ export default function SearchAndFilter({
                         <select
                             value={sortOption}
                             onChange={(e) => onSortChange(e.target.value)}
-                            className={`${inputClasses} cursor-pointer w-full pl-10`}
+                            className={`px-4 py-3 cursor-pointer z-10 ${baseInputClasses} w-full pl-10`}
                         >
                             <option value="name-asc">Name (A-Z)</option>
                             <option value="name-desc">Name (Z-A)</option>

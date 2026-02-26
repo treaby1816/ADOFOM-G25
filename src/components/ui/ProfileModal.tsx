@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award } from "lucide-react";
 import { Officer } from "@/types/officer";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface ProfileModalProps {
     officer: Officer;
@@ -11,9 +11,14 @@ interface ProfileModalProps {
 }
 
 export default function ProfileModal({ officer, onClose }: ProfileModalProps) {
+    const [isFullscreen, setIsFullscreen] = useState(false);
+
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
-            if (e.key === "Escape") onClose();
+            if (e.key === "Escape") {
+                if (isFullscreen) setIsFullscreen(false);
+                else onClose();
+            }
         };
         document.addEventListener("keydown", handleEsc);
         document.body.style.overflow = "hidden";
@@ -21,19 +26,47 @@ export default function ProfileModal({ officer, onClose }: ProfileModalProps) {
             document.removeEventListener("keydown", handleEsc);
             document.body.style.overflow = "";
         };
-    }, [onClose]);
+    }, [onClose, isFullscreen]);
+
+    const getDriveViewUrl = (url: string) => {
+        if (!url) return '';
+        if (!url.includes('drive.google.com/open?id=')) return url;
+        const id = url.split('id=')[1];
+        return id ? `/api/image-proxy?id=${id}` : url;
+    };
+
+    const imageUrl = getDriveViewUrl(officer.photo_url);
 
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center p-4"
-            onClick={onClose}
+            onClick={isFullscreen ? () => setIsFullscreen(false) : onClose}
         >
             {/* Backdrop */}
-            <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in" />
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" />
+
+            {/* Fullscreen Image Overlay */}
+            {isFullscreen && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-8 animate-fade-in bg-black/90 backdrop-blur-md" onClick={() => setIsFullscreen(false)}>
+                    <button
+                        className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white z-10 transition-colors"
+                        onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }}
+                    >
+                        <X size={24} />
+                    </button>
+                    <div className="relative w-full max-w-4xl max-h-full flex justify-center items-center" onClick={(e) => e.stopPropagation()}>
+                        <img
+                            src={imageUrl}
+                            alt={officer.full_name}
+                            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl ring-1 ring-white/10"
+                        />
+                    </div>
+                </div>
+            )}
 
             {/* Modal Content */}
             <div
-                className="relative bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-zinc-900 dark:via-zinc-900/95 dark:to-emerald-950/40 rounded-3xl shadow-[0_0_50px_-12px_rgba(16,185,129,0.3)] dark:shadow-[0_0_50px_-12px_rgba(4,120,87,0.2)] max-w-lg w-full max-h-[85vh] overflow-y-auto animate-modal-in border border-white/60 dark:border-zinc-800"
+                className={`relative bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-zinc-900 dark:via-zinc-900/95 dark:to-emerald-950/40 rounded-3xl shadow-[0_0_50px_-12px_rgba(16,185,129,0.3)] dark:shadow-[0_0_50px_-12px_rgba(4,120,87,0.2)] max-w-lg w-full max-h-[85vh] overflow-y-auto animate-modal-in border border-white/60 dark:border-zinc-800 ${isFullscreen ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100 transition-all duration-300'}`}
                 style={{ backgroundSize: '200% 200%', animation: 'gradient-bg 10s ease infinite' }}
                 onClick={(e) => e.stopPropagation()}
             >
@@ -54,13 +87,19 @@ export default function ProfileModal({ officer, onClose }: ProfileModalProps) {
 
                 {/* Avatar (overlapping header) */}
                 <div className="flex justify-center -mt-20 relative z-10">
-                    <div className="relative w-40 h-40 rounded-full overflow-hidden ring-[8px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 group hover:scale-[1.02] transition-transform duration-500">
-                        <Image
-                            src={officer.photo_url}
+                    <div
+                        className="relative w-40 h-40 rounded-full overflow-hidden ring-[8px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 group hover:scale-[1.05] transition-transform duration-300 cursor-zoom-in"
+                        onClick={() => setIsFullscreen(true)}
+                        title="Click to view full image"
+                    >
+                        <img
+                            src={imageUrl}
                             alt={officer.full_name}
-                            fill
-                            className="object-cover"
+                            className="w-full h-full object-cover group-hover:brightness-110 transition-all"
                         />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <span className="text-white font-medium text-sm bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-md">View Photo</span>
+                        </div>
                     </div>
                 </div>
 
@@ -116,12 +155,12 @@ export default function ProfileModal({ officer, onClose }: ProfileModalProps) {
                             Interests & Hobbies
                         </h4>
                         <div className="flex flex-wrap gap-2.5">
-                            {officer.hobbies.split(", ").map((hobby) => (
+                            {(officer.hobbies || "").split(",").filter(h => h.trim()).map((hobby) => (
                                 <span
-                                    key={hobby}
+                                    key={hobby.trim()}
                                     className="text-xs font-bold bg-green-50 dark:bg-emerald-900/30 text-green-700 dark:text-emerald-300 px-4 py-2 rounded-xl border border-green-100 dark:border-emerald-800/50 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all cursor-default"
                                 >
-                                    {hobby}
+                                    {hobby.trim()}
                                 </span>
                             ))}
                         </div>

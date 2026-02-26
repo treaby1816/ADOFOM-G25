@@ -81,9 +81,11 @@ export default function Home() {
   // Filtered and Sorted officers
   const processedOfficers = useMemo(() => {
     let result = officers.filter((o) => {
-      const matchesSearch = o.full_name
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase());
+      // Safe string matching, case-insensitive, ignores extra spaces
+      const safeName = (o.full_name || "").toLowerCase();
+      const safeQuery = (searchQuery || "").trim().toLowerCase();
+      const matchesSearch = !safeQuery || safeName.includes(safeQuery);
+
       const matchesLga = !lgaFilter || o.lga === lgaFilter;
       const matchesMonth =
         !monthFilter || o.birth_month_day.startsWith(monthFilter);
@@ -163,7 +165,7 @@ export default function Home() {
           </p>
 
           {/* Stats Glassmorphism Container */}
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-green-50 font-semibold bg-white/10 w-fit mx-auto px-8 py-4 rounded-3xl backdrop-blur-xl border border-white/30 shadow-2xl text-sm sm:text-base transition-all hover:bg-white/15">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-green-50 font-semibold bg-white/10 w-fit mx-auto px-8 py-4 rounded-3xl backdrop-blur-xl border border-white/30 shadow-2xl text-sm sm:text-base transition-all duration-300 hover:bg-white/20 hover:scale-105 hover:shadow-green-500/30 hover:border-white/50 cursor-default">
             <div className="flex items-center gap-2">
               <div className="p-2 bg-green-500/30 rounded-lg">
                 <Users size={20} className="text-green-200" />

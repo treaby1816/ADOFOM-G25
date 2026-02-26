@@ -31,6 +31,14 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
 
     const showInitials = imgError || !officer.photo_url || officer.photo_url === '/default-avatar.png';
 
+    const getDriveViewUrl = (url: string) => {
+        if (!url) return '';
+        if (!url.includes('drive.google.com/open?id=')) return url;
+        const id = url.split('id=')[1];
+        if (!id) return url;
+        return `/api/image-proxy?id=${id}`;
+    };
+
     return (
         <div className="h-full group relative bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl rounded-[2rem] border border-white/80 dark:border-zinc-800/80 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-green-500/20 dark:hover:shadow-emerald-900/20 hover:border-green-300/60 dark:hover:border-emerald-500/60 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col">
             {/* Decorative top accent */}
@@ -45,11 +53,10 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
                             {getInitials(officer.full_name)}
                         </div>
                     ) : (
-                        <Image
-                            src={officer.photo_url}
+                        <img
+                            src={getDriveViewUrl(officer.photo_url)}
                             alt={officer.full_name}
-                            fill
-                            className="object-cover"
+                            className="w-full h-full object-cover"
                             onError={() => setImgError(true)}
                         />
                     )}
