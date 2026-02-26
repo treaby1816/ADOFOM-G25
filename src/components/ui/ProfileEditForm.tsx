@@ -224,8 +224,8 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                                 key={pos.id}
                                 onClick={() => handleChange("photo_position", pos.id)}
                                 className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border transition-all ${form.photo_position === pos.id
-                                        ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm'
-                                        : 'bg-white dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-slate-500 dark:text-zinc-400 hover:border-emerald-300'
+                                    ? 'bg-emerald-500 border-emerald-500 text-white shadow-sm'
+                                    : 'bg-white dark:bg-zinc-800 border-slate-200 dark:border-zinc-700 text-slate-500 dark:text-zinc-400 hover:border-emerald-300'
                                     }`}
                             >
                                 {pos.label}
@@ -246,13 +246,13 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                     <div>
                         <label className={labelClass}>
                             <User size={12} className="text-emerald-500" />
-                            Full Name
+                            Full Name <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>
                         </label>
                         <input
                             type="text"
                             value={form.full_name}
-                            onChange={(e) => handleChange("full_name", e.target.value)}
-                            className={inputClass}
+                            readOnly
+                            className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50`}
                             placeholder="Enter full name"
                         />
                     </div>
@@ -292,26 +292,26 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                         <div>
                             <label className={labelClass}>
                                 <MapPin size={12} className="text-emerald-500" />
-                                LGA
+                                LGA <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>
                             </label>
                             <input
                                 type="text"
                                 value={form.lga}
-                                onChange={(e) => handleChange("lga", e.target.value)}
-                                className={inputClass}
+                                readOnly
+                                className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50`}
                                 placeholder="Local Government Area"
                             />
                         </div>
                         <div>
                             <label className={labelClass}>
                                 <Cake size={12} className="text-emerald-500" />
-                                Birthday
+                                Birthday <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>
                             </label>
                             <input
                                 type="text"
                                 value={form.birth_month_day}
-                                onChange={(e) => handleChange("birth_month_day", e.target.value)}
-                                className={inputClass}
+                                readOnly
+                                className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50`}
                                 placeholder="e.g. February 20"
                             />
                         </div>
