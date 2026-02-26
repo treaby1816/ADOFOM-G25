@@ -53,7 +53,9 @@ export default function SearchAndFilter({
                         placeholder="Search officers by name..."
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
-                        className={`w-full py-3 pr-12 pl-12 ${baseInputClasses}`}
+                        autoComplete="off"
+                        style={{ caretColor: 'auto', color: 'inherit' }}
+                        className={`w-full py-3 pr-12 pl-12 caret-green-500 dark:caret-emerald-400 ${baseInputClasses}`}
                     />
                     {searchQuery && (
                         <button
