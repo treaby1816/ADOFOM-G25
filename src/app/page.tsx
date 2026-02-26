@@ -306,6 +306,12 @@ export default function Home() {
         <ProfileModal
           officer={selectedOfficer}
           onClose={() => setSelectedOfficer(null)}
+          onOfficerUpdated={(updated) => {
+            setOfficers((prev) =>
+              prev.map((o) => (o.id === updated.id ? updated : o))
+            );
+            setSelectedOfficer(updated);
+          }}
         />
       )}
 
