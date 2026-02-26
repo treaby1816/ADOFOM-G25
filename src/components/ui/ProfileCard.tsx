@@ -78,7 +78,9 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
             {/* Info Section */}
             <div className="px-6 pb-6 flex-1 text-center relative z-10">
                 <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 leading-tight mb-2 group-hover:text-green-700 dark:group-hover:text-emerald-400 transition-colors duration-300">
-                    {officer.full_name}
+                    {officer.full_name.includes(',')
+                        ? officer.full_name.split(',')[0].toUpperCase() + ',' + officer.full_name.split(',').slice(1).join(',')
+                        : officer.full_name}
                 </h3>
                 <p className="text-sm font-bold text-green-700 dark:text-emerald-300 bg-green-50/80 dark:bg-emerald-950/50 inline-block px-4 py-1 rounded-full mb-1 border border-green-100/50 dark:border-emerald-800/50 shadow-sm">
                     {officer.current_mda}

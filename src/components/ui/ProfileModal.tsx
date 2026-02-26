@@ -140,7 +140,9 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                     {/* Body */}
                     <div className="px-8 pt-6 pb-8">
                         <h2 className="text-3xl font-black text-slate-800 dark:text-zinc-100 text-center mb-1 drop-shadow-sm">
-                            {currentOfficer.full_name}
+                            {currentOfficer.full_name.includes(',')
+                                ? currentOfficer.full_name.split(',')[0].toUpperCase() + ',' + currentOfficer.full_name.split(',').slice(1).join(',')
+                                : currentOfficer.full_name}
                         </h2>
                         <div className="flex flex-col items-center gap-1.5 mb-6">
                             <p className="text-sm font-bold text-green-800 dark:text-emerald-300 bg-green-100/80 dark:bg-emerald-900/30 border border-green-200/50 dark:border-emerald-800/50 px-5 py-1.5 rounded-full shadow-sm backdrop-blur-sm">
