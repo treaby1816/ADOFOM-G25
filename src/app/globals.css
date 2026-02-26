@@ -166,3 +166,28 @@ html.dark body {
 .card-enter {
   animation: slide-up 0.4s ease-out both;
 }
+
+/* Bulletproof Input Styling to override Tailwind v4 Reset */
+#officer-search {
+  color: #0f172a !important;
+  /* text-slate-900 */
+  caret-color: #22c55e !important;
+  /* text-green-500 */
+}
+
+#officer-search::placeholder {
+  color: #94a3b8 !important;
+  /* text-slate-400 */
+}
+
+html.dark #officer-search {
+  color: #f8fafc !important;
+  /* text-slate-50 */
+  caret-color: #34d399 !important;
+  /* text-emerald-400 */
+}
+
+html.dark #officer-search::placeholder {
+  color: #71717a !important;
+  /* text-zinc-500 */
+}
