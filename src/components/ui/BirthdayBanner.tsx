@@ -19,6 +19,7 @@ export default function BirthdayBanner({ officer, onClose }: BirthdayBannerProps
     }, []);
 
     useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         updateDimensions();
         window.addEventListener("resize", updateDimensions);
 

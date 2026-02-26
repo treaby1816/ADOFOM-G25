@@ -1,4 +1,4 @@
-import { Shield, Users, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { Officer } from "@/types/officer";
 
 interface ExportButtonProps {

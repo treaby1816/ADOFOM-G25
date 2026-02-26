@@ -80,7 +80,7 @@ export default function Home() {
 
   // Filtered and Sorted officers
   const processedOfficers = useMemo(() => {
-    let result = officers.filter((o) => {
+    const result = officers.filter((o) => {
       // Safe string matching, case-insensitive, ignores extra spaces
       const safeName = (o.full_name || "").toLowerCase();
       const safeQuery = (searchQuery || "").trim().toLowerCase();

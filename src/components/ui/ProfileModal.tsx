@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { useEffect, useState } from "react";
