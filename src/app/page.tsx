@@ -40,17 +40,21 @@ export default function Home() {
   const [birthdayOfficer, setBirthdayOfficer] = useState<Officer | null>(null);
   const [isLoading, setIsLoading] = useState(true); // Added for skeleton demo
 
+  const [error, setError] = useState<string | null>(null);
+
   // Fetch officers from Supabase
   useEffect(() => {
     const fetchOfficers = async () => {
       setIsLoading(true);
+      setError(null);
       try {
-        const { data, error } = await supabase
+        const { data, error: fetchError } = await supabase
           .from("administrative_officers")
           .select("*");
 
-        if (error) {
-          console.error("Error fetching officers:", error);
+        if (fetchError) {
+          console.error("Error fetching officers:", fetchError);
+          setError(`Supabase Error [${fetchError.code || 'UNKNOWN'}]: ${fetchError.message}. Env: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'MISSING'}`);
         } else if (data) {
           const sortedData = (data as Officer[]).sort((a, b) => {
             const aLastName = a.full_name.split(" ").pop() || "";
@@ -59,8 +63,9 @@ export default function Home() {
           });
           setOfficers(sortedData);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Unexpected error:", err);
+        setError(`Unexpected Crash: ${err?.message || String(err)}. Env: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'MISSING'}`);
       } finally {
         setIsLoading(false);
       }
@@ -196,6 +201,15 @@ export default function Home() {
 
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-6">
+
+        {/* Error Banner */}
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl mb-6 flex flex-col gap-1 shadow-sm dark:bg-red-950/30 dark:border-red-500/50">
+            <h3 className="font-bold text-red-800 dark:text-red-400">Connection Error</h3>
+            <p className="text-red-600 dark:text-red-300 text-sm font-mono break-all">{error}</p>
+          </div>
+        )}
+
         {/* Search & Filter Bar */}
         <SearchAndFilter
           searchQuery={searchQuery}
