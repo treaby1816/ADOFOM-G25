@@ -56,11 +56,9 @@ export default function Home() {
           console.error("Error fetching officers:", fetchError);
           setError(`Supabase Error [${fetchError.code || 'UNKNOWN'}]: ${fetchError.message}. Env: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'MISSING'}`);
         } else if (data) {
-          const sortedData = (data as Officer[]).sort((a, b) => {
-            const aLastName = a.full_name.split(" ").pop() || "";
-            const bLastName = b.full_name.split(" ").pop() || "";
-            return aLastName.localeCompare(bLastName);
-          });
+          const sortedData = (data as Officer[]).sort((a, b) =>
+            a.full_name.localeCompare(b.full_name)
+          );
           setOfficers(sortedData);
         }
       } catch (err: any) {
