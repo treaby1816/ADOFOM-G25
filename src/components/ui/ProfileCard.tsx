@@ -38,6 +38,7 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
         const n = name.toUpperCase();
         if (n.includes("ADEWOLE") && n.includes("FELIX")) return "object-top";
         if (n.includes("OLADURE") && n.includes("OLANIRETI")) return "object-top";
+        if (n.includes("OYEWO") && n.includes("GBADEBO")) return "object-top";
 
         return "object-center";
     };

@@ -47,6 +47,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
         const n = name.toUpperCase();
         if (n.includes("ADEWOLE") && n.includes("FELIX")) return "object-top";
         if (n.includes("OLADURE") && n.includes("OLANIRETI")) return "object-top";
+        if (n.includes("OYEWO") && n.includes("GBADEBO")) return "object-top";
         return "object-center";
     };
 
