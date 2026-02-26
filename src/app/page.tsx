@@ -72,12 +72,22 @@ export default function Home() {
     fetchOfficers();
   }, []);
 
-  // Birthday Engine — matches "Month Day" format (e.g. "February 20")
+  // Birthday Engine — matches "Month Day" (February 20) or "M/D" (2/20)
   useEffect(() => {
-    const now = new Date();
-    const todayStr = `${MONTH_NAMES[now.getMonth()]} ${now.getDate()}`;
+    if (officers.length === 0) return;
 
-    const match = officers.find((o) => o.birth_month_day === todayStr);
+    const now = new Date();
+    const m = now.getMonth();
+    const d = now.getDate();
+
+    const todayFull = `${MONTH_NAMES[m]} ${d}`;
+    const todayNumeric = `${m + 1}/${d}`;
+
+    const match = officers.find((o) => {
+      const bday = (o.birth_month_day || "").trim();
+      return bday === todayFull || bday === todayNumeric;
+    });
+
     if (match) {
       setBirthdayOfficer(match);
     }

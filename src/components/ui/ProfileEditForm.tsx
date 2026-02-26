@@ -84,26 +84,52 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 const fileExt = photoFile.name.split('.').pop();
                 const fileName = `${officer.id}_${Date.now()}.${fileExt}`;
 
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from("officer-photos")
-                    .upload(fileName, photoFile, {
-                        cacheControl: "3600",
-                        upsert: true,
-                    });
+                // Try lowercase bucket first, then uppercase if it fails with "not found"
+                const bucketNames = ["officer-photos", "OFFICER-PHOTOS"];
+                let uploadSuccessful = false;
+                let lastUploadError: any = null;
 
-                if (uploadError) {
-                    if (uploadError.message.includes("not found") || uploadError.message.includes("Bucket")) {
-                        setError("Photo storage not set up yet. Your text changes will be saved without the photo. Contact admin to create 'officer-photos' bucket.");
-                    } else {
-                        setError(`Failed to upload photo: ${uploadError.message}`);
-                        setSaving(false);
-                        return;
+                for (const bucket of bucketNames) {
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                        .from(bucket)
+                        .upload(fileName, photoFile, {
+                            cacheControl: "3600",
+                            upsert: true,
+                        });
+
+                    if (uploadError) {
+                        lastUploadError = uploadError;
+                        // If it's a "bucket not found" error, try the next casing
+                        if (uploadError.message.toLowerCase().includes("not found") || (uploadError as any).status === 404) {
+                            continue;
+                        }
+                        // For other errors (like RLS), stop and show error
+                        break;
                     }
-                } else if (uploadData) {
-                    const { data: urlData } = supabase.storage
-                        .from("officer-photos")
-                        .getPublicUrl(uploadData.path);
-                    photo_url = urlData.publicUrl;
+
+                    if (uploadData) {
+                        const { data: urlData } = supabase.storage
+                            .from(bucket)
+                            .getPublicUrl(uploadData.path);
+                        photo_url = urlData.publicUrl;
+                        uploadSuccessful = true;
+                        break;
+                    }
+                }
+
+                if (!uploadSuccessful) {
+                    console.error("Supabase Storage Error:", lastUploadError);
+                    const errorMsg = lastUploadError?.message || "Unknown storage error";
+
+                    if (errorMsg.includes("not found")) {
+                        setError("Error: Storage bucket 'officer-photos' not found. Please verify the bucket name in Supabase.");
+                    } else if (errorMsg.includes("row-level security") || errorMsg.includes("new row violates")) {
+                        setError("Error: Permission denied. Please ensure Storage RLS policies are set to 'Authenticated' for uploads.");
+                    } else {
+                        setError(`Failed to upload photo: ${errorMsg}`);
+                    }
+                    setSaving(false);
+                    return;
                 }
             }
 
