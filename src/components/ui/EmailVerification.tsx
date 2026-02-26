@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Mail, ShieldCheck, Loader2, X, ArrowLeft } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -21,6 +21,26 @@ export default function EmailVerification({
     const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Support Magic Link & Session detection
+    useEffect(() => {
+        // Initial check for existing session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session?.user?.email === officerEmail) {
+                onVerified();
+            }
+        });
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+            if (event === "SIGNED_IN" && session?.user?.email === officerEmail) {
+                onVerified();
+            }
+        });
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, [officerEmail, onVerified]);
 
     const sendOtp = async () => {
         setLoading(true);
@@ -152,10 +172,10 @@ export default function EmailVerification({
                         <>
                             <div className="text-center mb-6">
                                 <p className="text-slate-600 dark:text-zinc-300 text-sm font-medium mb-2 leading-relaxed">
-                                    Enter the 6-digit code sent to <span className="font-bold">{maskedEmail()}</span>
+                                    A verification link or 6-digit code has been sent to <span className="font-bold">{maskedEmail()}</span>
                                 </p>
                                 <p className="text-xs text-slate-400 dark:text-zinc-500">
-                                    Check your inbox and spam folder
+                                    Click the link in the email or enter the code below
                                 </p>
                             </div>
 

@@ -42,6 +42,12 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
         return id ? `/api/image-proxy?id=${id}` : url;
     };
 
+    const getPhotoPosition = (name: string) => {
+        const n = name.toUpperCase();
+        if (n.includes("ADEWOLE") && n.includes("FELIX")) return "object-top";
+        return "object-center";
+    };
+
     const imageUrl = getDriveViewUrl(currentOfficer.photo_url);
 
     const handleEditClick = () => {
@@ -83,7 +89,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                             <img
                                 src={imageUrl}
                                 alt={currentOfficer.full_name}
-                                className="max-w-full max-h-[90vh] object-contain object-top rounded-lg shadow-2xl ring-1 ring-white/10"
+                                className={`max-w-full max-h-[90vh] object-contain ${getPhotoPosition(currentOfficer.full_name)} rounded-lg shadow-2xl ring-1 ring-white/10`}
                             />
                         </div>
                     </div>
@@ -120,7 +126,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                             <img
                                 src={imageUrl}
                                 alt={currentOfficer.full_name}
-                                className="w-full h-full object-cover object-top group-hover:brightness-110 transition-all"
+                                className={`w-full h-full object-cover ${getPhotoPosition(currentOfficer.full_name)} group-hover:brightness-110 transition-all`}
                             />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <span className="text-white font-medium text-sm bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-md">View Photo</span>

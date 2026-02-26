@@ -30,8 +30,8 @@ export default function SearchAndFilter({
     onSortChange,
     officers,
 }: SearchAndFilterProps) {
-    const uniqueLgas = [...new Set(officers.map((o) => o.lga))].sort();
-    const uniqueMdas = [...new Set(officers.map((o) => o.current_mda))].sort();
+    const uniqueLgas = [...new Set(officers.map((o) => (o.lga || "").trim().toLowerCase().replace(/\s+/g, " ")))].filter(Boolean).sort();
+    const uniqueMdas = [...new Set(officers.map((o) => (o.current_mda || "").trim().toLowerCase().replace(/\s+/g, " ")))].filter(Boolean).sort();
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December",
@@ -83,7 +83,9 @@ export default function SearchAndFilter({
                         >
                             <option value="">All LGAs</option>
                             {uniqueLgas.map((lga) => (
-                                <option key={lga} value={lga}>{lga}</option>
+                                <option key={lga} value={lga} className="capitalize">
+                                    {lga.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                </option>
                             ))}
                         </select>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2">
@@ -118,7 +120,9 @@ export default function SearchAndFilter({
                         >
                             <option value="">All MDAs</option>
                             {uniqueMdas.map((mda) => (
-                                <option key={mda} value={mda}>{mda}</option>
+                                <option key={mda} value={mda} className="capitalize">
+                                    {mda.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                </option>
                             ))}
                         </select>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2">

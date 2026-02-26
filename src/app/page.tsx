@@ -93,10 +93,10 @@ export default function Home() {
       const safeQuery = (searchQuery || "").trim().toLowerCase();
       const matchesSearch = !safeQuery || safeName.includes(safeQuery);
 
-      const matchesLga = !lgaFilter || o.lga === lgaFilter;
+      const matchesLga = !lgaFilter || (o.lga || "").trim().toLowerCase().replace(/\s+/g, " ") === lgaFilter;
       const matchesMonth =
         !monthFilter || o.birth_month_day.startsWith(monthFilter);
-      const matchesMda = !mdaFilter || o.current_mda === mdaFilter;
+      const matchesMda = !mdaFilter || (o.current_mda || "").trim().toLowerCase().replace(/\s+/g, " ") === mdaFilter;
       return matchesSearch && matchesLga && matchesMonth && matchesMda;
     });
 
@@ -181,11 +181,17 @@ export default function Home() {
             </div>
             <div className="w-1 h-8 rounded-full bg-white/20 hidden sm:block" />
             <div className="flex items-center gap-2">
-              <span className="tracking-wide text-lg">{new Set(officers.map((o) => o.current_mda)).size} <span className="text-green-200 text-sm opacity-90 font-normal">MDAs</span></span>
+              <span className="tracking-wide text-lg">
+                {new Set(officers.map((o) => (o.current_mda || "").trim().toLowerCase().replace(/\s+/g, " "))).size}{" "}
+                <span className="text-green-200 text-sm opacity-90 font-normal">MDAs</span>
+              </span>
             </div>
             <div className="w-1 h-8 rounded-full bg-white/20 hidden sm:block" />
             <div className="flex items-center gap-2">
-              <span className="tracking-wide text-lg">{new Set(officers.map((o) => o.lga)).size} <span className="text-green-200 text-sm opacity-90 font-normal">LGAs</span></span>
+              <span className="tracking-wide text-lg">
+                {new Set(officers.map((o) => (o.lga || "").trim().toLowerCase().replace(/\s+/g, " "))).size}{" "}
+                <span className="text-green-200 text-sm opacity-90 font-normal">LGAs</span>
+              </span>
             </div>
           </div>
         </div>

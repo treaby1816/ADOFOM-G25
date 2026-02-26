@@ -16,7 +16,13 @@ interface ProfileEditFormProps {
 
 export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEditFormProps) {
     const [form, setForm] = useState({
+        full_name: officer.full_name || "",
+        phone_number: officer.phone_number || "",
         current_mda: officer.current_mda || "",
+        grade_level: officer.grade_level || "",
+        lga: officer.lga || "",
+        birth_month_day: officer.birth_month_day || "",
+        hobbies: officer.hobbies || "",
         about_me: officer.about_me || "",
     });
 
@@ -102,7 +108,13 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
 
             // Update the officer record
             const updateData = {
+                full_name: form.full_name.trim(),
+                phone_number: form.phone_number.trim(),
                 current_mda: form.current_mda.trim(),
+                grade_level: form.grade_level.trim(),
+                lga: form.lga.trim(),
+                birth_month_day: form.birth_month_day.trim(),
+                hobbies: form.hobbies.trim(),
                 about_me: form.about_me.trim(),
                 photo_url,
             };
@@ -215,19 +227,109 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                         </p>
                     </div>
 
-                    {/* Current MDA */}
+                    {/* Full Name */}
                     <div>
                         <label className={labelClass}>
-                            <Briefcase size={12} className="text-emerald-500" />
-                            Current MDA
+                            <User size={12} className="text-emerald-500" />
+                            Full Name
                         </label>
                         <input
                             type="text"
-                            value={form.current_mda}
-                            onChange={(e) => handleChange("current_mda", e.target.value)}
+                            value={form.full_name}
+                            onChange={(e) => handleChange("full_name", e.target.value)}
                             className={inputClass}
-                            placeholder="Ministry/Department/Agency"
+                            placeholder="Enter full name"
                         />
+                    </div>
+
+                    {/* MDA & Grade Level */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className={labelClass}>
+                                <Briefcase size={12} className="text-emerald-500" />
+                                Current MDA
+                            </label>
+                            <input
+                                type="text"
+                                value={form.current_mda}
+                                onChange={(e) => handleChange("current_mda", e.target.value)}
+                                className={inputClass}
+                                placeholder="Ministry/Department/Agency"
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>
+                                <Award size={12} className="text-emerald-500" />
+                                Grade Level
+                            </label>
+                            <input
+                                type="text"
+                                value={form.grade_level}
+                                onChange={(e) => handleChange("grade_level", e.target.value)}
+                                className={inputClass}
+                                placeholder="e.g. GL 12"
+                            />
+                        </div>
+                    </div>
+
+                    {/* LGA & Birthday */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className={labelClass}>
+                                <MapPin size={12} className="text-emerald-500" />
+                                LGA
+                            </label>
+                            <input
+                                type="text"
+                                value={form.lga}
+                                onChange={(e) => handleChange("lga", e.target.value)}
+                                className={inputClass}
+                                placeholder="Local Government Area"
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>
+                                <Cake size={12} className="text-emerald-500" />
+                                Birthday
+                            </label>
+                            <input
+                                type="text"
+                                value={form.birth_month_day}
+                                onChange={(e) => handleChange("birth_month_day", e.target.value)}
+                                className={inputClass}
+                                placeholder="e.g. February 20"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Phone & Hobbies */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className={labelClass}>
+                                <Phone size={12} className="text-emerald-500" />
+                                Phone Number
+                            </label>
+                            <input
+                                type="tel"
+                                value={form.phone_number}
+                                onChange={(e) => handleChange("phone_number", e.target.value)}
+                                className={inputClass}
+                                placeholder="e.g. 2348012345678"
+                            />
+                        </div>
+                        <div>
+                            <label className={labelClass}>
+                                <Heart size={12} className="text-emerald-500" />
+                                Hobbies
+                            </label>
+                            <input
+                                type="text"
+                                value={form.hobbies}
+                                onChange={(e) => handleChange("hobbies", e.target.value)}
+                                className={inputClass}
+                                placeholder="Reading, Music"
+                            />
+                        </div>
                     </div>
 
                     {/* About Me */}
@@ -248,7 +350,7 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                     <div className="bg-slate-50 dark:bg-zinc-800/40 rounded-2xl p-4 border border-slate-100 dark:border-zinc-800/50">
                         <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-zinc-500 mb-2">Notice</p>
                         <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
-                            To update your <span className="font-semibold">Full Name</span>, <span className="font-semibold">Grade Level</span>, or <span className="font-semibold">Email</span>, please contact the Personnel Department.
+                            Your <span className="font-semibold">Email</span> address is locked to your account identity. To change your registered email, please contact the Personnel Department.
                         </p>
                     </div>
 
