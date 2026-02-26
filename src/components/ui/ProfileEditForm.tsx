@@ -235,38 +235,50 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
 
                 {/* Photo Upload Area */}
                 <div className="flex flex-col items-center -mt-12 relative z-10 mb-6">
-                    <label className="group relative cursor-pointer">
-                        <input
-                            type="file"
-                            onChange={handlePhotoSelect}
-                            accept="image/*"
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-50"
-                        />
-                        <div className="relative w-32 h-32 rounded-full overflow-hidden ring-[6px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 group-hover:scale-105 transition-all duration-300">
-                            {currentImageUrl ? (
-                                <img
-                                    src={currentImageUrl}
-                                    alt={officer.full_name}
-                                    className={`w-full h-full object-cover ${form.photo_position}`}
-                                />
-                            ) : (
-                                <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                                    <User size={40} className="text-emerald-500" />
-                                </div>
-                            )}
-                            {/* Permanent Overlay for clarity */}
-                            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 flex flex-col items-center justify-center transition-all duration-300">
-                                <Camera size={24} className="text-white mb-1" />
-                                <span className="text-[10px] text-white font-bold uppercase tracking-wider bg-black/20 px-2 py-0.5 rounded">Change</span>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handlePhotoSelect}
+                        accept="image/*"
+                        className="hidden"
+                    />
+
+                    <div
+                        onClick={() => fileInputRef.current?.click()}
+                        className="group relative w-32 h-32 rounded-full overflow-hidden ring-[6px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 cursor-pointer hover:scale-105 active:scale-95 transition-all duration-300"
+                    >
+                        {currentImageUrl ? (
+                            <img
+                                src={currentImageUrl}
+                                alt={officer.full_name}
+                                className={`w-full h-full object-cover ${form.photo_position}`}
+                            />
+                        ) : (
+                            <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                                <User size={40} className="text-emerald-500" />
                             </div>
+                        )}
+                        {/* Interactive Overlay */}
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity duration-300">
+                            <Camera size={24} className="text-white mb-1" />
+                            <span className="text-[10px] text-white font-bold uppercase tracking-wider">Change Photo</span>
                         </div>
-                    </label>
+                    </div>
 
-                    <p className="mt-3 text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest">
-                        Click image above to change photo
-                    </p>
+                    <div className="mt-4 flex flex-col items-center gap-3 w-full px-12">
+                        <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5 transition-all duration-300 active:scale-95 cursor-pointer"
+                        >
+                            <Camera size={14} />
+                            Browse Photo to Replace
+                        </button>
 
-                    <div className="mt-4 flex flex-col items-center gap-3">
+                        <p className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest text-center">
+                            Maximum size: 2MB. Format: JPG, PNG
+                        </p>
+
                         {/* Position Selector */}
                         <div className="flex items-center gap-1.5 p-1.5 bg-slate-100/80 dark:bg-zinc-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-zinc-700/50 shadow-inner">
                             <span className="text-[9px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest px-2">Position:</span>
