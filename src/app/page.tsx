@@ -101,13 +101,9 @@ export default function Home() {
     // Sort Logic
     result.sort((a, b) => {
       if (sortOption === "name-asc") {
-        const aName = a.full_name.split(" ").pop() || "";
-        const bName = b.full_name.split(" ").pop() || "";
-        return aName.localeCompare(bName);
+        return a.full_name.localeCompare(b.full_name);
       } else if (sortOption === "name-desc") {
-        const aName = a.full_name.split(" ").pop() || "";
-        const bName = b.full_name.split(" ").pop() || "";
-        return bName.localeCompare(aName);
+        return b.full_name.localeCompare(a.full_name);
       } else if (sortOption === "level-senior") {
         // Very simple seniority sort based on Grade Level string (e.g. "GL 14" vs "GL 12")
         // Assuming higher number = more senior

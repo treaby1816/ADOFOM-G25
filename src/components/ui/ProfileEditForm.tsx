@@ -107,9 +107,24 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 }
             }
 
+            // Standardize format: SURNAME, Other Names
+            let formattedName = form.full_name.trim();
+            if (formattedName) {
+                // Remove existing commas to re-parse cleanly
+                const cleanName = formattedName.replace(/,/g, ' ').trim();
+                const parts = cleanName.split(/\s+/);
+                if (parts.length > 0) {
+                    const surname = parts[0].toUpperCase();
+                    const otherNames = parts.slice(1).map(part =>
+                        part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+                    ).join(' ');
+                    formattedName = otherNames ? `${surname}, ${otherNames}` : surname;
+                }
+            }
+
             // Update the officer record
             const updateData = {
-                full_name: form.full_name.trim(),
+                full_name: formattedName,
                 phone_number: form.phone_number.trim(),
                 current_mda: form.current_mda.trim(),
                 grade_level: form.grade_level.trim(),
