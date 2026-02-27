@@ -39,11 +39,13 @@ const LGA_MAPPING: Record<string, string> = {
     "akoko south east": "Akoko South-East",
     "akoko s/e": "Akoko South-East",
     "akoko se": "Akoko South-East",
+    "akoko south-east": "Akoko South-East",
     // Akoko South-West
     "akoko southwest": "Akoko South-West",
     "akoko south west": "Akoko South-West",
     "akoko s/w": "Akoko South-West",
     "akoko sw": "Akoko South-West",
+    "akoko south-west": "Akoko South-West",
     // Akure North
     "akure north": "Akure North",
     "akure-north": "Akure North",
