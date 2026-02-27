@@ -6,11 +6,11 @@ import { X, PartyPopper } from "lucide-react";
 import { Officer } from "@/types/officer";
 
 interface BirthdayBannerProps {
-    officer: Officer;
+    officers: Officer[];
     onClose: () => void;
 }
 
-export default function BirthdayBanner({ officer, onClose }: BirthdayBannerProps) {
+export default function BirthdayBanner({ officers, onClose }: BirthdayBannerProps) {
     const [showConfetti, setShowConfetti] = useState(true);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -32,6 +32,9 @@ export default function BirthdayBanner({ officer, onClose }: BirthdayBannerProps
             document.body.style.overflow = "";
         };
     }, [updateDimensions]);
+
+    // Safety check just in case it renders without officers
+    if (!officers || officers.length === 0) return null;
 
     return (
         <>
@@ -78,23 +81,45 @@ export default function BirthdayBanner({ officer, onClose }: BirthdayBannerProps
                     </div>
 
                     {/* Body */}
-                    <div className="px-6 py-8 text-center">
+                    <div className="px-6 py-6 text-center max-h-[60vh] overflow-y-auto">
                         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50 mb-4">
                             <PartyPopper size={30} className="text-green-600" />
                         </div>
-                        <p className="text-xl font-bold text-slate-800 mb-2">
-                            🎉 Happy Birthday to
+                        <p className="text-xl font-bold text-slate-800 mb-4">
+                            🎉 Celebrating Today:
                         </p>
-                        <p className="text-2xl font-extrabold text-green-700 mb-1">
-                            {officer.full_name}
-                        </p>
-                        <p className="text-sm text-slate-500 mb-6">
-                            from the <span className="font-semibold text-green-600">{officer.current_mda}</span>!
-                        </p>
+
+                        <div className="space-y-4 mb-6 text-left">
+                            {officers.map((officer) => (
+                                <div key={officer.id} className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                                    <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-2 border-white shadow-sm flex-shrink-0">
+                                        {officer.photo_url ? (
+                                            <img
+                                                src={officer.photo_url}
+                                                alt={officer.full_name}
+                                                className={`w-full h-full object-cover ${officer.photo_position || 'object-top'}`}
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center bg-green-100 text-green-600 font-bold text-xl">
+                                                {officer.full_name.charAt(0)}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div>
+                                        <p className="text-lg font-extrabold text-green-700 leading-tight">
+                                            {officer.full_name}
+                                        </p>
+                                        <p className="text-xs text-slate-500">
+                                            from the <span className="font-semibold text-green-600">{officer.current_mda}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
 
                         <button
                             onClick={onClose}
-                            className="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:from-green-700 hover:to-emerald-600 transition-all duration-300 cursor-pointer"
+                            className="w-full px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:from-green-700 hover:to-emerald-600 transition-all duration-300 cursor-pointer"
                         >
                             🎊 Celebrate!
                         </button>

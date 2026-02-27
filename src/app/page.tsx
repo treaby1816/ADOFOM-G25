@@ -12,9 +12,11 @@ import ExportButton from "@/components/ui/ExportButton";
 import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 import ScrollButtons from "@/components/ui/ScrollButtons";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import NotificationBell from "@/components/ui/NotificationBell";
 import { Officer } from "@/types/officer";
 import { Users, Shield, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { normalizeLGA, normalizeMDA, formatBirthday } from "@/lib/dataConsolidation";
 
 // Month names for birthday matching
 const MONTH_NAMES = [
@@ -37,7 +39,8 @@ export default function Home() {
   const itemsPerPage = 10; // Can be adjusted
 
   const [selectedOfficer, setSelectedOfficer] = useState<Officer | null>(null);
-  const [birthdayOfficer, setBirthdayOfficer] = useState<Officer | null>(null);
+  const [birthdayOfficers, setBirthdayOfficers] = useState<Officer[]>([]);
+  const [newOfficers, setNewOfficers] = useState<Officer[]>([]);
   const [isLoading, setIsLoading] = useState(true); // Added for skeleton demo
 
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +59,14 @@ export default function Home() {
           console.error("Error fetching officers:", fetchError);
           setError(`Supabase Error [${fetchError.code || 'UNKNOWN'}]: ${fetchError.message}. Env: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'MISSING'}`);
         } else if (data) {
-          const sortedData = (data as Officer[]).sort((a, b) =>
+          const processedData = (data as Officer[]).map(officer => ({
+            ...officer,
+            lga: normalizeLGA(officer.lga),
+            current_mda: normalizeMDA(officer.current_mda),
+            birth_month_day: formatBirthday(officer.birth_month_day)
+          }));
+
+          const sortedData = processedData.sort((a, b) =>
             a.full_name.localeCompare(b.full_name)
           );
           setOfficers(sortedData);
@@ -72,7 +82,7 @@ export default function Home() {
     fetchOfficers();
   }, []);
 
-  // Birthday Engine — matches "Month Day" (February 20) or "M/D" (2/20)
+  // Birthday Engine & New Officer Logic
   useEffect(() => {
     if (officers.length === 0) return;
 
@@ -80,17 +90,31 @@ export default function Home() {
     const m = now.getMonth();
     const d = now.getDate();
 
-    const todayFull = `${MONTH_NAMES[m]} ${d}`;
+    const todayFull = `${MONTH_NAMES[m]}/${d}`; // e.g. March/22
+    const todayFullWithSpace = `${MONTH_NAMES[m]} ${d}`; // e.g. March 22
     const todayNumeric = `${m + 1}/${d}`;
 
-    const match = officers.find((o) => {
+    // Find all birthday officers
+    const bdayMatches = officers.filter((o) => {
       const bday = (o.birth_month_day || "").trim();
-      return bday === todayFull || bday === todayNumeric;
+      return bday === todayFull || bday === todayNumeric || bday === todayFullWithSpace;
     });
 
-    if (match) {
-      setBirthdayOfficer(match);
+    if (bdayMatches.length > 0) {
+      setBirthdayOfficers(bdayMatches);
     }
+
+    // Find new officers (added within last 7 days)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(now.getDate() - 7);
+
+    const recentAdditions = officers.filter((o) => {
+      if (!o.created_at) return false;
+      const createdAtDate = new Date(o.created_at);
+      return createdAtDate > sevenDaysAgo;
+    });
+
+    setNewOfficers(recentAdditions);
   }, [officers]);
 
   // Filtered and Sorted officers
@@ -147,7 +171,8 @@ export default function Home() {
         <ImageSlider />
 
         {/* Controls Overlay */}
-        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-3">
+          <NotificationBell newOfficers={newOfficers} birthdayOfficers={birthdayOfficers} />
           <ThemeToggle />
         </div>
 
@@ -326,10 +351,10 @@ export default function Home() {
       )}
 
       {/* Birthday Banner */}
-      {!isLoading && birthdayOfficer && (
+      {!isLoading && birthdayOfficers.length > 0 && (
         <BirthdayBanner
-          officer={birthdayOfficer}
-          onClose={() => setBirthdayOfficer(null)}
+          officers={birthdayOfficers}
+          onClose={() => setBirthdayOfficers([])}
         />
       )}
 

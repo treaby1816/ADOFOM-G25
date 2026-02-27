@@ -11,4 +11,5 @@ export interface Officer {
     phone_number: string;
     hobbies: string;
     about_me: string;
+    created_at?: string;
 }
