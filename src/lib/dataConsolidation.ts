@@ -185,10 +185,10 @@ const MDA_MAPPING: Record<string, string> = {
     "local government service commission": "Local Government Service Commission",
     "lgsc": "Local Government Service Commission",
 
-    "board for adult, technical and vocational education (batve)": "Board for Adult, Vocational and Non-Formal Education",
-    "board of adult, technical & vocational education": "Board for Adult, Vocational and Non-Formal Education",
-    "board for adult": "Board for Adult, Vocational and Non-Formal Education",
-    "batve": "Board for Adult, Vocational and Non-Formal Education",
+    "board for adult, technical and vocational education (batve)": "Board for Adult, Technical and vocational education",
+    "board of adult, technical & vocational education": "Board for Adult, Technical and vocational education",
+    "board for adult": "Board for Adult, Technical and vocational education",
+    "batve": "Board for Adult, Technical and vocational education",
 
     "cabinet and special services": "Cabinet and Special Services Department",
     "cabinet and special service": "Cabinet and Special Services Department",
