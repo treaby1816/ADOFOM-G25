@@ -39,6 +39,11 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
         if (n.includes("ADEWOLE") && n.includes("FELIX")) return "object-top";
         if (n.includes("OLADURE") && n.includes("OLANIRETI")) return "object-top";
         if (n.includes("OYEWO") && n.includes("GBADEBO")) return "object-top";
+        if (n.includes("OMOOLORUN")) return "object-top";
+        if (n.includes("SANYADE")) return "object-top";
+        if (n.includes("OLUTOLA")) return "object-top";
+        if (n.includes("AJAYI")) return "object-top";
+        if (n.includes("SUNMOLA")) return "object-top";
 
         return "object-center";
     };
