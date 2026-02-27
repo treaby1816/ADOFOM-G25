@@ -40,20 +40,24 @@ const LGA_MAPPING: Record<string, string> = {
     "akoko s/e": "Akoko South-East",
     "akoko se": "Akoko South-East",
     "akoko south-east": "Akoko South-East",
+    "akoko south- east": "Akoko South-East",
     // Akoko South-West
     "akoko southwest": "Akoko South-West",
     "akoko south west": "Akoko South-West",
     "akoko s/w": "Akoko South-West",
     "akoko sw": "Akoko South-West",
     "akoko south-west": "Akoko South-West",
+    "akoko south- southwest": "Akoko South-West",
+    "akoko south west local government": "Akoko South-West",
     // Akure North
-    "akure north": "Akure North",
-    "akure-north": "Akure North",
+    "akure north (iju)": "Akure North",
     "akure n": "Akure North",
     // Akure South
     "akure south": "Akure South",
     "akure-south": "Akure South",
     "akure s": "Akure South",
+    "akure south local government": "Akure South",
+    "akure south local govt.": "Akure South",
     // Ese Odo
     "ese odo": "Ese Odo",
     "ese-odo": "Ese Odo",
@@ -64,13 +68,15 @@ const LGA_MAPPING: Record<string, string> = {
     "ifedore": "Ifedore",
     "ife dore": "Ifedore",
     // Ilaje
-    "ilaje": "Ilaje",
+    "ilaje local government": "Ilaje",
+    "ilaje-local-government": "Ilaje",
     // Ile Oluji/Okeigbo
     "ile oluji/okeigbo": "Ile Oluji/Okeigbo",
     "ile oluji okeigbo": "Ile Oluji/Okeigbo",
     "ile oluji": "Ile Oluji/Okeigbo",
     "okeigbo": "Ile Oluji/Okeigbo",
     "ile-oluji": "Ile Oluji/Okeigbo",
+    "ile-oluji oke-igbo": "Ile Oluji/Okeigbo",
     // Irele
     "irele": "Irele",
     // Odigbo
@@ -81,12 +87,15 @@ const LGA_MAPPING: Record<string, string> = {
     "ondo east": "Ondo East",
     "ondo-east": "Ondo East",
     "ondo e": "Ondo East",
+    "ondo east local government area": "Ondo East",
     // Ondo West
     "ondo west": "Ondo West",
     "ondo-west": "Ondo West",
     "ondo w": "Ondo West",
     // Ose
     "ose": "Ose",
+    "ose local government": "Ose",
+    "ose lg": "Ose",
     // Owo
     "owo": "Owo",
 };
@@ -94,8 +103,10 @@ const LGA_MAPPING: Record<string, string> = {
 export function normalizeLGA(lgaName: string | null | undefined): string {
     if (!lgaName) return "Unknown LGA";
 
-    // Clean up input
-    const cleanName = lgaName.trim().toLowerCase().replace(/\s+/g, " ");
+    // Clean up input - remove extra spaces, handle hyphen spaces
+    const cleanName = lgaName.trim().toLowerCase()
+        .replace(/\s*-\s*/g, "-") // "south - east" -> "south-east"
+        .replace(/\s+/g, " ");
 
     // Check direct mapping
     if (LGA_MAPPING[cleanName]) {
@@ -163,13 +174,21 @@ const MDA_MAPPING: Record<string, string> = {
     "osbir": "Board of Internal Revenue",
 
     "hospitals management board": "Hospitals Management Board",
+    "hospital management board": "Hospitals Management Board",
+    "ondo state hospitals management board": "Hospitals Management Board",
     "hmb": "Hospitals Management Board",
 
     "teaching service commission": "Teaching Service Commission",
     "tescom": "Teaching Service Commission",
+    "ondo state teaching service commission": "Teaching Service Commission",
 
     "local government service commission": "Local Government Service Commission",
     "lgsc": "Local Government Service Commission",
+
+    "board for adult, technical and vocational education (batve)": "Board for Adult, Vocational and Non-Formal Education",
+    "board of adult, technical & vocational education": "Board for Adult, Vocational and Non-Formal Education",
+    "board for adult": "Board for Adult, Vocational and Non-Formal Education",
+    "batve": "Board for Adult, Vocational and Non-Formal Education",
 
     "cabinet and special services": "Cabinet and Special Services Department",
     "cabinet and special service": "Cabinet and Special Services Department",
@@ -180,6 +199,8 @@ const MDA_MAPPING: Record<string, string> = {
     "ministry of agriculture and forestry": "Ministry of Agriculture and Forestry",
     "ministry of agriculture": "Ministry of Agriculture and Forestry",
     "agriculture and forestry": "Ministry of Agriculture and Forestry",
+    "ministry of agriculture & forestry (agric subsector)": "Ministry of Agriculture and Forestry",
+    "ministry of agriculture and forestry (forestry and produce subsector)": "Ministry of Agriculture and Forestry",
     "moaf": "Ministry of Agriculture and Forestry",
     "ministry of agriculture & forestry": "Ministry of Agriculture and Forestry",
     "moa": "Ministry of Agriculture and Forestry",
@@ -196,6 +217,8 @@ const MDA_MAPPING: Record<string, string> = {
 
     "ministry of economic planning and budget": "Ministry of Economic Planning and Budget",
     "economic planning and budget": "Ministry of Economic Planning and Budget",
+    "economic planning and coordinating office, ministry of economic planning & budget": "Ministry of Economic Planning and Budget",
+    "budget office": "Ministry of Economic Planning and Budget",
     "mepb": "Ministry of Economic Planning and Budget",
 
     "ministry of environment": "Ministry of Environment",
@@ -204,6 +227,11 @@ const MDA_MAPPING: Record<string, string> = {
     "ministry of land and housing": "Ministry of Lands and Housing",
     "ministry of lands and housing": "Ministry of Lands and Housing",
     "lands and housing": "Ministry of Lands and Housing",
+
+    "office of establishment and training": "Office of Establishment and Training",
+    "the office of establishment and training": "Office of Establishment and Training",
+
+    "subeb": "SUBEB",
 };
 
 // Check direct mapping
