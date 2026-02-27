@@ -33,19 +33,34 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
     // Most professional headshots look better centered or slightly higher.
     // If a position is saved in the database, use it. Otherwise, use defaults.
     const getPhotoPosition = (name: string, savedPos?: string) => {
-        if (savedPos) return savedPos;
+        if (savedPos && savedPos.startsWith('object-')) return savedPos;
+        if (savedPos) return "";
 
         const n = name.toUpperCase();
         if (n.includes("ADEWOLE") && n.includes("FELIX")) return "object-top";
         if (n.includes("OLADURE") && n.includes("OLANIRETI")) return "object-top";
         if (n.includes("OYEWO") && n.includes("GBADEBO")) return "object-top";
-        if (n.includes("OMOOLORUN")) return "object-top";
+
+        // CUSTOM SENIOR TUNING
+        if (n.includes("OMOOLORUN")) return ""; // Handled by inline style
+
         if (n.includes("SANYADE")) return "object-top";
         if (n.includes("OLUTOLA")) return "object-top";
         if (n.includes("AJAYI")) return "object-top";
         if (n.includes("SUNMOLA")) return "object-top";
 
         return "object-center";
+    };
+
+    const getCustomPositionStyle = (name: string, savedPos?: string): React.CSSProperties => {
+        if (savedPos && !savedPos.startsWith('object-')) {
+            return { objectPosition: savedPos };
+        }
+        const n = name.toUpperCase();
+        if (n.includes("OMOOLORUN")) {
+            return { objectPosition: 'center 10%' }; // Precision framing
+        }
+        return {};
     };
 
     const getDriveViewUrl = (url: string) => {
@@ -74,6 +89,7 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
                             src={getDriveViewUrl(officer.photo_url)}
                             alt={officer.full_name}
                             className={`w-full h-full object-cover ${getPhotoPosition(officer.full_name, officer.photo_position)}`}
+                            style={getCustomPositionStyle(officer.full_name, officer.photo_position)}
                             onError={() => setImgError(true)}
                         />
                     )}

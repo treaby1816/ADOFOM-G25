@@ -99,6 +99,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                                 src={imageUrl}
                                 alt={currentOfficer.full_name}
                                 className={`max-w-full max-h-[90vh] object-contain ${getPhotoPosition(currentOfficer.full_name, currentOfficer.photo_position)} rounded-lg shadow-2xl ring-1 ring-white/10`}
+                                style={getCustomPositionStyle(currentOfficer.full_name, currentOfficer.photo_position)}
                             />
                         </div>
                     </div>
@@ -136,6 +137,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                                 src={imageUrl}
                                 alt={currentOfficer.full_name}
                                 className={`w-full h-full object-cover ${getPhotoPosition(currentOfficer.full_name, currentOfficer.photo_position)} group-hover:brightness-110 transition-all`}
+                                style={getCustomPositionStyle(currentOfficer.full_name, currentOfficer.photo_position)}
                             />
                             <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <Eye size={24} className="text-white mb-2" />
