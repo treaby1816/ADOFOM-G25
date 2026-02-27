@@ -103,7 +103,10 @@ export function normalizeLGA(lgaName: string | null | undefined): string {
     }
 
     // Check partial matches if no direct mapping
-    for (const [key, value] of Object.entries(LGA_MAPPING)) {
+    // Sort entries by key length descending so "akoko south east" matches before "akoko south"
+    const sortedEntries = Object.entries(LGA_MAPPING).sort((a, b) => b[0].length - a[0].length);
+
+    for (const [key, value] of sortedEntries) {
         if (cleanName.includes(key) || key.includes(cleanName)) {
             return value;
         }
@@ -137,10 +140,6 @@ const MDA_MAPPING: Record<string, string> = {
     "moe": "Ministry of Education",
     "education ministry": "Ministry of Education",
 
-    "ministry of agriculture": "Ministry of Agriculture",
-    "moa": "Ministry of Agriculture",
-    "agriculture ministry": "Ministry of Agriculture",
-
     "ministry of finance": "Ministry of Finance",
     "mof": "Ministry of Finance",
     "finance ministry": "Ministry of Finance",
@@ -171,8 +170,43 @@ const MDA_MAPPING: Record<string, string> = {
 
     "local government service commission": "Local Government Service Commission",
     "lgsc": "Local Government Service Commission",
+
+    "cabinet and special services": "Cabinet and Special Services Department",
+    "cabinet and special service": "Cabinet and Special Services Department",
+    "cabinet and special services department": "Cabinet and Special Services Department",
+    "cabinet and special service department": "Cabinet and Special Services Department",
+    "cssd": "Cabinet and Special Services Department",
+
+    "ministry of agriculture and forestry": "Ministry of Agriculture and Forestry",
+    "ministry of agriculture": "Ministry of Agriculture and Forestry",
+    "agriculture and forestry": "Ministry of Agriculture and Forestry",
+    "moaf": "Ministry of Agriculture and Forestry",
+    "ministry of agriculture & forestry": "Ministry of Agriculture and Forestry",
+    "moa": "Ministry of Agriculture and Forestry",
+    "agriculture ministry": "Ministry of Agriculture and Forestry",
+
+    "office of the governor": "Office of the Governor",
+    "governor's office": "Office of the Governor",
+    "governors office": "Office of the Governor",
+    "the governor's office": "Office of the Governor",
+
+    "office of the deputy governor": "Office of the Deputy Governor",
+    "deputy governor's office": "Office of the Deputy Governor",
+    "deputy governors office": "Office of the Deputy Governor",
+
+    "ministry of economic planning and budget": "Ministry of Economic Planning and Budget",
+    "economic planning and budget": "Ministry of Economic Planning and Budget",
+    "mepb": "Ministry of Economic Planning and Budget",
+
+    "ministry of environment": "Ministry of Environment",
+    "environment ministry": "Ministry of Environment",
+
+    "ministry of land and housing": "Ministry of Lands and Housing",
+    "ministry of lands and housing": "Ministry of Lands and Housing",
+    "lands and housing": "Ministry of Lands and Housing",
 };
 
+// Check direct mapping
 export function normalizeMDA(mdaName: string | null | undefined): string {
     if (!mdaName) return "Unknown MDA";
 
@@ -182,6 +216,15 @@ export function normalizeMDA(mdaName: string | null | undefined): string {
     // Check direct mapping
     if (MDA_MAPPING[cleanName]) {
         return MDA_MAPPING[cleanName];
+    }
+
+    // Check partial matches if no direct mapping
+    // Sort entries by key length descending
+    const sortedEntries = Object.entries(MDA_MAPPING).sort((a, b) => b[0].length - a[0].length);
+    for (const [key, value] of sortedEntries) {
+        if (cleanName.includes(key) || key.includes(cleanName)) {
+            return value;
+        }
     }
 
     // Standardize "Ministry of X", "Dept object Y" etc.
