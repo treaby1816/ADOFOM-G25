@@ -1,6 +1,6 @@
 "use client";
 
-import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award, Pencil } from "lucide-react";
+import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award, Pencil, Eye } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { useEffect, useState } from "react";
 import EmailVerification from "./EmailVerification";
