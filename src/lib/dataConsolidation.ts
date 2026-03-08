@@ -226,22 +226,39 @@ const MDA_MAPPING: Record<string, string> = {
     "ministry of environment": "Ministry of Environment",
     "environment ministry": "Ministry of Environment",
 
+    "subeb": "SUBEB",
+
+    "ministry of physical planning and urban": "Ministry of Physical Planning and Urban Development",
+    "ministry of physical planning &urban": "Ministry of Physical Planning and Urban Development",
+    "ministry of physical planning and urban development": "Ministry of Physical Planning and Urban Development",
+
     "ministry of land and housing": "Ministry of Lands and Housing",
     "ministry of lands and housing": "Ministry of Lands and Housing",
+    "ministry of lands & housing": "Ministry of Lands and Housing",
     "lands and housing": "Ministry of Lands and Housing",
 
-    "office of establishment and training": "Office of Establishment and Training",
-    "the office of establishment and training": "Office of Establishment and Training",
-
-    "subeb": "SUBEB",
+    "general administration department": "General Administration Department",
+    "general administration department (gad)": "General Administration Department",
+    "gad": "General Administration Department",
 };
 
 // Check direct mapping
 export function normalizeMDA(mdaName: string | null | undefined): string {
     if (!mdaName) return "Unknown MDA";
 
-    // Clean up input
-    const cleanName = mdaName.trim().toLowerCase().replace(/\s+/g, " ");
+    // Clean up input and remove specific unwanted phrases
+    let cleanName = mdaName.trim().toLowerCase()
+        .replace(/\s+/g, " ")
+        .replace(/admin cadre/g, "")
+        .replace(/admin\. cadre/g, "")
+        .replace(/gh&p/g, "")
+        .replace(/gh & p/g, "")
+        .trim();
+
+    // If we stripped everything, return what we had before falling back to unknown
+    if (!cleanName) {
+        cleanName = mdaName.trim().toLowerCase().replace(/\s+/g, " ");
+    }
 
     // Check direct mapping
     if (MDA_MAPPING[cleanName]) {
