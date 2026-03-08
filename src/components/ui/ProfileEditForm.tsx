@@ -164,13 +164,19 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 photo_position: form.photo_position,
             };
 
-            const { error: updateError } = await supabase
+            const { data: returnedData, error: updateError } = await supabase
                 .from("administrative_officers")
                 .update(updateData)
-                .eq("id", officer.id);
+                .eq("id", officer.id)
+                .select();
 
             if (updateError) {
                 setError(`Failed to save: ${updateError.message}`);
+                return;
+            }
+
+            if (!returnedData || returnedData.length === 0) {
+                setError("Permission denied: The database blocked this update. Please check Supabase RLS policies.");
                 return;
             }
 
