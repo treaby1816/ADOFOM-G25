@@ -63,9 +63,9 @@ export default function LoginPage() {
           <div className="relative w-24 h-24" style={{ zIndex: 50 }}>
             {/* Fallback to text if /Ondo-Logo.png isn't available */}
             <img 
-              src="/clean-logo-v2-white.png" 
+              src="/Ondo-Logo.png" 
               alt="Ondo State Logo" 
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain brightness-0 invert"
             />
           </div>
         </div>
