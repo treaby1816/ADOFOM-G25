@@ -207,7 +207,10 @@ export default function Home() {
               <Shield className="w-10 h-10 sm:w-12 sm:h-12 text-green-300 drop-shadow-lg" />
             </div>
 
-            {/* Logo Right (Optional symmetry, hidden by default if not needed, I'll keep just one on left or center. Let's make it a single centered group) */}
+            {/* Logo Right */}
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/10 rounded-full backdrop-blur-md flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ animationDelay: "400ms" }}>
+              <img src="/logo2.jpg" alt="Secondary Logo" className="w-full h-full object-contain drop-shadow-md rounded-full" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('hidden'); }} />
+            </div>
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight mb-4 drop-shadow-2xl leading-tight">
             Ondo State <br className="sm:hidden" />
