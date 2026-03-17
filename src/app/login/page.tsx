@@ -60,11 +60,11 @@ export default function LoginPage() {
         
         {/* Logo Section */}
         <div className="flex justify-center mb-8">
-          <div className="relative w-28 h-28 bg-white rounded-full p-2 shadow-2xl flex items-center justify-center border border-white/20" style={{ zIndex: 50 }}>
+          <div className="relative" style={{ zIndex: 50 }}>
             <img 
-              src="/logo1.jpg" 
+              src="/logo2.jpg" 
               alt="Ondo State Logo" 
-              className="w-full h-full object-contain rounded-full"
+              className="w-32 h-32 object-contain rounded-full bg-white/10 p-2 shadow-xl"
             />
           </div>
         </div>
