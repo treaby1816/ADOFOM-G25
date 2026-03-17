@@ -60,14 +60,12 @@ export default function LoginPage() {
         
         {/* Logo Section */}
         <div className="flex justify-center mb-8">
-          <div className="relative w-24 h-24 drop-shadow-lg">
-            {/* Fallback to text if /Ondo-Logo.png isn't available, but we'll try to load it */}
-            <Image 
-              src="/Ondo-Logo.png" 
+          <div className="relative w-24 h-24" style={{ zIndex: 50 }}>
+            {/* Fallback to text if /Ondo-Logo.png isn't available */}
+            <img 
+              src="/clean-logo.png" 
               alt="Ondo State Logo" 
-              fill
-              className="object-contain"
-              priority
+              className="w-full h-full object-contain"
             />
           </div>
         </div>
