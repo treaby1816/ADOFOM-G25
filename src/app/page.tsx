@@ -168,9 +168,9 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       {/* Top Professional Header */}
-      <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-[#001f3f] border-b border-yellow-500/20 sticky top-0 z-[100] shadow-lg">
+      <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-green-950/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] shadow-lg">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-white/10 p-1 backdrop-blur-sm border border-white/20 overflow-hidden">
+          <div className="w-10 h-10 rounded-full p-1 border border-white/20 overflow-hidden" style={{ zIndex: 50 }}>
             <img src="/logo2.jpg" alt="Ondo State Logo" className="w-full h-full object-contain rounded-full" />
           </div>
           <h2 className="text-lg font-bold text-white tracking-tight hidden sm:block">
