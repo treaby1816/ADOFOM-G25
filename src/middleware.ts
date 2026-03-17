@@ -15,7 +15,9 @@ export async function middleware(request: NextRequest) {
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           response = NextResponse.next({ request })
-          cookiesToSet.forEach(({ name, value, options }) => response.cookies.set(name, value, options))
+          cookiesToSet.forEach(({ name, value, options }) => 
+            response.cookies.set(name, value, { ...options, path: '/' })
+          )
         },
       },
     }
@@ -34,5 +36,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|Ondo-Logo.png).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|Ondo-Logo.png|auth|login).*)'],
 }
