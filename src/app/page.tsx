@@ -24,6 +24,8 @@ const MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December",
 ];
 
+import SignOutButton from "@/components/SignOutButton";
+
 export default function Home() {
   const [officers, setOfficers] = useState<Officer[]>([]);
 
@@ -165,7 +167,25 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
-      {/* Header */}
+      {/* Top Professional Header */}
+      <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-[#001f3f] border-b border-yellow-500/20 sticky top-0 z-[100] shadow-lg">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-white/10 p-1 backdrop-blur-sm border border-white/20 overflow-hidden">
+            <img src="/logo2.jpg" alt="Ondo State Logo" className="w-full h-full object-contain rounded-full" />
+          </div>
+          <h2 className="text-lg font-bold text-white tracking-tight hidden sm:block">
+            ADOFOM Portal
+          </h2>
+        </div>
+        
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <div className="h-6 w-[1px] bg-white/20 mx-1 hidden sm:block" />
+          <SignOutButton />
+        </div>
+      </header>
+
+      {/* Hero Section Header (Existing Slider) */}
       <header className="relative overflow-hidden text-white shadow-xl min-h-[350px] flex flex-col justify-center">
         {/* Background Slider */}
         <ImageSlider />
@@ -173,7 +193,6 @@ export default function Home() {
         {/* Controls Overlay */}
         <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-3">
           <NotificationBell newOfficers={newOfficers} birthdayOfficers={birthdayOfficers} />
-          <ThemeToggle />
         </div>
 
         {/* Content Overlay */}
