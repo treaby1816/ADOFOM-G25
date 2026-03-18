@@ -29,6 +29,35 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
+    // 3. ADMIN & APPROVAL CHECK (For all other users)
+    if (user && user.email !== 'felixadewole16@gmail.com') {
+        const { data: profile } = await supabase
+            .from('administrative_officers')
+            .select('is_approved, is_admin')
+            .eq('id', user.id)
+            .single()
+
+        const isPendingPage = request.nextUrl.pathname.startsWith('/pending-approval')
+        const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
+        const isSetupProfilePage = request.nextUrl.pathname.startsWith('/dashboard/setup-profile')
+
+        // A. Admin Route Protection
+        if (isAdminRoute && !profile?.is_admin) {
+            return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
+
+        // B. Approval Check
+        // If they are not approved, they can only view public routes, the pending page, or setup profile
+        if (!profile?.is_approved && !isPublicRoute && !isPendingPage && !isSetupProfilePage) {
+            return NextResponse.redirect(new URL('/pending-approval', request.url))
+        }
+
+        // C. Redirect away from pending if already approved
+        if (profile?.is_approved && isPendingPage) {
+            return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
+    }
+
     return response
 }
 export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'] }
