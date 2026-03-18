@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
 export async function middleware(request: NextRequest) {
     let response = NextResponse.next({ request: { headers: request.headers } })
@@ -31,6 +32,9 @@ export async function middleware(request: NextRequest) {
 
     // 3. ADMIN & APPROVAL CHECK (For all other users)
     if (user && user.email !== 'felixadewole16@gmail.com') {
+        const email = user.email?.toLowerCase() || ''
+        const isWhitelisted = !!WHITELIST_OFFICERS[email]
+
         const { data: profile } = await supabase
             .from('administrative_officers')
             .select('is_approved, is_admin')
@@ -47,13 +51,16 @@ export async function middleware(request: NextRequest) {
         }
 
         // B. Approval Check
+        // If they are on the whitelist, they are instantly verified. Otherwise check DB.
+        const isVerified = isWhitelisted || profile?.is_approved
+
         // If they are not approved, they can only view public routes, the pending page, or setup profile
-        if (!profile?.is_approved && !isPublicRoute && !isPendingPage && !isSetupProfilePage) {
+        if (!isVerified && !isPublicRoute && !isPendingPage && !isSetupProfilePage) {
             return NextResponse.redirect(new URL('/pending-approval', request.url))
         }
 
-        // C. Redirect away from pending if already approved
-        if (profile?.is_approved && isPendingPage) {
+        // C. Redirect away from pending if already verified
+        if (isVerified && isPendingPage) {
             return NextResponse.redirect(new URL('/dashboard', request.url))
         }
     }
