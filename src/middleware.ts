@@ -6,7 +6,16 @@ export async function middleware(request: NextRequest) {
     const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
         cookies: { getAll() { return request.cookies.getAll() }, setAll(cookiesToSet) { cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value)) }, },
     })
+
+    // Refresh the session token
+    await supabase.auth.getSession()
+
     const { data: { user } } = await supabase.auth.getUser()
+
+    // ★ MASTER BYPASS: Felix gets unrestricted access to ALL pages
+    if (user?.email === 'felixadewole16@gmail.com') {
+        return NextResponse.next()
+    }
 
     // 1. PUBLIC ROUTES & ASSETS
     const isPublicRoute = request.nextUrl.pathname.startsWith('/login') || 
@@ -37,8 +46,6 @@ export async function middleware(request: NextRequest) {
         }
 
         // B. Approval Check
-        // Redirect to pending if not approved and trying to access private routes
-        // (Admins bypass the pending check for their own routes, but still need to be approved for dashboard)
         if (!profile?.is_approved && !isPublicRoute && !isPendingPage && !isAdminRoute) {
             return NextResponse.redirect(new URL('/pending-approval', request.url))
         }
