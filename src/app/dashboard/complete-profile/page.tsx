@@ -257,11 +257,18 @@ export default function CompleteProfilePage() {
                 />
               </div>
 
-              <div className="pt-6">
+              <div className="pt-6 flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => router.back()}
+                  className="w-1/3 py-4 border border-white/10 text-slate-400 rounded-2xl hover:bg-white/5 hover:text-white transition-all font-medium uppercase tracking-widest text-xs"
+                >
+                  Previous Step
+                </button>
                 <button
                   type="submit"
                   disabled={isLoading || success}
-                  className="w-full py-4 btn-gold rounded-2xl flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest"
+                  className="flex-1 py-4 btn-gold rounded-2xl flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest"
                 >
                   {isLoading ? 'Saving Profile...' : 'Complete Profile Setup'}
                   <ChevronRight size={20} />
