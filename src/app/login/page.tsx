@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
 import { Mail, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react'
 
@@ -141,6 +142,18 @@ export default function LoginPage() {
             </button>
           </div>
         </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-400">
+            New Officer?{' '}
+            <Link 
+              href="/signup" 
+              className="font-medium text-yellow-500 hover:text-yellow-400 transition-colors underline underline-offset-4"
+            >
+              Create your portal account here.
+            </Link>
+          </p>
+        </div>
 
         {/* Mobile Hint */}
         <div className="mt-8 text-center border-t border-slate-800 pt-6">

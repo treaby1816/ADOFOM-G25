@@ -1,0 +1,174 @@
+'use client'
+
+import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/utils/supabase/client'
+import { Mail, Lock, User, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react'
+
+export default function SignupPage() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [fullName, setFullName] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
+  const router = useRouter()
+  const supabase = createClient()
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setMessage(null)
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      if (error) {
+        setMessage({ type: 'error', text: error.message })
+      } else if (data.user) {
+        if (data.session) {
+            // If email confirmation is disabled, redirect immediately
+            router.push('/dashboard/complete-profile')
+        } else {
+            setMessage({ 
+                type: 'success', 
+                text: 'Registration successful! Please check your email for the confirmation link.' 
+            })
+        }
+      }
+    } catch (err: any) {
+      setMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-[#001f3f] flex flex-col items-center justify-center p-4">
+      <div className="max-w-md w-full space-y-8 bg-slate-900/40 backdrop-blur-xl p-8 rounded-3xl border border-slate-700/50 shadow-2xl relative overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500/0 via-yellow-500 to-yellow-500/0"></div>
+        <div className="absolute -top-24 -left-24 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl"></div>
+        
+        {/* Header */}
+        <div className="text-center relative">
+          <div className="flex justify-center mb-6">
+            <div className="relative w-20 h-20 bg-white/10 rounded-full backdrop-blur-md flex items-center justify-center border border-white/20 shadow-xl overflow-hidden">
+              <img src="/logo2.jpg" alt="Ondo State Logo" className="w-full h-full object-contain rounded-full" />
+            </div>
+          </div>
+          <h2 className="text-3xl font-black text-white tracking-tight uppercase mb-2">
+            Create Account
+          </h2>
+          <p className="text-slate-400 text-sm font-medium">
+            Join the ADOFOM Official Portal
+          </p>
+        </div>
+
+        {message && (
+          <div className={`p-4 rounded-xl flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300 ${
+            message.type === 'error' ? 'bg-red-500/10 border border-red-500/20 text-red-400' : 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
+          }`}>
+            {message.type === 'error' ? <AlertCircle className="w-5 h-5 shrink-0" /> : <CheckCircle2 className="w-5 h-5 shrink-0" />}
+            <p className="text-sm font-medium leading-relaxed">{message.text}</p>
+          </div>
+        )}
+
+        <form className="mt-8 space-y-5" onSubmit={handleSignup}>
+          <div className="space-y-4">
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
+                <User className="h-5 w-5" />
+              </div>
+              <input
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                placeholder="Full Name"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
+                <Mail className="h-5 w-5" />
+              </div>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(setEmail(e.target.value)}
+                className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                placeholder="Official Email Address"
+                disabled={isLoading}
+              />
+            </div>
+
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
+                <Lock className="h-5 w-5" />
+              </div>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                placeholder="Password"
+                disabled={isLoading}
+                minLength={6}
+              />
+            </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-semibold rounded-xl text-slate-950 bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 focus:ring-yellow-500 transition-all shadow-[0_0_15px_rgba(234,179,8,0.3)] hover:shadow-[0_0_25px_rgba(234,179,8,0.5)] disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Creating Account...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  Create Account
+                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </span>
+              )}
+            </button>
+          </div>
+        </form>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-400">
+            Already have an account?{' '}
+            <Link 
+              href="/login" 
+              className="font-medium text-yellow-500 hover:text-yellow-400 transition-colors underline underline-offset-4"
+            >
+              Sign in here.
+            </Link>
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}

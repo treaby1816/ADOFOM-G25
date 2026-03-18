@@ -7,8 +7,8 @@ export async function middleware(request: NextRequest) {
         cookies: { getAll() { return request.cookies.getAll() }, setAll(cookiesToSet) { cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value)) }, },
     })
     const { data: { user } } = await supabase.auth.getUser()
-    // REDIRECT LOGIC: If no user and not on auth/login pages, force redirect to /login
-    if (!user && !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/auth') && !request.nextUrl.pathname.includes('Ondo-Logo.png')) {
+    // REDIRECT LOGIC: If no user and not on auth/login/signup pages, force redirect to /login
+    if (!user && !request.nextUrl.pathname.startsWith('/login') && !request.nextUrl.pathname.startsWith('/signup') && !request.nextUrl.pathname.startsWith('/auth') && !request.nextUrl.pathname.includes('Ondo-Logo.png')) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
     return response
