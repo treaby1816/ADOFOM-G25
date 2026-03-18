@@ -11,5 +11,7 @@ export interface Officer {
     phone_number: string;
     hobbies: string;
     about_me: string;
+    is_admin?: boolean;
+    is_approved?: boolean;
     created_at?: string;
 }

@@ -20,22 +20,30 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // 3. APPROVAL CHECK (If logged in)
+    // 3. ADMIN & APPROVAL CHECK (If logged in)
     if (user) {
         const { data: profile } = await supabase
             .from('administrative_officers')
-            .select('is_approved')
+            .select('is_approved, is_admin')
             .eq('id', user.id)
             .single()
 
         const isPendingPage = request.nextUrl.pathname.startsWith('/pending-approval')
+        const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
 
+        // A. Admin Route Protection
+        if (isAdminRoute && !profile?.is_admin) {
+            return NextResponse.redirect(new URL('/dashboard', request.url))
+        }
+
+        // B. Approval Check
         // Redirect to pending if not approved and trying to access private routes
-        if (!profile?.is_approved && !isPublicRoute && !isPendingPage) {
+        // (Admins bypass the pending check for their own routes, but still need to be approved for dashboard)
+        if (!profile?.is_approved && !isPublicRoute && !isPendingPage && !isAdminRoute) {
             return NextResponse.redirect(new URL('/pending-approval', request.url))
         }
 
-        // Redirect away from pending if already approved
+        // C. Redirect away from pending if already approved
         if (profile?.is_approved && isPendingPage) {
             return NextResponse.redirect(new URL('/', request.url))
         }

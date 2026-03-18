@@ -28,7 +28,20 @@ export async function GET(request: Request) {
     )
     
     // IMPORTANT: Wait for the session to be established and cookies written
-    await supabase.auth.exchangeCodeForSession(code)
+    const { data: { user } } = await supabase.auth.exchangeCodeForSession(code)
+    
+    // Auto-Admin Logic for Felix
+    if (user?.user_metadata?.full_name === 'ADEWOLE Felix Bamidele') {
+      await supabase
+        .from('administrative_officers')
+        .upsert({
+          id: user.id,
+          full_name: user.user_metadata.full_name,
+          email_address: user.email,
+          is_admin: true,
+          is_approved: true
+        })
+    }
     
     // Redirect to the root directory
     return NextResponse.redirect(`${origin}/`)
