@@ -8,7 +8,7 @@ import { User, Building2, GraduationCap, MapPin, Calendar, Phone, Heart, FileTex
 
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
-export default function CompleteProfilePage() {
+export default function SetupProfilePage() {
   const [formData, setFormData] = useState({
     full_name: '',
     current_mda: '',
@@ -102,7 +102,16 @@ export default function CompleteProfilePage() {
 
   return (
     <div className="min-h-screen bg-hero-gradient py-12 px-4">
-      <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl overflow-hidden relative">
+      <div className="max-w-4xl mx-auto">
+        {/* Top Back Navigation */}
+        <button 
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-white/80 hover:text-gold-500 mb-6 transition-colors w-fit"
+        >
+          ← Back
+        </button>
+
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl overflow-hidden relative">
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500/0 via-yellow-500 to-yellow-500/0"></div>
 
@@ -277,6 +286,7 @@ export default function CompleteProfilePage() {
             </div>
           </div>
         </form>
+        </div>
       </div>
     </div>
   )

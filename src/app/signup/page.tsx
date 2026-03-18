@@ -38,7 +38,7 @@ export default function SignupPage() {
       } else if (data.user) {
         if (data.session) {
             // If email confirmation is disabled, redirect immediately
-            router.push('/dashboard/complete-profile')
+            router.push('/dashboard/setup-profile')
         } else {
             setMessage({ 
                 type: 'success', 
@@ -55,7 +55,16 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-hero-gradient flex flex-col items-center justify-center p-4">
-      <div className="max-w-md w-full space-y-8 bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
+      <div className="max-w-md w-full">
+        {/* Top Back Navigation */}
+        <button 
+          onClick={() => router.back()}
+          className="flex items-center gap-2 text-white/80 hover:text-gold-500 mb-6 transition-colors w-fit"
+        >
+          ← Back
+        </button>
+
+        <div className="space-y-8 bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500/0 via-yellow-500 to-yellow-500/0"></div>
         <div className="absolute -top-24 -left-24 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl"></div>
@@ -174,6 +183,7 @@ export default function SignupPage() {
               Sign in here.
             </Link>
           </p>
+        </div>
         </div>
       </div>
     </div>
