@@ -6,6 +6,8 @@ import { createClient } from '@/utils/supabase/client'
 import PhotoUploader from '@/components/ui/PhotoUploader'
 import { User, Building2, GraduationCap, MapPin, Calendar, Phone, Heart, FileText, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react'
 
+import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
+
 export default function CompleteProfilePage() {
   const [formData, setFormData] = useState({
     full_name: '',
@@ -32,7 +34,20 @@ export default function CompleteProfilePage() {
         router.push('/login')
         return
       }
-      setFormData(prev => ({ ...prev, full_name: user.user_metadata?.full_name || '' }))
+
+      // Check whitelist for auto-fill
+      const email = user.email?.toLowerCase()
+      const whitelistEntry = email ? WHITELIST_OFFICERS[email] : null
+      
+      setFormData(prev => ({ 
+        ...prev, 
+        full_name: whitelistEntry?.full_name || user.user_metadata?.full_name || '',
+        current_mda: whitelistEntry?.current_mda || '',
+        grade_level: whitelistEntry?.grade_level || '',
+        lga: whitelistEntry?.lga || '',
+        phone_number: whitelistEntry?.phone_number || '',
+        birth_month_day: whitelistEntry?.birth_month_day || '',
+      }))
     }
     checkUser()
   }, [])
@@ -55,37 +70,21 @@ export default function CompleteProfilePage() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('You must be logged in to complete your profile.')
 
-      // Check if administrative_officers record already exists
-      const { data: existingRecord, error: fetchError } = await supabase
-        .from('administrative_officers')
-        .select('id')
-        .eq('id', user.id)
-        .maybeSingle()
+      const email = user.email?.toLowerCase()
+      const whitelistEntry = email ? WHITELIST_OFFICERS[email] : null
+      const isFelix = email === 'felixadewole16@gmail.com'
 
-      if (fetchError) throw fetchError
-
-      let dbError;
-      if (existingRecord) {
-        // Update existing record
-        const { error: updateError } = await supabase
-          .from('administrative_officers')
-          .update({
-            ...formData,
-            email_address: user.email
-          })
-          .eq('id', user.id)
-        dbError = updateError
-      } else {
-        // Insert new record
-        const { error: insertError } = await supabase
-          .from('administrative_officers')
-          .insert({
-            id: user.id,
-            ...formData,
-            email_address: user.email
-          })
-        dbError = insertError
+      const profileData = {
+        id: user.id,
+        ...formData,
+        email_address: user.email,
+        is_approved: whitelistEntry?.is_approved || isFelix || false,
+        is_admin: isFelix || whitelistEntry?.is_admin || false
       }
+
+      const { error: dbError } = await supabase
+        .from('administrative_officers')
+        .upsert(profileData)
 
       if (dbError) throw dbError
 
