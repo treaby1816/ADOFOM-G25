@@ -138,7 +138,7 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
 
                 <button
                     onClick={() => onViewProfile(officer)}
-                    className="flex items-center gap-2 text-xs font-bold text-white bg-green-600 hover:bg-green-500 shadow-md hover:shadow-green-500/30 hover:-translate-y-0.5 active:scale-95 px-5 py-2.5 rounded-full transition-all duration-300 cursor-pointer"
+                    className="flex items-center gap-2 text-xs font-bold btn-gold shadow-md hover:-translate-y-0.5 active:scale-95 px-5 py-2.5 rounded-full transition-all duration-300 cursor-pointer"
                 >
                     <Eye size={16} />
                     View Profile

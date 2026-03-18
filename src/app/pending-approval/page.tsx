@@ -6,7 +6,7 @@ import SignOutButton from '@/components/SignOutButton'
 
 export default function PendingApprovalPage() {
   return (
-    <div className="min-h-screen bg-[#001f3f] flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-hero-gradient flex flex-col items-center justify-center p-4">
       <div className="max-w-2xl w-full bg-slate-900/40 backdrop-blur-xl p-8 sm:p-12 rounded-3xl border border-slate-700/50 shadow-2xl relative overflow-hidden text-center">
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500/0 via-yellow-500 to-yellow-500/0"></div>

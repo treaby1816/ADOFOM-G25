@@ -102,23 +102,26 @@ export default function CompleteProfilePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <div className="bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-zinc-800 overflow-hidden">
+    <div className="min-h-screen bg-hero-gradient py-12 px-4">
+      <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl overflow-hidden relative">
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500/0 via-yellow-500 to-yellow-500/0"></div>
+
         {/* Header Decor */}
-        <div className="h-24 bg-gradient-to-r from-green-900 to-[#001f3f] flex items-center px-8">
+        <div className="h-24 bg-white/5 flex items-center px-8 border-b border-white/10">
           <h1 className="text-2xl font-black text-white uppercase tracking-tight">Setup Official Profile</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-8">
           {error && (
-            <div className="p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-2xl flex items-center gap-3 text-red-600 dark:text-red-400 text-sm font-medium">
+            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-center gap-3 text-red-400 text-sm font-medium">
               <AlertCircle size={20} />
               {error}
             </div>
           )}
 
           {success && (
-            <div className="p-4 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900 rounded-2xl flex items-center gap-3 text-emerald-600 dark:text-emerald-400 text-sm font-medium animate-in zoom-in-95 duration-300">
+            <div className="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center gap-3 text-emerald-400 text-sm font-medium animate-in zoom-in-95 duration-300">
               <CheckCircle2 size={20} />
               Profile saved successfully! Redirecting to dashboard...
             </div>
@@ -134,7 +137,7 @@ export default function CompleteProfilePage() {
             <div className="w-full md:w-2/3 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                     <User size={14} /> Full Name
                   </label>
                   <input
@@ -143,13 +146,13 @@ export default function CompleteProfilePage() {
                     required
                     value={formData.full_name}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-green-500 transition-all text-sm"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
                     placeholder="e.g. John Doe"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                     <Phone size={14} /> Phone Number
                   </label>
                   <input
@@ -158,13 +161,13 @@ export default function CompleteProfilePage() {
                     required
                     value={formData.phone_number}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-green-500 transition-all text-sm"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
                     placeholder="e.g. 08012345678"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                     <Building2 size={14} /> Current MDA
                   </label>
                   <input
@@ -173,13 +176,13 @@ export default function CompleteProfilePage() {
                     required
                     value={formData.current_mda}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-green-500 transition-all text-sm"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
                     placeholder="e.g. Ministry of Finance"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                     <GraduationCap size={14} /> Grade Level
                   </label>
                   <select
@@ -187,17 +190,17 @@ export default function CompleteProfilePage() {
                     required
                     value={formData.grade_level}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-green-500 transition-all text-sm appearance-none"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
                   >
-                    <option value="">Select Level</option>
+                    <option value="" className="bg-slate-900">Select Level</option>
                     {Array.from({ length: 10 }, (_, i) => String(i + 8).padStart(2, '0')).map(level => (
-                      <option key={level} value={`GL ${level}`}>GL {level}</option>
+                      <option key={level} value={`GL ${level}`} className="bg-slate-900">GL {level}</option>
                     ))}
                   </select>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                     <MapPin size={14} /> Local Government (LGA)
                   </label>
                   <input
@@ -206,13 +209,13 @@ export default function CompleteProfilePage() {
                     required
                     value={formData.lga}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-green-500 transition-all text-sm"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
                     placeholder="e.g. Akure South"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                     <Calendar size={14} /> Birthday (e.g. March/22)
                   </label>
                   <input
@@ -221,14 +224,14 @@ export default function CompleteProfilePage() {
                     required
                     value={formData.birth_month_day}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-green-500 transition-all text-sm"
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
                     placeholder="Month/Day (e.g. April/15)"
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                   <Heart size={14} /> Hobbies
                 </label>
                 <input
@@ -236,13 +239,13 @@ export default function CompleteProfilePage() {
                   name="hobbies"
                   value={formData.hobbies}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-green-500 transition-all text-sm"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
                   placeholder="e.g. Reading, Traveling, Chess"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 flex items-center gap-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                   <FileText size={14} /> About Me
                 </label>
                 <textarea
@@ -250,7 +253,7 @@ export default function CompleteProfilePage() {
                   rows={4}
                   value={formData.about_me}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-slate-50 dark:bg-zinc-950 border border-slate-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-green-500 transition-all text-sm outline-none"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500 outline-none"
                   placeholder="Tell us about yourself..."
                 />
               </div>
@@ -259,7 +262,7 @@ export default function CompleteProfilePage() {
                 <button
                   type="submit"
                   disabled={isLoading || success}
-                  className="w-full py-4 bg-[#001f3f] hover:bg-green-900 text-white rounded-2xl font-black uppercase tracking-[0.2em] transition-all transform active:scale-95 shadow-xl hover:shadow-green-900/40 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-4 btn-gold rounded-2xl flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest"
                 >
                   {isLoading ? 'Saving Profile...' : 'Complete Profile Setup'}
                   <ChevronRight size={20} />
