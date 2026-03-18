@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/client'
@@ -10,6 +10,26 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
+
+  useEffect(() => {
+    const clearSession = async () => {
+      // Clear Supabase session on mount to prevent old "Pending" sessions
+      const supabase = createClient()
+      await supabase.auth.signOut()
+
+      // Clear all local storage and session storage
+      localStorage.clear()
+      sessionStorage.clear()
+      
+      // Clear non-HttpOnly cookies
+      document.cookie.split(";").forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, "")
+          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+      });
+    }
+    clearSession()
+  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()

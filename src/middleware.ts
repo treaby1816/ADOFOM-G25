@@ -14,7 +14,7 @@ export async function middleware(request: NextRequest) {
 
     // ★ MASTER BYPASS: Felix gets unrestricted access to ALL pages
     if (user?.email === 'felixadewole16@gmail.com') {
-        return NextResponse.next()
+        return response
     }
 
     // 1. PUBLIC ROUTES & ASSETS
@@ -27,33 +27,6 @@ export async function middleware(request: NextRequest) {
     // 2. AUTH CHECK
     if (!user && !isPublicRoute) {
         return NextResponse.redirect(new URL('/login', request.url))
-    }
-
-    // 3. ADMIN & APPROVAL CHECK (If logged in)
-    if (user) {
-        const { data: profile } = await supabase
-            .from('administrative_officers')
-            .select('is_approved, is_admin')
-            .eq('id', user.id)
-            .single()
-
-        const isPendingPage = request.nextUrl.pathname.startsWith('/pending-approval')
-        const isAdminRoute = request.nextUrl.pathname.startsWith('/admin')
-
-        // A. Admin Route Protection
-        if (isAdminRoute && !profile?.is_admin) {
-            return NextResponse.redirect(new URL('/dashboard', request.url))
-        }
-
-        // B. Approval Check
-        if (!profile?.is_approved && !isPublicRoute && !isPendingPage && !isAdminRoute) {
-            return NextResponse.redirect(new URL('/pending-approval', request.url))
-        }
-
-        // C. Redirect away from pending if already approved
-        if (profile?.is_approved && isPendingPage) {
-            return NextResponse.redirect(new URL('/', request.url))
-        }
     }
 
     return response

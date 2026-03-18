@@ -36,6 +36,12 @@ export async function GET(request: Request) {
       const whitelistEntry = WHITELIST_OFFICERS[email]
       const isFelix = email === 'felixadewole16@gmail.com' || user.user_metadata?.full_name === 'ADEWOLE Felix Bamidele'
 
+      if (isFelix) {
+        // Explicitly set approved session cookie for Felix
+        const cookieStoreObj = await cookies()
+        cookieStoreObj.set('felix_master_approved', 'true', { path: '/', maxAge: 60 * 60 * 24 * 7 })
+      }
+
       if (whitelistEntry || isFelix) {
         // Sync Profile Data from Whitelist or set defaults for Felix
         const profileData = {
