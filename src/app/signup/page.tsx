@@ -109,7 +109,7 @@ export default function SignupPage() {
                 type="email"
                 required
                 value={email}
-                onChange={(setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
                 className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
                 placeholder="Official Email Address"
                 disabled={isLoading}
