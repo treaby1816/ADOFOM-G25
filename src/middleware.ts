@@ -13,8 +13,11 @@ export async function middleware(request: NextRequest) {
 
     const { data: { user } } = await supabase.auth.getUser()
 
-    // ★ MASTER BYPASS: Felix gets unrestricted access to ALL pages
-    if (user?.email === 'felixadewole16@gmail.com') {
+    const rawEmail = user?.email || ''
+    const cleanEmail = rawEmail.trim().toLowerCase()
+
+    // ★ MASTER BYPASS: Felix gets unrestricted access to ALL pages (Case-insensitive)
+    if (cleanEmail === 'felixadewole16@gmail.com') {
         return response
     }
 
@@ -31,9 +34,9 @@ export async function middleware(request: NextRequest) {
     }
 
     // 3. ADMIN & APPROVAL CHECK (For all other users)
-    if (user && user.email !== 'felixadewole16@gmail.com') {
-        const email = user.email?.toLowerCase() || ''
-        const isWhitelisted = !!WHITELIST_OFFICERS[email]
+    if (user && cleanEmail !== 'felixadewole16@gmail.com') {
+        const isWhitelisted = !!WHITELIST_OFFICERS[cleanEmail]
+        const whitelistIsAdmin = WHITELIST_OFFICERS[cleanEmail]?.is_admin === true
 
         const { data: profile } = await supabase
             .from('administrative_officers')
@@ -46,8 +49,10 @@ export async function middleware(request: NextRequest) {
         const isSetupProfilePage = request.nextUrl.pathname.startsWith('/dashboard/setup-profile')
 
         // A. Admin Route Protection
-        if (isAdminRoute && !profile?.is_admin) {
-            return NextResponse.redirect(new URL('/dashboard', request.url))
+        // Allow if DB says admin, OR if the hardcoded whitelist says admin
+        const actuallyAdmin = profile?.is_admin || whitelistIsAdmin
+        if (isAdminRoute && !actuallyAdmin) {
+            return NextResponse.redirect(new URL('/', request.url))
         }
 
         // B. Approval Check
@@ -61,7 +66,7 @@ export async function middleware(request: NextRequest) {
 
         // C. Redirect away from pending if already verified
         if (isVerified && isPendingPage) {
-            return NextResponse.redirect(new URL('/dashboard', request.url))
+            return NextResponse.redirect(new URL('/', request.url))
         }
     }
 
