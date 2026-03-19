@@ -1,18 +1,9 @@
-'use client'
-
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { createClient } from '@/utils/supabase/client'
-import { 
-  CheckCircle2, 
-  XCircle, 
-  Search, 
-  UserCheck, 
-  UserX, 
-  ShieldAlert,
-  Loader2,
-  ChevronLeft,
-  Filter,
-  Clock
+import {
+  CheckCircle2, XCircle, Search, UserCheck,
+  UserX, ShieldAlert, Loader2, ChevronLeft,
+  Filter, Clock, AlertTriangle
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -22,6 +13,7 @@ interface Officer {
   email_address: string
   current_mda: string
   is_approved: boolean
+  is_admin: boolean // Added this for the safety check
   created_at: string
 }
 
@@ -30,53 +22,73 @@ export default function ApprovalsPage() {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved'>('all')
-  const supabase = createClient()
+  const [processingId, setProcessingId] = useState<string | null>(null) // Track specific button clicks
+  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    fetchOfficers()
-  }, [])
+  // Optimization: Stabilize the Supabase client relative to the render cycle
+  const supabase = useMemo(() => createClient(), [])
 
-  const fetchOfficers = async () => {
+  const fetchOfficers = useCallback(async () => {
     setLoading(true)
-    const { data, error } = await supabase
+    setError(null)
+    const { data, error: sbError } = await supabase
       .from('administrative_officers')
-      .select('id, full_name, email_address, current_mda, is_approved, created_at')
+      .select('id, full_name, email_address, current_mda, is_approved, is_admin, created_at')
+      .order('is_approved', { ascending: true }) // Show pending at the top
       .order('created_at', { ascending: false })
-    
-    if (!error && data) {
+
+    if (sbError) {
+      setError("Failed to load officers. Please check your permissions.")
+      console.error(sbError)
+    } else if (data) {
       setOfficers(data)
     }
     setLoading(false)
-  }
+  }, [supabase])
 
-  const toggleApproval = async (id: string, currentStatus: boolean) => {
-    const { error } = await supabase
+  useEffect(() => {
+    fetchOfficers()
+  }, [fetchOfficers])
+
+  const toggleApproval = async (id: string, currentStatus: boolean, email: string) => {
+    // SAFETY CHECK: Prevent Felix from revoking his own access
+    if (email === 'felixadewole16@gmail.com' && currentStatus === true) {
+      alert("Critical Action Blocked: You cannot revoke access for the Superuser account.")
+      return
+    }
+
+    setProcessingId(id)
+    const { error: updateError } = await supabase
       .from('administrative_officers')
       .update({ is_approved: !currentStatus })
       .eq('id', id)
-    
-    if (!error) {
-      setOfficers(officers.map(o => o.id === id ? { ...o, is_approved: !currentStatus } : o))
+
+    if (!updateError) {
+      setOfficers(prev => prev.map(o => o.id === id ? { ...o, is_approved: !currentStatus } : o))
+    } else {
+      alert("Update failed: " + updateError.message)
     }
+    setProcessingId(null)
   }
 
   const filteredOfficers = officers.filter(o => {
-    const matchesSearch = o.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         o.email_address?.toLowerCase().includes(searchQuery.toLowerCase())
-    const matchesFilter = filter === 'all' || 
-                         (filter === 'pending' && !o.is_approved) || 
-                         (filter === 'approved' && o.is_approved)
+    const query = searchQuery.toLowerCase().trim()
+    const matchesSearch = o.full_name?.toLowerCase().includes(query) ||
+      o.email_address?.toLowerCase().includes(query)
+    const matchesFilter = filter === 'all' ||
+      (filter === 'pending' && !o.is_approved) ||
+      (filter === 'approved' && o.is_approved)
     return matchesSearch && matchesFilter
   })
 
   return (
     <div className="min-h-screen bg-hero-gradient p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        
+
         {/* Breadcrumb & Title */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <Link href="/" className="text-yellow-500 hover:text-yellow-400 flex items-center gap-2 text-sm font-bold uppercase tracking-wider mb-2">
+            <Link href="/" className="text-yellow-500 hover:text-yellow-400 flex items-center gap-2 text-sm font-bold uppercase tracking-wider mb-2 transition-colors">
               <ChevronLeft size={16} /> Back to Dashboard
             </Link>
             <h1 className="text-3xl font-black text-white uppercase tracking-tight flex items-center gap-3">
@@ -85,50 +97,52 @@ export default function ApprovalsPage() {
             <p className="text-slate-400 text-sm mt-1">Manage portal access for Administrative Officers</p>
           </div>
 
-          <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md p-1 rounded-xl border border-white/10">
-            <button 
-              onClick={() => setFilter('all')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all ${filter === 'all' ? 'bg-yellow-500 text-slate-950' : 'text-slate-400 hover:text-white'}`}
-            >
-              All
-            </button>
-            <button 
-              onClick={() => setFilter('pending')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all ${filter === 'pending' ? 'bg-yellow-500 text-slate-950' : 'text-slate-300 hover:text-white'}`}
-            >
-              Pending
-            </button>
-            <button 
-              onClick={() => setFilter('approved')}
-              className={`px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all ${filter === 'approved' ? 'bg-yellow-500 text-slate-950' : 'text-slate-300 hover:text-white'}`}
-            >
-              Approved
-            </button>
+          <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md p-1 rounded-xl border border-white/10 shadow-lg">
+            {(['all', 'pending', 'approved'] as const).map((type) => (
+              <button
+                key={type}
+                onClick={() => setFilter(type)}
+                className={`px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all ${filter === type
+                  ? 'bg-yellow-500 text-slate-950 shadow-gold'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5'
+                  }`}
+              >
+                {type}
+              </button>
+            ))}
           </div>
         </div>
+
+        {/* Error State */}
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-2xl flex items-center gap-3 text-red-400 text-sm font-medium">
+            <AlertTriangle size={20} />
+            {error}
+          </div>
+        )}
 
         {/* Search Bar */}
         <div className="relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-yellow-500 transition-colors" size={20} />
-          <input 
-            type="text" 
-            placeholder="Search by name or email..." 
+          <input
+            type="text"
+            placeholder="Search by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-yellow-500/50 backdrop-blur-md transition-all"
           />
         </div>
 
-        {/* Desktop Table / Mobile List */}
+        {/* Table Container */}
         <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
           {loading ? (
             <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4">
-              <Loader2 className="animate-spin" size={40} />
-              <p className="font-medium animate-pulse">Loading directory data...</p>
+              <Loader2 className="animate-spin text-yellow-500" size={40} />
+              <p className="font-medium animate-pulse uppercase tracking-widest text-xs">Syncing with database...</p>
             </div>
           ) : filteredOfficers.length === 0 ? (
             <div className="p-20 text-center text-slate-500">
-              <p className="text-lg font-medium">No officers found matching your criteria.</p>
+              <p className="text-lg font-medium">No records found matching your criteria.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -137,8 +151,8 @@ export default function ApprovalsPage() {
                   <tr className="bg-white/5 text-xs font-black text-slate-400 uppercase tracking-widest border-b border-white/10">
                     <th className="px-6 py-4">Officer Details</th>
                     <th className="px-6 py-4">MDA / Agency</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
+                    <th className="px-6 py-4 text-center">Status</th>
+                    <th className="px-6 py-4 text-right">Verification Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -156,26 +170,30 @@ export default function ApprovalsPage() {
                         <span className="text-slate-300 text-sm font-medium">{officer.current_mda}</span>
                       </td>
                       <td className="px-6 py-5">
-                        {officer.is_approved ? (
-                          <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20 w-fit">
-                            <CheckCircle2 size={14} /> Approved
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2 text-yellow-500 text-xs font-bold uppercase tracking-wider bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20 w-fit">
-                            <Clock size={14} /> Pending
-                          </div>
-                        )}
+                        <div className="flex justify-center">
+                          {officer.is_approved ? (
+                            <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase tracking-wider bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20 w-fit">
+                              <CheckCircle2 size={12} /> Approved
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2 text-yellow-500 text-[10px] font-black uppercase tracking-wider bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20 w-fit">
+                              <Clock size={12} /> Pending
+                            </div>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-5 text-right">
-                        <button 
-                          onClick={() => toggleApproval(officer.id, officer.is_approved)}
-                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 ${
-                            officer.is_approved 
-                              ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20' 
-                              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
-                          }`}
+                        <button
+                          onClick={() => toggleApproval(officer.id, officer.is_approved, officer.email_address)}
+                          disabled={processingId === officer.id}
+                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 ${officer.is_approved
+                            ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                            : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
+                            }`}
                         >
-                          {officer.is_approved ? (
+                          {processingId === officer.id ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : officer.is_approved ? (
                             <><UserX size={16} /> Revoke</>
                           ) : (
                             <><UserCheck size={16} /> Verify</>
@@ -190,37 +208,33 @@ export default function ApprovalsPage() {
           )}
         </div>
 
-        {/* Stats Summary */}
+        {/* Stats Summary Card */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 flex items-center justify-between">
-            <div>
-              <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Total Officers</p>
-              <p className="text-2xl font-black text-white mt-1">{officers.length}</p>
-            </div>
-            <div className="p-3 bg-white/5 rounded-2xl border border-white/5">
-              <Filter className="text-slate-400" size={24} />
-            </div>
-          </div>
-          <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 flex items-center justify-between">
-            <div>
-              <p className="text-emerald-400/60 text-xs font-bold uppercase tracking-widest">Verified</p>
-              <p className="text-2xl font-black text-white mt-1">{officers.filter(o => o.is_approved).length}</p>
-            </div>
-            <div className="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/10">
-              <CheckCircle2 className="text-emerald-400" size={24} />
-            </div>
-          </div>
-          <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 flex items-center justify-between">
-            <div>
-              <p className="text-yellow-500/60 text-xs font-bold uppercase tracking-widest">Pending</p>
-              <p className="text-2xl font-black text-white mt-1">{officers.filter(o => !o.is_approved).length}</p>
-            </div>
-            <div className="p-3 bg-yellow-500/10 rounded-2xl border border-yellow-500/10">
-              <ShieldAlert className="text-yellow-500" size={24} />
-            </div>
-          </div>
+          <StatCard title="Total Officers" value={officers.length} icon={<Filter size={20} />} />
+          <StatCard title="Verified" value={officers.filter(o => o.is_approved).length} icon={<CheckCircle2 size={20} />} color="emerald" />
+          <StatCard title="Pending" value={officers.filter(o => !o.is_approved).length} icon={<ShieldAlert size={20} />} color="yellow" />
         </div>
+      </div>
+    </div>
+  )
+}
 
+// Reusable StatCard Component
+function StatCard({ title, value, icon, color = 'slate' }: { title: string, value: number, icon: React.ReactNode, color?: string }) {
+  const colorClasses: Record<string, string> = {
+    emerald: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/10',
+    yellow: 'text-yellow-500 bg-yellow-500/10 border-yellow-500/10',
+    slate: 'text-slate-400 bg-white/5 border-white/5'
+  }
+
+  return (
+    <div className="bg-white/5 backdrop-blur-md p-6 rounded-3xl border border-white/10 flex items-center justify-between shadow-xl">
+      <div>
+        <p className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em]">{title}</p>
+        <p className="text-3xl font-black text-white mt-1 leading-none">{value}</p>
+      </div>
+      <div className={`p-4 rounded-2xl border ${colorClasses[color]}`}>
+        {icon}
       </div>
     </div>
   )
