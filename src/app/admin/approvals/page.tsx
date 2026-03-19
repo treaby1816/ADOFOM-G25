@@ -11,7 +11,8 @@ import {
   ShieldAlert,
   Loader2,
   ChevronLeft,
-  Filter
+  Filter,
+  Clock
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -75,7 +76,7 @@ export default function ApprovalsPage() {
         {/* Breadcrumb & Title */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <Link href="/dashboard" className="text-yellow-500 hover:text-yellow-400 flex items-center gap-2 text-sm font-bold uppercase tracking-wider mb-2">
+            <Link href="/" className="text-yellow-500 hover:text-yellow-400 flex items-center gap-2 text-sm font-bold uppercase tracking-wider mb-2">
               <ChevronLeft size={16} /> Back to Dashboard
             </Link>
             <h1 className="text-3xl font-black text-white uppercase tracking-tight flex items-center gap-3">
