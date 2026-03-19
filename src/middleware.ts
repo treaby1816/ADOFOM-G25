@@ -60,8 +60,8 @@ export async function middleware(request: NextRequest) {
 
     // 5. Master Bypass (Felix)
     if (cleanEmail === 'felixadewole16@gmail.com') {
-        // Redirect away from login/pending if already logged in as superuser
-        if (isPublicRoute || pathname === '/pending-approval') {
+        // Redirect away from pending if already logged in as superuser
+        if (pathname === '/pending-approval') {
             return NextResponse.redirect(new URL('/', request.url))
         }
         return response
@@ -99,8 +99,8 @@ export async function middleware(request: NextRequest) {
                 return NextResponse.redirect(new URL('/pending-approval', request.url))
             }
         } else {
-            // C. Verified Loop Breaker: Redirect verified away from login/pending
-            if (isPendingPage || isPublicRoute) {
+            // C. Verified Loop Breaker: Redirect verified away from pending
+            if (isPendingPage) {
                 return NextResponse.redirect(new URL('/', request.url))
             }
         }
