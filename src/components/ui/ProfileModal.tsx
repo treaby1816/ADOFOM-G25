@@ -75,6 +75,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
     const imageUrl = getDriveViewUrl(currentOfficer.photo_url);
 
     const handleEditClick = () => {
+        console.log("Edit Profile Clicked for:", currentOfficer.full_name);
         setShowVerification(true);
     };
 
@@ -145,7 +146,10 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                     <div className="flex justify-center -mt-20 relative z-10">
                         <div
                             className="relative w-40 h-40 rounded-full overflow-hidden ring-[8px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 group hover:scale-[1.05] transition-transform duration-300 cursor-zoom-in"
-                            onClick={() => setIsFullscreen(true)}
+                            onClick={() => {
+                                console.log("Fullscreen triggered for:", currentOfficer.full_name);
+                                setIsFullscreen(true);
+                            }}
                             title="Click to view full image"
                         >
                             <img

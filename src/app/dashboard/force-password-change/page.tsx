@@ -3,13 +3,15 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import { Lock, ShieldCheck, AlertCircle, Loader2, ChevronRight } from 'lucide-react'
+import { Lock, ShieldCheck, AlertCircle, Loader2, ChevronRight, Eye, EyeOff } from 'lucide-react'
 
 export default function ForcePasswordChangePage() {
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,21 +110,28 @@ export default function ForcePasswordChangePage() {
             <label htmlFor="new-password" className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">
               New Password
             </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-slate-400" />
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
+                <Lock className="h-5 w-5" />
               </div>
               <input
                 id="new-password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                className="block w-full pl-10 pr-12 py-3 border border-slate-700 rounded-xl bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
                 placeholder="Minimum 6 characters"
                 minLength={6}
                 disabled={isLoading}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-yellow-500 transition-colors cursor-pointer"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 
@@ -130,21 +139,28 @@ export default function ForcePasswordChangePage() {
             <label htmlFor="confirm-password" className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">
               Confirm Password
             </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-slate-400" />
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
+                <Lock className="h-5 w-5" />
               </div>
               <input
                 id="confirm-password"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                className="block w-full pl-10 pr-12 py-3 border border-slate-700 rounded-xl bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
                 placeholder="Re-enter your new password"
                 minLength={6}
                 disabled={isLoading}
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-yellow-500 transition-colors cursor-pointer"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
             </div>
           </div>
 

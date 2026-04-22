@@ -14,8 +14,10 @@
   background: linear-gradient(135deg, #001f3f 0%, #052e16 100%) !important;
 }
 
-.btn-gold {
-  @apply bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-slate-950 font-bold transition-all shadow-lg hover:shadow-yellow-500/50;
+@layer components {
+  .btn-gold {
+    @apply bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700 text-slate-950 font-bold transition-all shadow-lg hover:shadow-yellow-500/50;
+  }
 }
 
 * {

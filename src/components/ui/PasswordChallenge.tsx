@@ -32,24 +32,29 @@ export default function PasswordChallenge({
         setError(null);
 
         try {
+            console.log("Verifying password for:", officerEmail);
             const supabase = createClient();
 
             // Verify identity via signInWithPassword — NO OTP, NO emails
-            const { error: signInError } = await supabase.auth.signInWithPassword({
+            const { data, error: signInError } = await supabase.auth.signInWithPassword({
                 email: officerEmail,
                 password,
             });
 
             if (signInError) {
-                setError("Incorrect password. Please try again.");
+                console.warn("Password Verification Error:", signInError);
+                setError(signInError.message || "Incorrect password. Please try again.");
                 setLoading(false);
                 return;
             }
 
+            console.log("Password verified successfully for:", officerEmail);
             // Password correct — allow edits
             onVerified();
-        } catch {
-            setError("Verification failed. Please try again.");
+        } catch (err: any) {
+            console.error("Verification Catch Error:", err);
+            const errorMsg = typeof err === 'object' ? (err.message || JSON.stringify(err)) : String(err);
+            setError(`Verification failed: ${errorMsg}`);
         } finally {
             setLoading(false);
         }
