@@ -5,7 +5,7 @@
 import { useState, useEffect, useMemo } from "react";
 import ProfileCard from "@/components/ui/ProfileCard";
 import ProfileModal from "@/components/ui/ProfileModal";
-import BirthdayCelebration from "@/components/ui/BirthdayCelebration";
+
 import SearchAndFilter from "@/components/filters/SearchAndFilter";
 import ImageSlider from "@/components/ui/ImageSlider";
 import ExportButton from "@/components/ui/ExportButton";
@@ -369,10 +369,6 @@ export default function Home() {
         />
       )}
 
-      {/* Birthday Banner */}
-      {!isLoading && (
-        <BirthdayCelebration />
-      )}
 
       {/* Floating Scroll Buttons */}
       <ScrollButtons />

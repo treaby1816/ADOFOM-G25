@@ -11,7 +11,7 @@ export const getTodayCelebrants = async () => {
 
   const { data, error } = await supabase
     .from('administrative_officers')
-    .select('full_name, current_mda')
+    .select('*')
     .eq('birth_month_day', today) // Matches your stored MM-DD format
 
   if (error) throw error

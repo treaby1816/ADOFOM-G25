@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import Footer from "@/components/ui/Footer";
+import BirthdayCelebration from "@/components/ui/BirthdayCelebration";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -55,6 +56,7 @@ export default function RootLayout({
             `,
           }}
         />
+        <BirthdayCelebration />
       </body>
     </html>
   );
