@@ -12,7 +12,7 @@ import ExportButton from "@/components/ui/ExportButton";
 import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 import ScrollButtons from "@/components/ui/ScrollButtons";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import NotificationBell from "@/components/ui/NotificationBell";
+import NotificationDrawer from "@/components/ui/NotificationDrawer";
 import { Officer } from "@/types/officer";
 import { Users, Shield, ChevronLeft, ChevronRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
@@ -25,6 +25,8 @@ const MONTH_NAMES = [
 ];
 
 import SignOutButton from "@/components/SignOutButton";
+import Link from "next/link";
+import { Settings, ShieldCheck } from "lucide-react";
 
 export default function Home() {
   const [officers, setOfficers] = useState<Officer[]>([]);
@@ -46,6 +48,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true); // Added for skeleton demo
 
   const [error, setError] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Fetch officers from Supabase
   useEffect(() => {
@@ -53,6 +56,9 @@ export default function Home() {
       setIsLoading(true);
       setError(null);
       try {
+        const { data: { user } } = await supabase.auth.getUser();
+        let fetchedIsAdmin = false;
+
         const { data, error: fetchError } = await supabase
           .from("administrative_officers")
           .select("*");
@@ -72,6 +78,13 @@ export default function Home() {
             a.full_name.localeCompare(b.full_name)
           );
           setOfficers(sortedData);
+
+          if (user) {
+            const currentUserObj = (data as Officer[]).find(o => o.id === user.id);
+            if (currentUserObj?.is_admin === true) {
+              setIsAdmin(true);
+            }
+          }
         }
       } catch (err: any) {
         console.error("Unexpected error:", err);
@@ -181,6 +194,23 @@ export default function Home() {
         </div>
         
         <div className="flex items-center gap-4">
+          {isAdmin && (
+            <Link 
+              href="/admin/approvals" 
+              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 transition-all text-xs font-bold uppercase tracking-wider"
+              title="Admin Approval Dashboard"
+            >
+              <ShieldCheck size={16} />
+              <span>Admin Panel</span>
+            </Link>
+          )}
+          <Link
+            href="/dashboard/settings"
+            className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
+            title="Account Settings"
+          >
+            <Settings size={18} />
+          </Link>
           <ThemeToggle />
           <div className="h-6 w-[1px] bg-white/20 mx-1 hidden sm:block" />
           <SignOutButton />
@@ -194,7 +224,7 @@ export default function Home() {
 
         {/* Controls Overlay */}
         <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-3">
-          <NotificationBell newOfficers={newOfficers} birthdayOfficers={birthdayOfficers} />
+          <NotificationDrawer />
         </div>
 
         {/* Content Overlay */}
@@ -372,6 +402,17 @@ export default function Home() {
 
       {/* Floating Scroll Buttons */}
       <ScrollButtons />
+
+      {/* Mobile Admin FAB */}
+      {isAdmin && (
+        <Link
+          href="/admin/approvals"
+          className="md:hidden fixed bottom-6 right-6 z-[100] flex items-center justify-center w-14 h-14 bg-yellow-500 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.4)] border border-yellow-400 text-yellow-950 hover:scale-105 active:scale-95 transition-all text-xl"
+          title="Admin Panel"
+        >
+          <ShieldCheck size={28} />
+        </Link>
+      )}
     </main>
   );
 }

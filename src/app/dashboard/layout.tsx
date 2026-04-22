@@ -27,7 +27,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           .eq('id', user.id)
           .single()
         
-        if (profile?.is_admin) {
+        if (profile?.is_admin === true) {
           setIsAdmin(true)
         }
       }
@@ -85,6 +85,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       <main className="flex-grow">
         {children}
       </main>
+
+      {/* Mobile Admin FAB */}
+      {isAdmin && (
+        <Link
+          href="/admin/approvals"
+          className="md:hidden fixed bottom-6 right-6 z-[100] flex items-center justify-center w-14 h-14 bg-yellow-500 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.4)] border border-yellow-400 text-yellow-950 hover:scale-105 active:scale-95 transition-all text-xl"
+          title="Admin Panel"
+        >
+          <ShieldCheck size={28} />
+        </Link>
+      )}
     </div>
   )
 }
