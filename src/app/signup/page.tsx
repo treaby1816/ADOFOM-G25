@@ -98,7 +98,8 @@ export default function SignupPage() {
             .from('administrative_officers')
             .update({
               id: data.user.id,
-              needs_password_change: false // They just set their password
+              is_approved: true, // AUTO-APPROVE existing officers during claim
+              needs_password_change: false 
             })
             .eq('email_address', email.trim().toLowerCase());
 
