@@ -148,9 +148,9 @@ export default function DashboardPage() {
         officer.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         officer.email_address?.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesLga = !lgaFilter || (officer.lga || "").trim().toLowerCase().replace(/\s+/g, " ") === lgaFilter;
-      const matchesMonth = !monthFilter || officer.birth_month_day.startsWith(monthFilter);
-      const matchesMda = !mdaFilter || (officer.current_mda || "").trim().toLowerCase().replace(/\s+/g, " ") === mdaFilter;
+      const matchesLga = !lgaFilter || lgaFilter === "" || (officer.lga || "").trim().toLowerCase().replace(/\s+/g, " ") === lgaFilter.toLowerCase();
+      const matchesMonth = !monthFilter || monthFilter === "" || officer.birth_month_day.startsWith(monthFilter);
+      const matchesMda = !mdaFilter || mdaFilter === "" || (officer.current_mda || "").trim().toLowerCase().replace(/\s+/g, " ") === mdaFilter.toLowerCase();
       
       return matchesSearch && matchesLga && matchesMonth && matchesMda;
     }).sort((a, b) => {
@@ -165,8 +165,6 @@ export default function DashboardPage() {
       }
       return 0;
     });
-
-    return result;
   }, [officers, searchQuery, lgaFilter, monthFilter, mdaFilter, sortOption]);
 
   // Reset page to 1 when filters change
