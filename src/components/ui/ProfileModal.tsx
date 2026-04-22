@@ -3,8 +3,8 @@
 import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award, Pencil, Eye } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { useEffect, useState } from "react";
-import PasswordChallenge from "./PasswordChallenge";
-import ProfileEditForm from "./ProfileEditForm";
+import VerifyPasswordModal from "./VerifyPasswordModal";
+import EditProfileFormModal from "./EditProfileFormModal";
 import { createClient } from "@/utils/supabase/client";
 
 interface ProfileModalProps {
@@ -87,7 +87,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
     const imageUrl = getDriveViewUrl(currentOfficer.photo_url);
 
     const handleEditClick = () => {
-        console.log("Edit Profile Clicked for:", currentOfficer.full_name);
+
         setShowVerification(true);
     };
 
@@ -147,6 +147,18 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                         <X size={18} />
                     </button>
 
+                    {/* Edit Button */}
+                    {isOwnProfile && (
+                        <button
+                            onClick={handleEditClick}
+                            className="absolute top-4 right-16 flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 hover:bg-emerald-500/80 text-white/90 hover:text-white backdrop-blur-md transition-all duration-200 z-20 cursor-pointer shadow-lg border border-white/20 text-xs font-bold uppercase tracking-wider"
+                            title="Edit Profile"
+                        >
+                            <Pencil size={14} />
+                            <span className="hidden sm:inline">Edit Profile</span>
+                        </button>
+                    )}
+
                     {/* Header with gradient */}
                     <div className="relative bg-gradient-to-br from-green-700 via-emerald-600 to-green-900 dark:from-emerald-900 dark:via-emerald-800 dark:to-emerald-950 pt-10 pb-20 rounded-t-3xl overflow-hidden shadow-inner">
                         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIi8+PC9zdmc+')] opacity-60 mix-blend-overlay" />
@@ -159,7 +171,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                         <div
                             className="relative w-40 h-40 rounded-full overflow-hidden ring-[8px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 group hover:scale-[1.05] transition-transform duration-300 cursor-zoom-in"
                             onClick={() => {
-                                console.log("Fullscreen triggered for:", currentOfficer.full_name);
+
                                 setIsFullscreen(true);
                             }}
                             title="Click to view full image"
@@ -193,18 +205,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                             </p>
                         </div>
 
-                        {/* Edit Profile Button — only visible on own profile */}
-                        {isOwnProfile && (
-                        <div className="flex justify-center mb-6">
-                            <button
-                                onClick={handleEditClick}
-                                className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800/50 rounded-full hover:bg-emerald-100 dark:hover:bg-emerald-900/50 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 cursor-pointer"
-                            >
-                                <Pencil size={14} />
-                                Edit My Profile
-                            </button>
-                        </div>
-                        )}
+
 
                         {/* Meta Row */}
                         <div className="flex justify-center mb-8">
@@ -287,7 +288,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
 
             {/* Password Challenge Modal */}
             {showVerification && (
-                <PasswordChallenge
+                <VerifyPasswordModal
                     officerEmail={currentOfficer.email_address}
                     officerName={currentOfficer.full_name}
                     onVerified={handleVerified}
@@ -297,7 +298,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
 
             {/* Profile Edit Form */}
             {showEditForm && (
-                <ProfileEditForm
+                <EditProfileFormModal
                     officer={currentOfficer}
                     onSave={handleSave}
                     onClose={() => setShowEditForm(false)}

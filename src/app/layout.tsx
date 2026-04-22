@@ -4,6 +4,8 @@ import Footer from "@/components/ui/Footer";
 import BirthdayCelebration from "@/components/ui/BirthdayCelebration";
 import "./globals.css";
 import "@/utils/console-suppress";
+import AuthGuardLayout from "@/components/auth/AuthGuardLayout";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Ondo State Admin Directory",
@@ -40,13 +42,16 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange={false}>
-          <div className="flex flex-col min-h-screen">
-            <div className="flex-grow">
-              {children}
+          <AuthGuardLayout>
+            <div className="flex flex-col min-h-screen">
+              <div className="flex-grow">
+                {children}
+              </div>
+              <Footer />
             </div>
-            <Footer />
-          </div>
+          </AuthGuardLayout>
         </ThemeProvider>
+        <Toaster richColors position="top-center" theme="dark" />
 
         {/* Service Worker Registration */}
         <script

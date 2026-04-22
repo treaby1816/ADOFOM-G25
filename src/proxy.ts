@@ -59,7 +59,7 @@ export async function proxy(request: NextRequest) {
             pathname.includes('logo2.jpg')
 
         const isPendingPage = pathname === '/pending-approval'
-        const isForcePasswordPage = pathname === '/dashboard/force-password-change'
+        const isForcePasswordPage = pathname === '/setup/update-password'
         const isSetupPage = pathname.startsWith('/dashboard/setup-profile')
         const isAdminRoute = pathname.startsWith('/admin')
         const isSettingsRoute = pathname.startsWith('/dashboard/settings')
@@ -86,7 +86,7 @@ export async function proxy(request: NextRequest) {
             // Fetch profile data
             const { data, error: profileError } = await supabase
                 .from('administrative_officers')
-                .select('is_approved, is_admin, must_change_password')
+                .select('is_approved, is_admin, needs_password_change')
                 .eq('id', user.id)
                 .maybeSingle()
 
@@ -102,18 +102,18 @@ export async function proxy(request: NextRequest) {
 
         const isApproved = isFelix || profile?.is_approved === true
         const isAdmin = isFelix || profile?.is_admin === true
-        const mustChangePassword = profile?.must_change_password === true
+        const needsPasswordChange = profile?.needs_password_change === true
 
         // A. Force Password Change Enforcement
-        if (mustChangePassword && !isFelix) {
+        if (needsPasswordChange && !isFelix) {
             if (!isForcePasswordPage) {
-                return NextResponse.redirect(new URL('/dashboard/force-password-change', request.url))
+                return NextResponse.redirect(new URL('/setup/update-password', request.url))
             }
             return response
         }
 
         // B. Already changed password — redirect away from force-change page
-        if (!mustChangePassword && isForcePasswordPage) {
+        if (!needsPasswordChange && isForcePasswordPage) {
             return NextResponse.redirect(new URL('/', request.url))
         }
 

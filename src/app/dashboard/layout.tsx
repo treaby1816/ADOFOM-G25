@@ -1,11 +1,11 @@
 'use client'
 
 import { ReactNode, useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import SignOutButton from '@/components/SignOutButton'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
-import { ShieldCheck, ArrowLeft, Settings } from 'lucide-react'
+import { ShieldCheck, ArrowLeft, Settings, Loader2 } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 
 interface DashboardLayoutProps {
@@ -14,11 +14,13 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [isAdmin, setIsAdmin] = useState(false)
+  const [isChecking, setIsChecking] = useState(true)
   const supabase = createClient()
   const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
-    async function checkAdmin() {
+    async function checkUser() {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         if (user) {
@@ -35,11 +37,22 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           }
         }
       } catch (err) {
-        console.error('Dashboard Admin Check Error:', err instanceof Error ? err.message : err)
+        console.error('Dashboard Check Error:', err instanceof Error ? err.message : err)
+      } finally {
+        setIsChecking(false)
       }
     }
-    checkAdmin()
+    checkUser()
   }, [supabase])
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex flex-col items-center justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-emerald-500 mb-4" />
+        <p className="text-sm font-bold text-slate-500 dark:text-zinc-400 tracking-wide uppercase">Securing Session...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 flex flex-col">

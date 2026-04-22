@@ -13,6 +13,6 @@ export interface Officer {
     about_me: string;
     is_admin?: boolean;
     is_approved?: boolean;
-    must_change_password?: boolean;
+    needs_password_change?: boolean;
     created_at?: string;
 }

@@ -9,6 +9,7 @@ import {
   Filter, Clock, AlertTriangle
 } from 'lucide-react'
 import Link from 'next/link'
+import { toast } from 'sonner'
 
 interface Officer {
   id: string
@@ -91,23 +92,51 @@ export default function ApprovalsPage() {
     if (isAuthorized) fetchOfficers()
   }, [isAuthorized, fetchOfficers])
 
+  // Realtime: listen for new signups so the list updates instantly
+  useEffect(() => {
+    if (!isAuthorized) return
+
+    const channel = supabase
+      .channel('admin-updates')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'administrative_officers' },
+        (payload) => {
+          if (!payload.new.is_approved) {
+            setOfficers((current) => [payload.new as Officer, ...current])
+          }
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [supabase, isAuthorized])
+
   const toggleApproval = async (id: string, currentStatus: boolean, email: string) => {
     // SAFETY CHECK: Prevent Felix from revoking his own access
     if (email === 'felixadewole16@gmail.com' && currentStatus === true) {
-      alert("Critical Action Blocked: You cannot revoke access for the Superuser account.")
+      toast.error("Critical Action Blocked: You cannot revoke access for the Superuser account.")
       return
     }
 
     setProcessingId(id)
+    
+    // OPTIMISTIC UI: Update state immediately
+    setOfficers(prev => prev.map(o => o.id === id ? { ...o, is_approved: !currentStatus } : o))
+
     const { error: updateError } = await supabase
       .from('administrative_officers')
       .update({ is_approved: !currentStatus })
       .eq('id', id)
 
     if (!updateError) {
-      setOfficers(prev => prev.map(o => o.id === id ? { ...o, is_approved: !currentStatus } : o))
+      toast.success(currentStatus ? 'Access Revoked!' : 'Officer Approved!')
     } else {
-      alert("Update failed: " + updateError.message)
+      // Revert on failure
+      setOfficers(prev => prev.map(o => o.id === id ? { ...o, is_approved: currentStatus } : o))
+      toast.error("Update failed: " + updateError.message)
     }
     setProcessingId(null)
   }

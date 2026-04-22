@@ -54,7 +54,7 @@ export default function SignupPage() {
       if (data.user) {
         // Step 2: Insert into administrative_officers table
         // is_approved = false (pending admin verification)
-        // must_change_password = false (they just set their password)
+        // needs_password_change = false (they just set their password)
 
         // Standardize name format: SURNAME, Other Names
         let formattedName = fullName.trim()
@@ -84,7 +84,7 @@ export default function SignupPage() {
             photo_url: '',
             is_approved: false,
             is_admin: false,
-            must_change_password: false,
+            needs_password_change: false,
           })
 
         if (insertError) {

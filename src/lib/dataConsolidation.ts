@@ -299,18 +299,45 @@ export function formatBirthday(bday: string | null | undefined): string {
     if (!bday) return "";
     const clean = bday.trim();
 
-    // Check if it's in MM/DD or M/D format
+    // Check if it's in MM-DD or MM/DD format
     if (clean.includes("/") || clean.includes("-")) {
         const parts = clean.split(/[-/]/);
         if (parts.length === 2) {
             const m = parseInt(parts[0], 10);
             const d = parseInt(parts[1], 10);
             if (!isNaN(m) && !isNaN(d) && m >= 1 && m <= 12) {
-                return `${MONTH_NAMES[m - 1]}/${d}`; // E.g., March/22
+                const monthShort = MONTH_NAMES[m - 1].substring(0, 3);
+                const dayPadded = d.toString().padStart(2, '0');
+                return `${monthShort}/${dayPadded}`; // E.g., May/27
             }
         }
     }
 
-    // Otherwise return as is (e.g. if already "March 22")
     return clean;
+}
+
+// Convert DB format (05-27) to date input format (2024-05-27)
+export function formatToDateInput(mmdd: string | null | undefined): string {
+    if (!mmdd) return "";
+    const clean = mmdd.trim();
+    if (clean.includes("-") || clean.includes("/")) {
+        const parts = clean.split(/[-/]/);
+        if (parts.length === 2) {
+            const m = parts[0].padStart(2, '0');
+            const d = parts[1].padStart(2, '0');
+            return `2024-${m}-${d}`;
+        }
+    }
+    return "";
+}
+
+// Convert date input format (2024-05-27) to DB format (05-27)
+export function parseFromDateInput(yyyymmdd: string | null | undefined): string {
+    if (!yyyymmdd) return "";
+    const parts = yyyymmdd.split("-");
+    if (parts.length === 3) {
+        // parts[1] is MM, parts[2] is DD
+        return `${parts[1]}-${parts[2]}`;
+    }
+    return yyyymmdd;
 }

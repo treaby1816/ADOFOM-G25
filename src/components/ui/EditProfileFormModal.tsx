@@ -1,33 +1,49 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useForm } from "react-hook-form";
 import {
     X, Save, Loader2, Camera, User, Briefcase,
     MapPin, Cake, Heart, Phone, Mail, Award, FileText, CheckCircle2
 } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { supabase } from "@/lib/supabase";
-import { formatBirthday } from "@/lib/dataConsolidation";
+import { formatToDateInput, parseFromDateInput } from "@/lib/dataConsolidation";
 
-interface ProfileEditFormProps {
+interface EditProfileFormModalProps {
     officer: Officer;
     onSave: (updatedOfficer: Officer) => void;
     onClose: () => void;
 }
 
-export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEditFormProps) {
-    const [form, setForm] = useState({
-        full_name: officer.full_name || "",
-        phone_number: officer.phone_number || "",
-        current_mda: officer.current_mda || "",
-        grade_level: officer.grade_level || "",
-        lga: officer.lga || "",
-        birth_month_day: officer.birth_month_day || "",
-        hobbies: officer.hobbies || "",
-        about_me: officer.about_me || "",
-        photo_position: officer.photo_position || "object-center",
+interface ProfileFormValues {
+    full_name: string;
+    phone_number: string;
+    current_mda: string;
+    grade_level: string;
+    lga: string;
+    birth_month_day: string;
+    hobbies: string;
+    about_me: string;
+    photo_position: string;
+}
+
+export default function EditProfileFormModal({ officer, onSave, onClose }: EditProfileFormModalProps) {
+    const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<ProfileFormValues>({
+        defaultValues: {
+            full_name: officer.full_name || "",
+            phone_number: officer.phone_number || "",
+            current_mda: officer.current_mda || "",
+            grade_level: officer.grade_level || "",
+            lga: officer.lga || "",
+            birth_month_day: formatToDateInput(officer.birth_month_day), // Convert to YYYY-MM-DD
+            hobbies: officer.hobbies || "",
+            about_me: officer.about_me || "",
+            photo_position: officer.photo_position || "object-center",
+        }
     });
 
+    const photo_position = watch("photo_position");
     const [photoFile, setPhotoFile] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
     const [saving, setSaving] = useState(false);
@@ -36,21 +52,14 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
     const [success, setSuccess] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleChange = (field: string, value: string) => {
-        setForm((prev) => ({ ...prev, [field]: value }));
-    };
-
     const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
-        // Validate file size (max 2MB)
         if (file.size > 2 * 1024 * 1024) {
             setError("Photo must be under 2MB");
             return;
         }
-
-        // Validate file type
         if (!file.type.startsWith("image/")) {
             setError("Please select an image file");
             return;
@@ -58,12 +67,8 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
 
         setPhotoFile(file);
         setError(null);
-
-        // Create preview
         const reader = new FileReader();
-        reader.onloadend = () => {
-            setPhotoPreview(reader.result as string);
-        };
+        reader.onloadend = () => setPhotoPreview(reader.result as string);
         reader.readAsDataURL(file);
     };
 
@@ -74,19 +79,16 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
         return id ? `/api/image-proxy?id=${id}` : url;
     };
 
-    const handleSubmit = async () => {
+    const onSubmit = async (data: ProfileFormValues) => {
         setSaving(true);
         setError(null);
 
         try {
             let photo_url = officer.photo_url;
 
-            // Upload photo if changed
             if (photoFile) {
                 const fileExt = photoFile.name.split('.').pop();
                 const fileName = `${officer.id}_${Date.now()}.${fileExt}`;
-
-                // Try lowercase bucket first, then uppercase if it fails with "not found"
                 const bucketNames = ["officer-photos", "OFFICER-PHOTOS"];
                 let uploadSuccessful = false;
                 let lastUploadError: any = null;
@@ -94,25 +96,17 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 for (const bucket of bucketNames) {
                     const { data: uploadData, error: uploadError } = await supabase.storage
                         .from(bucket)
-                        .upload(fileName, photoFile, {
-                            cacheControl: "3600",
-                            upsert: true,
-                        });
+                        .upload(fileName, photoFile, { cacheControl: "3600", upsert: true });
 
                     if (uploadError) {
                         lastUploadError = uploadError;
-                        // If it's a "bucket not found" error, try the next casing
                         if (uploadError.message.toLowerCase().includes("not found") || (uploadError as any).status === 404) {
                             continue;
                         }
-                        // For other errors (like RLS), stop and show error
                         break;
                     }
-
                     if (uploadData) {
-                        const { data: urlData } = supabase.storage
-                            .from(bucket)
-                            .getPublicUrl(uploadData.path);
+                        const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(uploadData.path);
                         photo_url = urlData.publicUrl;
                         uploadSuccessful = true;
                         break;
@@ -120,10 +114,8 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 }
 
                 if (!uploadSuccessful) {
-                    console.error("Supabase Storage Error:", lastUploadError);
                     const errorMsg = lastUploadError?.message || "Unknown storage error";
                     setDebugInfo(JSON.stringify(lastUploadError, null, 2));
-
                     if (errorMsg.includes("not found")) {
                         setError("Error: Storage bucket 'officer-photos' not found. Please verify the bucket name in your Supabase storage tab.");
                     } else if (errorMsg.toLowerCase().includes("row-level security") || errorMsg.toLowerCase().includes("permission") || (lastUploadError as any).status === 403) {
@@ -136,10 +128,8 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 }
             }
 
-            // Standardize format: SURNAME, Other Names
-            let formattedName = form.full_name.trim();
+            let formattedName = data.full_name.trim();
             if (formattedName) {
-                // Remove existing commas to re-parse cleanly
                 const cleanName = formattedName.replace(/,/g, ' ').trim();
                 const parts = cleanName.split(/\s+/);
                 if (parts.length > 0) {
@@ -151,18 +141,17 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 }
             }
 
-            // Update the officer record
             const updateData = {
                 full_name: formattedName,
-                phone_number: form.phone_number.trim(),
-                current_mda: form.current_mda.trim(),
-                grade_level: form.grade_level.trim(),
-                lga: form.lga.trim(),
-                birth_month_day: formatBirthday(form.birth_month_day),
-                hobbies: form.hobbies.trim(),
-                about_me: form.about_me.trim(),
+                phone_number: data.phone_number.trim(),
+                current_mda: data.current_mda.trim(),
+                grade_level: data.grade_level.trim(),
+                lga: data.lga.trim(),
+                birth_month_day: parseFromDateInput(data.birth_month_day), // Convert back to MM-DD
+                hobbies: data.hobbies.trim(),
+                about_me: data.about_me.trim(),
                 photo_url,
-                photo_position: form.photo_position,
+                photo_position: data.photo_position,
             };
 
             const { data: returnedData, error: updateError } = await supabase
@@ -175,17 +164,13 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 setError(`Failed to save: ${updateError.message}`);
                 return;
             }
-
             if (!returnedData || returnedData.length === 0) {
                 setError("Permission denied: The database blocked this update. Please check Supabase RLS policies.");
                 return;
             }
 
-            // Success
             setSuccess(true);
-            setTimeout(() => {
-                onSave({ ...officer, ...updateData });
-            }, 1200);
+            setTimeout(() => onSave({ ...officer, ...updateData }), 1200);
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : String(err);
             setError(`Unexpected error: ${message}`);
@@ -196,7 +181,6 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
 
     const currentImageUrl = photoPreview || getDriveViewUrl(officer.photo_url);
 
-    // Success state
     if (success) {
         return (
             <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
@@ -206,9 +190,7 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                         <CheckCircle2 className="w-12 h-12 text-green-600 dark:text-emerald-400" />
                     </div>
                     <h3 className="text-2xl font-black text-slate-800 dark:text-zinc-100 mb-2">Profile Updated!</h3>
-                    <p className="text-slate-500 dark:text-zinc-400 text-sm font-medium">
-                        Your changes have been saved successfully.
-                    </p>
+                    <p className="text-slate-500 dark:text-zinc-400 text-sm font-medium">Your changes have been saved successfully.</p>
                 </div>
             </div>
         );
@@ -220,12 +202,10 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
     return (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4" onClick={onClose}>
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" />
-
             <div
                 className="relative bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-zinc-900 dark:via-zinc-900/95 dark:to-emerald-950/40 rounded-3xl shadow-[0_0_50px_-12px_rgba(16,185,129,0.3)] max-w-lg w-full max-h-[90vh] overflow-y-auto animate-modal-in border border-white/60 dark:border-zinc-800"
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Close Button */}
                 <button
                     onClick={onClose}
                     className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 dark:bg-zinc-800/80 hover:bg-red-50 dark:hover:bg-red-950/50 text-slate-400 dark:text-zinc-400 hover:text-red-500 dark:hover:text-red-400 transition-all duration-200 z-10 cursor-pointer"
@@ -233,39 +213,22 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                     <X size={18} />
                 </button>
 
-                {/* Header */}
                 <div className="relative bg-gradient-to-br from-green-700 via-emerald-600 to-green-900 dark:from-emerald-900 dark:via-emerald-800 dark:to-emerald-950 pt-8 pb-6 rounded-t-3xl overflow-hidden text-center px-6">
                     <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMSIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIi8+PC9zdmc+')] opacity-60 mix-blend-overlay" />
                     <h2 className="relative text-2xl font-black text-white mb-1">Update Profile</h2>
                     <p className="relative text-green-100/80 text-sm font-medium">{officer.full_name}</p>
                 </div>
 
-                {/* Photo Upload Area */}
                 <div className="flex flex-col items-center -mt-12 relative z-10 mb-6">
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handlePhotoSelect}
-                        accept="image/*"
-                        className="hidden"
-                    />
-
-                    <div
-                        onClick={() => fileInputRef.current?.click()}
-                        className="group relative w-32 h-32 rounded-full overflow-hidden ring-[6px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 cursor-pointer hover:scale-105 active:scale-95 transition-all duration-300"
-                    >
+                    <input type="file" ref={fileInputRef} onChange={handlePhotoSelect} accept="image/*" className="hidden" />
+                    <div onClick={() => fileInputRef.current?.click()} className="group relative w-32 h-32 rounded-full overflow-hidden ring-[6px] ring-white dark:ring-zinc-900 shadow-2xl bg-white dark:bg-zinc-900 cursor-pointer hover:scale-105 active:scale-95 transition-all duration-300">
                         {currentImageUrl ? (
-                            <img
-                                src={currentImageUrl}
-                                alt={officer.full_name}
-                                className={`w-full h-full object-cover ${form.photo_position}`}
-                            />
+                            <img src={currentImageUrl} alt={officer.full_name} className={`w-full h-full object-cover ${photo_position}`} />
                         ) : (
                             <div className="w-full h-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
                                 <User size={40} className="text-emerald-500" />
                             </div>
                         )}
-                        {/* Interactive Overlay */}
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center transition-opacity duration-300">
                             <Camera size={24} className="text-white mb-1" />
                             <span className="text-[10px] text-white font-bold uppercase tracking-wider">Change Photo</span>
@@ -273,20 +236,10 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                     </div>
 
                     <div className="mt-4 flex flex-col items-center gap-3 w-full px-12">
-                        <button
-                            type="button"
-                            onClick={() => fileInputRef.current?.click()}
-                            className="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5 transition-all duration-300 active:scale-95 cursor-pointer"
-                        >
-                            <Camera size={14} />
-                            Browse Photo to Replace
+                        <button type="button" onClick={() => fileInputRef.current?.click()} className="w-full flex items-center justify-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-0.5 transition-all duration-300 active:scale-95 cursor-pointer">
+                            <Camera size={14} /> Browse Photo to Replace
                         </button>
-
-                        <p className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest text-center">
-                            Maximum size: 2MB. Format: JPG, PNG
-                        </p>
-
-                        {/* Position Selector */}
+                        <p className="text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-widest text-center">Maximum size: 2MB. Format: JPG, PNG</p>
                         <div className="flex items-center gap-1.5 p-1.5 bg-slate-100/80 dark:bg-zinc-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-zinc-700/50 shadow-inner">
                             <span className="text-[9px] font-black text-slate-400 dark:text-zinc-500 uppercase tracking-widest px-2">Position:</span>
                             {[
@@ -297,11 +250,8 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                                 <button
                                     key={pos.id}
                                     type="button"
-                                    onClick={() => handleChange("photo_position", pos.id)}
-                                    className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-xl transition-all ${form.photo_position === pos.id
-                                        ? 'bg-white dark:bg-emerald-500 text-emerald-700 dark:text-white shadow-sm'
-                                        : 'text-slate-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300'
-                                        }`}
+                                    onClick={() => setValue("photo_position", pos.id)}
+                                    className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wider rounded-xl transition-all ${photo_position === pos.id ? 'bg-white dark:bg-emerald-500 text-emerald-700 dark:text-white shadow-sm' : 'text-slate-500 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300'}`}
                                 >
                                     {pos.label}
                                 </button>
@@ -310,134 +260,74 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                     </div>
                 </div>
 
-                {/* Form */}
-                <div className="px-6 pb-6 space-y-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="px-6 pb-6 space-y-4">
                     <div className="text-center mb-2">
-                        <p className="text-xs text-slate-400 dark:text-zinc-500">
-                            Updating your official profile information
-                        </p>
+                        <p className="text-xs text-slate-400 dark:text-zinc-500">Updating your official profile information</p>
                     </div>
 
-                    {/* Full Name */}
                     <div>
                         <label className={labelClass}>
                             <User size={12} className="text-emerald-500" />
                             Full Name <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>
                         </label>
-                        <input
-                            type="text"
-                            value={form.full_name}
-                            readOnly
-                            className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50`}
-                            placeholder="Enter full name"
-                        />
+                        <input type="text" {...register("full_name")} readOnly className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50`} />
                     </div>
 
-                    {/* MDA & Grade Level */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>
-                                <Briefcase size={12} className="text-emerald-500" />
-                                Current MDA
+                                <Briefcase size={12} className="text-emerald-500" /> Current MDA
                             </label>
-                            <input
-                                type="text"
-                                value={form.current_mda}
-                                onChange={(e) => handleChange("current_mda", e.target.value)}
-                                className={inputClass}
-                                placeholder="Ministry/Department/Agency"
-                            />
+                            <input type="text" {...register("current_mda", { required: "MDA is required" })} className={inputClass} placeholder="Ministry/Department/Agency" />
+                            {errors.current_mda && <span className="text-[10px] text-red-500 mt-1">{errors.current_mda.message}</span>}
                         </div>
                         <div>
                             <label className={labelClass}>
-                                <Award size={12} className="text-emerald-500" />
-                                Grade Level
+                                <Award size={12} className="text-emerald-500" /> Grade Level
                             </label>
-                            <input
-                                type="text"
-                                value={form.grade_level}
-                                onChange={(e) => handleChange("grade_level", e.target.value)}
-                                className={inputClass}
-                                placeholder="e.g. GL 12"
-                            />
+                            <input type="text" {...register("grade_level")} className={inputClass} placeholder="e.g. GL 12" />
                         </div>
                     </div>
 
-                    {/* LGA & Birthday */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>
-                                <MapPin size={12} className="text-emerald-500" />
-                                LGA <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>
+                                <MapPin size={12} className="text-emerald-500" /> LGA <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>
                             </label>
-                            <input
-                                type="text"
-                                value={form.lga}
-                                readOnly
-                                className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50`}
-                                placeholder="Local Government Area"
-                            />
+                            <input type="text" {...register("lga")} readOnly className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50`} />
                         </div>
                         <div>
                             <label className={labelClass}>
-                                <Cake size={12} className="text-emerald-500" />
-                                Birthday <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>
+                                <Cake size={12} className="text-emerald-500" /> Birthday
                             </label>
-                            <input
-                                type="text"
-                                value={form.birth_month_day}
-                                readOnly
-                                className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50`}
-                                placeholder="e.g. February 20"
-                            />
+                            <input type="date" {...register("birth_month_day", { required: "Birthday is required" })} className={inputClass} />
+                            {errors.birth_month_day && <span className="text-[10px] text-red-500 mt-1">{errors.birth_month_day.message}</span>}
                         </div>
                     </div>
 
-                    {/* Phone & Hobbies */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>
-                                <Phone size={12} className="text-emerald-500" />
-                                Phone Number
+                                <Phone size={12} className="text-emerald-500" /> Phone Number
                             </label>
-                            <input
-                                type="tel"
-                                value={form.phone_number}
-                                onChange={(e) => handleChange("phone_number", e.target.value)}
-                                className={inputClass}
-                                placeholder="e.g. 2348012345678"
-                            />
+                            <input type="tel" {...register("phone_number", { required: "Phone is required" })} className={inputClass} placeholder="e.g. 2348012345678" />
+                            {errors.phone_number && <span className="text-[10px] text-red-500 mt-1">{errors.phone_number.message}</span>}
                         </div>
                         <div>
                             <label className={labelClass}>
-                                <Heart size={12} className="text-emerald-500" />
-                                Hobbies
+                                <Heart size={12} className="text-emerald-500" /> Hobbies
                             </label>
-                            <input
-                                type="text"
-                                value={form.hobbies}
-                                onChange={(e) => handleChange("hobbies", e.target.value)}
-                                className={inputClass}
-                                placeholder="Reading, Music"
-                            />
+                            <input type="text" {...register("hobbies")} className={inputClass} placeholder="Reading, Music" />
                         </div>
                     </div>
 
-                    {/* About Me */}
                     <div>
                         <label className={labelClass}>
-                            <FileText size={12} className="text-emerald-500" />
-                            About Me
+                            <FileText size={12} className="text-emerald-500" /> About Me
                         </label>
-                        <textarea
-                            value={form.about_me}
-                            onChange={(e) => handleChange("about_me", e.target.value)}
-                            className={`${inputClass} resize-none h-32`}
-                            placeholder="Tell us about yourself, your roles, and responsibilities..."
-                        />
+                        <textarea {...register("about_me")} className={`${inputClass} resize-none h-32`} placeholder="Tell us about yourself, your roles, and responsibilities..." />
                     </div>
 
-                    {/* Non-editable info notice */}
                     <div className="bg-slate-50 dark:bg-zinc-800/40 rounded-2xl p-4 border border-slate-100 dark:border-zinc-800/50">
                         <p className="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-zinc-500 mb-2">Notice</p>
                         <p className="text-xs text-slate-500 dark:text-zinc-400 leading-relaxed">
@@ -445,7 +335,6 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                         </p>
                     </div>
 
-                    {/* Error */}
                     {error && (
                         <div className="bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 text-red-700 dark:text-red-300 text-sm font-medium px-4 py-3 rounded-xl overflow-hidden">
                             <div className="flex items-center gap-2 mb-1">
@@ -455,41 +344,21 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                             {debugInfo && (
                                 <div className="mt-2 pt-2 border-t border-red-200/50 dark:border-red-800/50">
                                     <p className="text-[10px] font-bold text-red-400 dark:text-red-500 uppercase tracking-tighter mb-1">Technical Debug Info:</p>
-                                    <pre className="text-[9px] font-mono whitespace-pre-wrap opacity-60">
-                                        {debugInfo}
-                                    </pre>
+                                    <pre className="text-[9px] font-mono whitespace-pre-wrap opacity-60">{debugInfo}</pre>
                                 </div>
                             )}
                         </div>
                     )}
 
-                    {/* Buttons */}
                     <div className="flex gap-3 pt-2">
-                        <button
-                            onClick={onClose}
-                            className="flex-1 py-3 rounded-2xl bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 font-bold hover:bg-slate-200 dark:hover:bg-zinc-700 transition-all text-sm cursor-pointer"
-                        >
+                        <button type="button" onClick={onClose} className="flex-1 py-3 rounded-2xl bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 font-bold hover:bg-slate-200 dark:hover:bg-zinc-700 transition-all text-sm cursor-pointer">
                             Cancel
                         </button>
-                        <button
-                            onClick={handleSubmit}
-                            disabled={saving}
-                            className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold hover:from-green-500 hover:to-emerald-400 shadow-md hover:shadow-lg hover:shadow-green-500/30 active:scale-[0.98] transition-all duration-300 text-sm disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-                        >
-                            {saving ? (
-                                <>
-                                    <Loader2 size={16} className="animate-spin" />
-                                    Saving...
-                                </>
-                            ) : (
-                                <>
-                                    <Save size={16} />
-                                    Save Changes
-                                </>
-                            )}
+                        <button type="submit" disabled={saving} className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold hover:from-green-500 hover:to-emerald-400 shadow-md hover:shadow-lg hover:shadow-green-500/30 active:scale-[0.98] transition-all duration-300 text-sm disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
+                            {saving ? <><Loader2 size={16} className="animate-spin" /> Saving...</> : <><Save size={16} /> Save Changes</>}
                         </button>
                     </div>
-                </div>
+                </form>
             </div>
         </div>
     );

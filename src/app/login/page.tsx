@@ -65,7 +65,7 @@ export default function LoginPage() {
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('administrative_officers')
-          .select('is_approved, must_change_password')
+          .select('is_approved, needs_password_change')
           .eq('id', data.user.id)
           .maybeSingle()
         
@@ -78,8 +78,8 @@ export default function LoginPage() {
 
       // Redirect Logic:
       // 1. Must change password? → Force password change page
-      if (profile?.must_change_password === true) {
-        router.push('/dashboard/force-password-change')
+      if (profile?.needs_password_change === true) {
+        router.push('/setup/update-password')
         return
       }
 

@@ -4,19 +4,19 @@ import { useState } from "react";
 import { Lock, ShieldCheck, Loader2, X, Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
-interface PasswordChallengeProps {
+interface VerifyPasswordModalProps {
     officerEmail: string;
     officerName: string;
     onVerified: () => void;
     onClose: () => void;
 }
 
-export default function PasswordChallenge({
+export default function VerifyPasswordModal({
     officerEmail,
     officerName,
     onVerified,
     onClose,
-}: PasswordChallengeProps) {
+}: VerifyPasswordModalProps) {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -32,7 +32,7 @@ export default function PasswordChallenge({
         setError(null);
 
         try {
-            console.log("Verifying password for:", officerEmail);
+
             const supabase = createClient();
 
             // Verify identity via signInWithPassword — NO OTP, NO emails
@@ -42,17 +42,17 @@ export default function PasswordChallenge({
             });
 
             if (signInError) {
-                console.warn("Password Verification Error:", signInError);
+
                 setError(signInError.message || "Incorrect password. Please try again.");
                 setLoading(false);
                 return;
             }
 
-            console.log("Password verified successfully for:", officerEmail);
+
             // Password correct — allow edits
             onVerified();
         } catch (err: any) {
-            console.error("Verification Catch Error:", err);
+
             const errorMsg = typeof err === 'object' ? (err.message || JSON.stringify(err)) : String(err);
             setError(`Verification failed: ${errorMsg}`);
         } finally {
