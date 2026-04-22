@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import SignOutButton from '@/components/SignOutButton'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
-import { ShieldCheck, ArrowLeft } from 'lucide-react'
+import { ShieldCheck, ArrowLeft, Settings } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 
 interface DashboardLayoutProps {
@@ -69,6 +69,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <span className="hidden md:inline">Admin Panel</span>
             </Link>
           )}
+          <Link
+            href="/dashboard/settings"
+            className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
+            title="Account Settings"
+          >
+            <Settings size={18} />
+          </Link>
           <ThemeToggle />
           <div className="h-6 w-[1px] bg-white/20 mx-1 hidden sm:block" />
           <SignOutButton />

@@ -1,6 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
 export async function middleware(request: NextRequest) {
     let response = NextResponse.next({
@@ -49,57 +48,69 @@ export async function middleware(request: NextRequest) {
         pathname.includes('Ondo-Logo.png') ||
         pathname.includes('logo2.jpg')
 
-    // 3. Early Exit for Assets and Public Routes (Unauthenticated)
-    if (isAsset) return response
-    if (!user && isPublicRoute) return response
+    const isPendingPage = pathname === '/pending-approval'
+    const isForcePasswordPage = pathname === '/dashboard/force-password-change'
+    const isSetupPage = pathname.startsWith('/dashboard/setup-profile')
+    const isAdminRoute = pathname.startsWith('/admin')
+    const isSettingsRoute = pathname.startsWith('/dashboard/settings')
 
-    // 4. Redirect unauthenticated users to login
+    // 3. Early Exit for Assets
+    if (isAsset) return response
+
+    // 4. Unauthenticated users
+    if (!user && isPublicRoute) return response
+    if (!user && isPendingPage) return NextResponse.redirect(new URL('/login', request.url))
     if (!user && !isPublicRoute) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // 5. Master Bypass (Felix)
-    if (cleanEmail === 'felixadewole16@gmail.com') {
-        // Redirect away from pending if already logged in as superuser
-        if (pathname === '/pending-approval') {
-            return NextResponse.redirect(new URL('/', request.url))
-        }
-        return response
+    // 5. Authenticated users — redirect away from login/signup
+    if (user && isPublicRoute) {
+        return NextResponse.redirect(new URL('/', request.url))
     }
 
-    // 6. Authorization Logic (Authenticated Users Only)
+    // 6. Authenticated user — fetch profile for authorization checks
     if (user) {
-        // Data Fetching: Check local whitelist first, then DB
-        const whitelistEntry = WHITELIST_OFFICERS[cleanEmail]
-        
-        // Use maybeSingle to avoid 500 error on missing row
+        const isFelix = cleanEmail === 'felixadewole16@gmail.com'
+
+        // Fetch profile data
         const { data: profile } = await supabase
             .from('administrative_officers')
-            .select('is_approved, is_admin')
+            .select('is_approved, is_admin, must_change_password')
             .eq('id', user.id)
             .maybeSingle()
 
-        const isVerified = !!whitelistEntry || profile?.is_approved === true
-        const isAdmin = !!whitelistEntry?.is_admin || profile?.is_admin === true
+        const isApproved = isFelix || profile?.is_approved === true
+        const isAdmin = isFelix || profile?.is_admin === true
+        const mustChangePassword = profile?.must_change_password === true
 
-        // Route Protection Definitions
-        const isAdminRoute = pathname.startsWith('/admin')
-        const isPendingPage = pathname === '/pending-approval'
-        const isSetupPage = pathname.startsWith('/dashboard/setup-profile')
+        // A. Force Password Change Enforcement
+        // If user must change password, only allow the force-change page
+        if (mustChangePassword && !isFelix) {
+            if (!isForcePasswordPage) {
+                return NextResponse.redirect(new URL('/dashboard/force-password-change', request.url))
+            }
+            return response
+        }
 
-        // A. Admin Access Control
+        // B. Already changed password — redirect away from force-change page
+        if (!mustChangePassword && isForcePasswordPage) {
+            return NextResponse.redirect(new URL('/', request.url))
+        }
+
+        // C. Admin Route Access Control
         if (isAdminRoute && !isAdmin) {
             return NextResponse.redirect(new URL('/', request.url))
         }
 
-        // B. Verification Enforcement
-        if (!isVerified) {
-            // Force unverified users to pending-approval (unless on public/setup routes)
-            if (!isPendingPage && !isPublicRoute && !isSetupPage) {
+        // D. Approval Enforcement
+        if (!isApproved) {
+            // Unapproved users can only access: pending-approval, setup-profile, settings, force-password-change
+            if (!isPendingPage && !isSetupPage && !isForcePasswordPage && !isSettingsRoute) {
                 return NextResponse.redirect(new URL('/pending-approval', request.url))
             }
         } else {
-            // C. Verified Loop Breaker: Redirect verified away from pending
+            // E. Approved user on pending page → redirect away
             if (isPendingPage) {
                 return NextResponse.redirect(new URL('/', request.url))
             }

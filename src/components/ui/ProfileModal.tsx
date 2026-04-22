@@ -3,7 +3,7 @@
 import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award, Pencil, Eye } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { useEffect, useState } from "react";
-import EmailVerification from "./EmailVerification";
+import PasswordChallenge from "./PasswordChallenge";
 import ProfileEditForm from "./ProfileEditForm";
 
 interface ProfileModalProps {
@@ -94,7 +94,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
     return (
         <>
             <div
-                className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                className="fixed inset-0 z-[200] flex items-center justify-center p-4"
                 onClick={isFullscreen ? () => setIsFullscreen(false) : onClose}
             >
                 {/* Backdrop */}
@@ -129,7 +129,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                     {/* Close Button */}
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 dark:bg-zinc-800/80 hover:bg-red-50 dark:hover:bg-red-950/50 text-slate-400 dark:text-zinc-400 hover:text-red-500 dark:hover:text-red-400 transition-all duration-200 z-10 cursor-pointer"
+                        className="absolute top-4 right-4 p-2.5 rounded-full bg-black/20 hover:bg-red-500/80 text-white/80 hover:text-white backdrop-blur-md transition-all duration-200 z-20 cursor-pointer shadow-lg border border-white/10"
                     >
                         <X size={18} />
                     </button>
@@ -267,9 +267,9 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                 </div>
             </div>
 
-            {/* Email Verification Modal */}
+            {/* Password Challenge Modal */}
             {showVerification && (
-                <EmailVerification
+                <PasswordChallenge
                     officerEmail={currentOfficer.email_address}
                     officerName={currentOfficer.full_name}
                     onVerified={handleVerified}

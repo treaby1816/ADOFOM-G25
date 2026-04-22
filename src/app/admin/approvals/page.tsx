@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import {

@@ -1,63 +1,80 @@
 'use client'
 
-import Link from 'next/link'
-import { ShieldAlert, Clock, Mail, ChevronLeft } from 'lucide-react'
-import SignOutButton from '@/components/SignOutButton'
+import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
+import { Clock, Mail, Phone, LogOut, ShieldCheck } from 'lucide-react'
 
-export default function PendingApprovalPage() {
+export default function PendingApproval() {
+  const supabase = createClient()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
+  }
+
   return (
-    <div className="min-h-screen bg-hero-gradient flex flex-col items-center justify-center p-4">
-      <div className="max-w-2xl w-full bg-slate-900/40 backdrop-blur-xl p-8 sm:p-12 rounded-3xl border border-slate-700/50 shadow-2xl relative overflow-hidden text-center">
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500/0 via-yellow-500 to-yellow-500/0"></div>
+    <div className="min-h-screen bg-hero-gradient flex items-center justify-center p-6 text-white">
+      <div className="max-w-md w-full backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl text-center">
         
-        <div className="flex justify-center mb-8">
-          <div className="relative w-24 h-24 bg-yellow-500/10 rounded-full flex items-center justify-center border border-yellow-500/20 animate-pulse">
-            <Clock className="w-12 h-12 text-yellow-500" />
-            <ShieldAlert className="absolute -top-1 -right-1 w-8 h-8 text-yellow-500 bg-[#001f3f] rounded-full p-1" />
+        {/* Status Icon */}
+        <div className="mb-6 inline-flex p-4 bg-yellow-500/20 rounded-full border border-yellow-500/30">
+          <Clock className="text-yellow-500 animate-pulse" size={48} />
+        </div>
+
+        <h1 className="text-3xl font-black mb-3 tracking-tight">Account Pending</h1>
+        <p className="text-white/60 mb-8 leading-relaxed">
+          Your profile has been successfully created. For security, an administrator must verify your credentials before you can access the Ondo State Admin Directory.
+        </p>
+
+        {/* Support Section */}
+        <div className="space-y-4 text-left bg-white/5 p-6 rounded-2xl border border-white/10 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="p-2 bg-emerald-500/20 rounded-lg">
+              <ShieldCheck className="text-emerald-500" size={20} />
+            </div>
+            <div>
+              <p className="text-[10px] uppercase font-bold text-white/40 tracking-widest">Administrator</p>
+              <p className="text-sm font-semibold">Felix Bamidele</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Mail className="text-white/40" size={20} />
+            <a href="mailto:felixadewole16@gmail.com" className="text-sm hover:text-emerald-400 transition-colors">
+              felixadewole16@gmail.com
+            </a>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Phone className="text-white/40" size={20} />
+            <a href="tel:08065136221" className="text-sm hover:text-emerald-400 transition-colors">
+              +234 806 513 6221
+            </a>
           </div>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight uppercase mb-6">
-          Access Pending <br className="sm:hidden" /> Verification
-        </h1>
-        
-        <div className="space-y-6 text-slate-300 font-medium leading-relaxed">
-          <p className="text-lg">
-            Your ADOFOM account is pending verification by the <span className="text-yellow-500 font-bold">Administrative Cadre Secretariat</span>.
-          </p>
-          
-          <div className="bg-white/5 rounded-2xl p-6 border border-white/10 flex items-start gap-4 text-left italic">
-            <Mail className="w-6 h-6 shrink-0 text-slate-400" />
-            <p className="text-sm">
-              "We perform rigorous verification of every profile to ensure only genuine Administrative Officers gain access to the directory data. You will receive access automatically once verified."
-            </p>
-          </div>
-
-          <p className="text-sm text-slate-400">
-            If you believe this is a mistake or have questions, please contact the Secretariat through your MDA's official channels.
-          </p>
-        </div>
-
-        <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-center gap-6">
-          <Link 
-            href="/login" 
-            className="flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-white transition-colors"
+        {/* Actions */}
+        <div className="space-y-3">
+          <button 
+            onClick={() => window.location.reload()}
+            className="w-full py-4 bg-white text-slate-900 rounded-xl font-bold hover:bg-emerald-50 transition-all shadow-lg"
           >
-            <ChevronLeft size={18} />
-            Back to Login
-          </Link>
+            Check Status
+          </button>
           
-          <div className="h-4 w-[1px] bg-slate-800 hidden sm:block" />
-          
-          <SignOutButton />
+          <button 
+            onClick={handleLogout}
+            className="w-full py-4 flex items-center justify-center gap-2 text-white/60 font-medium hover:text-white transition-colors"
+          >
+            <LogOut size={18} />
+            Sign Out
+          </button>
         </div>
-      </div>
-      
-      {/* Footer Branding */}
-      <div className="mt-8 flex items-center gap-3 opacity-50">
-        <img src="/logo2.jpg" alt="Logo" className="w-8 h-8 rounded-full border border-white/20" />
-        <span className="text-white text-xs font-black tracking-widest uppercase">ADOFOM Portal</span>
+
+        <p className="mt-8 text-[10px] text-white/20 uppercase tracking-[0.2em] font-bold">
+          Ondo State Govt • ADOFOM Portal
+        </p>
       </div>
     </div>
   )

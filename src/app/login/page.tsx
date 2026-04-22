@@ -1,35 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import { Mail, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
-
-  useEffect(() => {
-    const clearSession = async () => {
-      // Clear Supabase session on mount to prevent old "Pending" sessions
-      const supabase = createClient()
-      await supabase.auth.signOut()
-
-      // Clear all local storage and session storage
-      localStorage.clear()
-      sessionStorage.clear()
-      
-      // Clear non-HttpOnly cookies
-      document.cookie.split(";").forEach((c) => {
-        document.cookie = c
-          .replace(/^ +/, "")
-          .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-      });
-    }
-    clearSession()
-  }, [])
+  const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -42,26 +24,67 @@ export default function LoginPage() {
       return
     }
 
+    if (!password || password.length < 6) {
+      setMessage({ type: 'error', text: 'Password must be at least 6 characters.' })
+      setIsLoading(false)
+      return
+    }
+
     try {
       const supabase = createClient()
-      const { error } = await supabase.auth.signInWithOtp({
+
+      // Sign in with email and password — NO OTP, NO Magic Links
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
-        options: {
-          // ensure this resolves to the base URL
-          emailRedirectTo: window.location.origin + '/auth/callback',
-        },
+        password,
       })
 
       if (error) {
-        if (error.status === 429) {
-          setMessage({ type: 'error', text: 'Rate limit reached. Please try again later.' })
+        if (error.status === 400) {
+          setMessage({ type: 'error', text: 'Invalid email or password. Please try again.' })
+        } else if (error.status === 429) {
+          setMessage({ type: 'error', text: 'Too many login attempts. Please try again later.' })
         } else {
           setMessage({ type: 'error', text: error.message || 'An error occurred during sign in.' })
         }
-      } else {
-        setMessage({ type: 'success', text: 'Success! A secure login link has been sent to your email. Please check your inbox (and spam folder).' })
-        setEmail('') // Clear input on success
+        setIsLoading(false)
+        return
       }
+
+      if (!data.user) {
+        setMessage({ type: 'error', text: 'Authentication failed. Please try again.' })
+        setIsLoading(false)
+        return
+      }
+
+      // Post-login: Check profile state for redirect
+      const cleanEmail = data.user.email?.trim().toLowerCase() || ''
+      const isFelix = cleanEmail === 'felixadewole16@gmail.com'
+
+      const { data: profile } = await supabase
+        .from('administrative_officers')
+        .select('is_approved, must_change_password')
+        .eq('id', data.user.id)
+        .maybeSingle()
+
+      // Redirect Logic:
+      // 1. Must change password? → Force password change page
+      if (profile?.must_change_password === true) {
+        router.push('/dashboard/force-password-change')
+        return
+      }
+
+      // 2. Not approved and not Felix? → Pending approval
+      if (!isFelix && profile?.is_approved !== true) {
+        router.push('/pending-approval')
+        return
+      }
+
+      // 3. All clear → Main directory
+      setMessage({ type: 'success', text: 'Login successful. Redirecting...' })
+      router.push('/')
+      router.refresh()
+
     } catch (err) {
       setMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' })
     } finally {
@@ -117,7 +140,8 @@ export default function LoginPage() {
         )}
 
         {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleLogin} className="space-y-4">
+          {/* Email */}
           <div>
             <label htmlFor="email" className="sr-only">Email address</label>
             <div className="relative">
@@ -139,7 +163,30 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* Password */}
           <div>
+            <label htmlFor="password" className="sr-only">Password</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-slate-400" aria-hidden="true" />
+              </div>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                placeholder="Enter your password"
+                disabled={isLoading}
+                minLength={6}
+              />
+            </div>
+          </div>
+
+          <div className="pt-2">
             <button
               type="submit"
               disabled={isLoading}
@@ -151,11 +198,11 @@ export default function LoginPage() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Processing...
+                  Authenticating...
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
-                  Send Secure Login Link
+                  Sign In
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </span>
               )}

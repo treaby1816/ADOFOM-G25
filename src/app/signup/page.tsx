@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
@@ -21,7 +20,20 @@ export default function SignupPage() {
     setIsLoading(true)
     setMessage(null)
 
+    if (!fullName.trim()) {
+      setMessage({ type: 'error', text: 'Please enter your full name.' })
+      setIsLoading(false)
+      return
+    }
+
+    if (password.length < 6) {
+      setMessage({ type: 'error', text: 'Password must be at least 6 characters.' })
+      setIsLoading(false)
+      return
+    }
+
     try {
+      // Step 1: Create the auth user — NO email confirmation, NO OTP
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -29,24 +41,61 @@ export default function SignupPage() {
           data: {
             full_name: fullName,
           },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       })
 
       if (error) {
         setMessage({ type: 'error', text: error.message })
-      } else if (data.user) {
-        if (data.session) {
-            // If email confirmation is disabled, redirect immediately
-            router.push('/dashboard/setup-profile')
-        } else {
-            setMessage({ 
-                type: 'success', 
-                text: 'Registration successful! Please check your email for the confirmation link.' 
-            })
-        }
+        setIsLoading(false)
+        return
       }
-    } catch (err: any) {
+      
+      if (data.user) {
+        // Step 2: Insert into administrative_officers table
+        // is_approved = false (pending admin verification)
+        // must_change_password = false (they just set their password)
+
+        // Standardize name format: SURNAME, Other Names
+        let formattedName = fullName.trim()
+        const cleanName = formattedName.replace(/,/g, ' ').trim()
+        const parts = cleanName.split(/\s+/)
+        if (parts.length > 0) {
+          const surname = parts[0].toUpperCase()
+          const otherNames = parts.slice(1).map(part =>
+            part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+          ).join(' ')
+          formattedName = otherNames ? `${surname}, ${otherNames}` : surname
+        }
+
+        const { error: insertError } = await supabase
+          .from('administrative_officers')
+          .insert({
+            id: data.user.id,
+            email_address: email.trim().toLowerCase(),
+            full_name: formattedName,
+            phone_number: '',
+            birth_month_day: '',
+            current_mda: '',
+            grade_level: '',
+            lga: '',
+            hobbies: '',
+            about_me: '',
+            photo_url: '',
+            is_approved: false,
+            is_admin: false,
+            must_change_password: false,
+          })
+
+        if (insertError) {
+          console.error('Profile insert error:', insertError)
+          // Don't block the user — the auth account was created, they just won't have a profile row yet
+          // The middleware/login flow will handle the pending state
+        }
+
+        // Redirect to pending approval — they need admin verification
+        router.push('/pending-approval')
+      }
+    } catch (err: unknown) {
       setMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' })
     } finally {
       setIsLoading(false)
@@ -135,11 +184,18 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
-                placeholder="Password"
+                placeholder="Password (min. 6 characters)"
                 disabled={isLoading}
                 minLength={6}
               />
             </div>
+          </div>
+
+          {/* Info notice */}
+          <div className="bg-yellow-500/5 border border-yellow-500/15 rounded-xl p-3">
+            <p className="text-xs text-yellow-400/80 leading-relaxed">
+              After registration, your account will need to be <strong className="text-yellow-400">verified by the Admin Secretariat</strong> before you can access the directory.
+            </p>
           </div>
 
           <div className="flex gap-4">

@@ -5,7 +5,7 @@
 import { useState, useEffect, useMemo } from "react";
 import ProfileCard from "@/components/ui/ProfileCard";
 import ProfileModal from "@/components/ui/ProfileModal";
-import BirthdayBanner from "@/components/ui/BirthdayBanner";
+import BirthdayCelebration from "@/components/ui/BirthdayCelebration";
 import SearchAndFilter from "@/components/filters/SearchAndFilter";
 import ImageSlider from "@/components/ui/ImageSlider";
 import ExportButton from "@/components/ui/ExportButton";
@@ -94,12 +94,14 @@ export default function Home() {
 
     const todayFull = `${MONTH_NAMES[m]}/${d}`; // e.g. March/22
     const todayFullWithSpace = `${MONTH_NAMES[m]} ${d}`; // e.g. March 22
-    const todayNumeric = `${m + 1}/${d}`;
+    const todayNumeric = `${m + 1}/${d}`; // e.g. 3/22
+    const todayDashed = `${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; // e.g. 03-22
+    const todayMonthSlash = `${MONTH_NAMES[m]}/${String(d).padStart(2, '0')}`; // e.g. March/02
 
     // Find all birthday officers
     const bdayMatches = officers.filter((o) => {
       const bday = (o.birth_month_day || "").trim();
-      return bday === todayFull || bday === todayNumeric || bday === todayFullWithSpace;
+      return bday === todayFull || bday === todayNumeric || bday === todayFullWithSpace || bday === todayDashed || bday === todayMonthSlash;
     });
 
     if (bdayMatches.length > 0) {
@@ -368,11 +370,8 @@ export default function Home() {
       )}
 
       {/* Birthday Banner */}
-      {!isLoading && birthdayOfficers.length > 0 && (
-        <BirthdayBanner
-          officers={birthdayOfficers}
-          onClose={() => setBirthdayOfficers([])}
-        />
+      {!isLoading && (
+        <BirthdayCelebration />
       )}
 
       {/* Floating Scroll Buttons */}
