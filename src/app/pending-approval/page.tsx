@@ -45,19 +45,13 @@ export default function PendingApproval() {
               .update({ is_approved: true })
               .eq('id', user.id);
             
-            if (updateErr) {
-              console.error('Self-heal update error:', updateErr);
-            } else {
+            if (!updateErr) {
               router.push('/')
             }
-          } else {
-            console.log('Officer is new or incomplete, staying on pending page');
           }
         } else if (officer?.is_approved) {
-          console.log('Officer already approved, redirecting');
           router.push('/')
-        } else {
-          console.log('No officer record found for user ID:', user.id);
+        }
       }
     }
     checkApproval()
