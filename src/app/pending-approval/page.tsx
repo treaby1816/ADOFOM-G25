@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 import { Clock, Mail, Phone, LogOut, ShieldCheck } from 'lucide-react'
 
 export default function PendingApproval() {
@@ -19,7 +20,15 @@ export default function PendingApproval() {
     const checkApproval = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // Check if they are a legacy officer in the DB
+        // ULTIMATE BYPASS: Check the local master list
+        const email = user.email?.toLowerCase() || ""
+        if (WHITELIST_OFFICERS[email]) {
+          console.log('Master Key match: Redirecting legacy officer instantly')
+          router.push('/')
+          return
+        }
+
+        // Fallback: Check DB if not in local master list
         const { data: officer } = await supabase
           .from('administrative_officers')
           .select('*')
