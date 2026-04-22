@@ -5,6 +5,7 @@ import { Officer } from "@/types/officer";
 import { useEffect, useState } from "react";
 import PasswordChallenge from "./PasswordChallenge";
 import ProfileEditForm from "./ProfileEditForm";
+import { createClient } from "@/utils/supabase/client";
 
 interface ProfileModalProps {
     officer: Officer;
@@ -17,6 +18,17 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
     const [showVerification, setShowVerification] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [currentOfficer, setCurrentOfficer] = useState(officer);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+    // Fetch logged-in user's ID to gate the Edit button
+    useEffect(() => {
+        const supabase = createClient();
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            if (user) setCurrentUserId(user.id);
+        });
+    }, []);
+
+    const isOwnProfile = currentUserId !== null && currentOfficer.id === currentUserId;
 
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
@@ -181,7 +193,8 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                             </p>
                         </div>
 
-                        {/* Edit Profile Button */}
+                        {/* Edit Profile Button — only visible on own profile */}
+                        {isOwnProfile && (
                         <div className="flex justify-center mb-6">
                             <button
                                 onClick={handleEditClick}
@@ -191,6 +204,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                                 Edit My Profile
                             </button>
                         </div>
+                        )}
 
                         {/* Meta Row */}
                         <div className="flex justify-center mb-8">

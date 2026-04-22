@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import {
   CheckCircle2, XCircle, Search, UserCheck,
@@ -26,9 +27,47 @@ export default function ApprovalsPage() {
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved'>('all')
   const [processingId, setProcessingId] = useState<string | null>(null) // Track specific button clicks
   const [error, setError] = useState<string | null>(null)
+  const [isAuthorized, setIsAuthorized] = useState(false)
+  const [authChecking, setAuthChecking] = useState(true)
+
+  const router = useRouter()
 
   // Optimization: Stabilize the Supabase client relative to the render cycle
   const supabase = useMemo(() => createClient(), [])
+
+  // Admin access guard — verify before rendering any data
+  useEffect(() => {
+    async function verifyAdminAccess() {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) {
+          router.replace('/')
+          return
+        }
+
+        const { data: profile, error: profileError } = await supabase
+          .from('administrative_officers')
+          .select('is_admin')
+          .eq('id', user.id)
+          .single()
+
+        if (profileError || !profile?.is_admin) {
+          console.warn('Admin access denied — redirecting to home.')
+          router.replace('/')
+          return
+        }
+
+        setIsAuthorized(true)
+      } catch (err) {
+        console.error('Admin guard error:', err)
+        router.replace('/')
+      } finally {
+        setAuthChecking(false)
+      }
+    }
+
+    verifyAdminAccess()
+  }, [supabase, router])
 
   const fetchOfficers = useCallback(async () => {
     setLoading(true)
@@ -49,8 +88,8 @@ export default function ApprovalsPage() {
   }, [supabase])
 
   useEffect(() => {
-    fetchOfficers()
-  }, [fetchOfficers])
+    if (isAuthorized) fetchOfficers()
+  }, [isAuthorized, fetchOfficers])
 
   const toggleApproval = async (id: string, currentStatus: boolean, email: string) => {
     // SAFETY CHECK: Prevent Felix from revoking his own access
@@ -84,6 +123,23 @@ export default function ApprovalsPage() {
   })
 
   return (
+    <>
+      {/* Admin Access Guard — loading / unauthorized states */}
+      {authChecking ? (
+        <div className="min-h-screen bg-hero-gradient flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4 text-slate-400">
+            <Loader2 className="animate-spin text-yellow-500" size={48} />
+            <p className="font-bold uppercase tracking-widest text-xs">Verifying admin access...</p>
+          </div>
+        </div>
+      ) : !isAuthorized ? (
+        <div className="min-h-screen bg-hero-gradient flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4 text-red-400">
+            <ShieldAlert size={48} />
+            <p className="font-bold uppercase tracking-widest text-xs">Access Denied — Redirecting...</p>
+          </div>
+        </div>
+      ) : (
     <div className="min-h-screen bg-hero-gradient p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
 
@@ -218,6 +274,8 @@ export default function ApprovalsPage() {
         </div>
       </div>
     </div>
+      )}
+    </>
   )
 }
 
