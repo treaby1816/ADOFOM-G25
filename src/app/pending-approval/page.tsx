@@ -27,21 +27,29 @@ export default function PendingApproval() {
           .maybeSingle()
 
         if (officer && !officer.is_approved) {
+          console.log('Officer found, checking legacy status:', officer.full_name);
           const isLegacyAndComplete = officer.full_name && officer.full_name !== 'New User' && officer.current_mda;
           if (isLegacyAndComplete) {
             console.log('Self-healing: Auto-approving legacy officer');
-            await supabase
+            const { error: updateErr } = await supabase
               .from('administrative_officers')
               .update({ is_approved: true })
               .eq('id', user.id);
             
-            router.push('/') // Redirect to dashboard instantly
+            if (updateErr) {
+              console.error('Self-heal update error:', updateErr);
+            } else {
+              router.push('/')
+            }
+          } else {
+            console.log('Officer is new or incomplete, staying on pending page');
           }
         } else if (officer?.is_approved) {
-          router.push('/') // Already approved, just go
+          console.log('Officer already approved, redirecting');
+          router.push('/')
+        } else {
+          console.log('No officer record found for user ID:', user.id);
         }
-      }
-    }
     checkApproval()
   }, [supabase, router])
 
