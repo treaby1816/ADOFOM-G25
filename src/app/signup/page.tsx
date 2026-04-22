@@ -48,7 +48,7 @@ export default function SignupPage() {
       if (!whitelistData) {
         setMessage({ 
           type: 'error', 
-          text: 'This email is not authorized to join the portal. Please contact the Administrator to be added to the official register.' 
+          text: `The email "${email.trim().toLowerCase()}" is not authorized to join. Please ensure you typed it exactly as it appears in the official register.` 
         });
         setIsLoading(false);
         return;
@@ -177,7 +177,7 @@ export default function SignupPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                className="block w-full pl-10 pr-3 py-4 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors text-base"
                 placeholder="Official Email Address"
                 disabled={isLoading}
               />
