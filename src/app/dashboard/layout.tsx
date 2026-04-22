@@ -19,17 +19,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   useEffect(() => {
     async function checkAdmin() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase
-          .from('administrative_officers')
-          .select('is_admin')
-          .eq('id', user.id)
-          .single()
-        
-        if (profile?.is_admin === true) {
-          setIsAdmin(true)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const { data: profile, error } = await supabase
+            .from('administrative_officers')
+            .select('is_admin')
+            .eq('id', user.id)
+            .single()
+          
+          if (error) throw error
+          
+          if (profile?.is_admin === true) {
+            setIsAdmin(true)
+          }
         }
+      } catch (err) {
+        console.error('Dashboard Admin Check Error:', err instanceof Error ? err.message : err)
       }
     }
     checkAdmin()

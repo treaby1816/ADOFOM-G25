@@ -4,13 +4,14 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
+  const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -60,12 +61,20 @@ export default function LoginPage() {
       // Post-login: Check profile state for redirect
       const cleanEmail = data.user.email?.trim().toLowerCase() || ''
       const isFelix = cleanEmail === 'felixadewole16@gmail.com'
-
-      const { data: profile } = await supabase
-        .from('administrative_officers')
-        .select('is_approved, must_change_password')
-        .eq('id', data.user.id)
-        .maybeSingle()
+      let profile = null
+      try {
+        const { data: profileData, error: profileError } = await supabase
+          .from('administrative_officers')
+          .select('is_approved, must_change_password')
+          .eq('id', data.user.id)
+          .maybeSingle()
+        
+        if (profileError) throw profileError
+        profile = profileData
+      } catch (profileErr) {
+        console.error('Post-login Profile Error:', profileErr instanceof Error ? profileErr.message : profileErr)
+        // If we can't fetch profile, fall back to default redirect
+      }
 
       // Redirect Logic:
       // 1. Must change password? → Force password change page
@@ -85,8 +94,10 @@ export default function LoginPage() {
       router.push('/')
       router.refresh()
 
-    } catch (err) {
-      setMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' })
+    } catch (err: any) {
+      console.error('Login Handler Error:', err)
+      const errorMsg = typeof err === 'object' ? (err.message || JSON.stringify(err)) : String(err)
+      setMessage({ type: 'error', text: `An unexpected error occurred: ${errorMsg}` })
     } finally {
       setIsLoading(false)
     }
@@ -165,24 +176,32 @@ export default function LoginPage() {
 
           {/* Password */}
           <div>
-            <label htmlFor="password" className="sr-only">Password</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Lock className="h-5 w-5 text-slate-400" aria-hidden="true" />
+            <label htmlFor="password" senior-only="true" className="sr-only">Password</label>
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
+                <Lock className="h-5 w-5" aria-hidden="true" />
               </div>
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                className="block w-full pl-10 pr-12 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
                 placeholder="Enter your password"
                 disabled={isLoading}
                 minLength={6}
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-yellow-500 transition-colors cursor-pointer"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
           </div>
 
