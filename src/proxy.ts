@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
 export async function proxy(request: NextRequest) {
     try {
@@ -100,7 +101,8 @@ export async function proxy(request: NextRequest) {
             // Non-blocking: continue as unprivileged user if query fails
         }
 
-        const isApproved = isFelix || profile?.is_approved === true
+        const isOnWhitelist = !!WHITELIST_OFFICERS[cleanEmail]
+        const isApproved = isFelix || isOnWhitelist || profile?.is_approved === true
         const isAdmin = isFelix || profile?.is_admin === true
         const needsPasswordChange = profile?.needs_password_change === true
 
