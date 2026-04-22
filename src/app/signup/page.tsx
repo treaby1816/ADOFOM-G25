@@ -67,7 +67,8 @@ export default function SignupPage() {
         password,
         options: {
           data: {
-            needs_setup: !isExistingAndComplete // Skip setup if already complete
+            needs_setup: !isExistingAndComplete,
+            is_approved: isExistingAndComplete // THE MASTER BYPASS BADGE
           }
         }
       })

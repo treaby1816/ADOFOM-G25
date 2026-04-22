@@ -60,6 +60,15 @@ export async function updateSession(request: NextRequest) {
       }
   }
 
+  // MASTER BYPASS: If user has 'is_approved' badge, they skip the pending trap
+  if (user && user.user_metadata?.is_approved === true) {
+      if (request.nextUrl.pathname === '/pending-approval') {
+          const url = request.nextUrl.clone()
+          url.pathname = '/'
+          return NextResponse.redirect(url)
+      }
+  }
+
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:

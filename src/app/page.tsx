@@ -93,8 +93,11 @@ export default function DashboardPage() {
               await supabase
                 .from('administrative_officers')
                 .update({ is_approved: true })
-                .eq('id', user.id);
-              currentUserObj.is_approved = true;
+                // PHANTOM APPROVAL: Grant access to legacy officers even if database says false
+      const isLegacyAndComplete = currentUserObj.full_name && currentUserObj.full_name !== 'New User' && currentUserObj.current_mda;
+      const finalApprovalState = currentUserObj?.is_approved || isLegacyAndComplete;
+
+      currentUserObj.is_approved = finalApprovalState;
             }
           }
         }
