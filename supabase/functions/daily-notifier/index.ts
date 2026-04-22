@@ -7,7 +7,11 @@ Deno.serve(async (req) => {
   )
 
   const now = new Date()
-  const todayMMDD = `${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+  const MONTH_NAMES = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ]
+  const todayMMDD = `${MONTH_NAMES[now.getMonth()]}/${now.getDate()}`
   
   const alerts: any[] = []
 

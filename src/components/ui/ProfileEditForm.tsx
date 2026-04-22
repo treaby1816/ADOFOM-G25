@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { supabase } from "@/lib/supabase";
+import { formatBirthday } from "@/lib/dataConsolidation";
 
 interface ProfileEditFormProps {
     officer: Officer;
@@ -157,7 +158,7 @@ export default function ProfileEditForm({ officer, onSave, onClose }: ProfileEdi
                 current_mda: form.current_mda.trim(),
                 grade_level: form.grade_level.trim(),
                 lga: form.lga.trim(),
-                birth_month_day: form.birth_month_day.trim(),
+                birth_month_day: formatBirthday(form.birth_month_day),
                 hobbies: form.hobbies.trim(),
                 about_me: form.about_me.trim(),
                 photo_url,
