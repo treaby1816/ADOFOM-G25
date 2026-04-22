@@ -4,12 +4,11 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import { Mail, Lock, User, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [fullName, setFullName] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
   const [showPassword, setShowPassword] = useState(false)
@@ -21,14 +20,9 @@ export default function SignupPage() {
     setIsLoading(true)
     setMessage(null)
 
-    if (!fullName.trim()) {
-      setMessage({ type: 'error', text: 'Please enter your full name.' })
-      setIsLoading(false)
-      return
-    }
-
     if (password.length < 6) {
       setMessage({ type: 'error', text: 'Password must be at least 6 characters.' })
+      setIsLoading(false)
       return
     }
 
@@ -66,8 +60,7 @@ export default function SignupPage() {
         password,
         options: {
           data: {
-            full_name: fullName.trim(),
-            needs_setup: true // Industry standard "Setup Guard"
+            needs_setup: true // Force redirect to profile setup
           }
         }
       })
@@ -105,23 +98,12 @@ export default function SignupPage() {
           if (updateError) console.error('Link error:', updateError);
         } else {
           // NEW USER FLOW: Create a fresh profile
-          let formattedName = fullName.trim()
-          const cleanName = formattedName.replace(/,/g, ' ').trim()
-          const parts = cleanName.split(/\s+/)
-          if (parts.length > 0) {
-            const surname = parts[0].toUpperCase()
-            const otherNames = parts.slice(1).map(part =>
-              part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-            ).join(' ')
-            formattedName = otherNames ? `${surname}, ${otherNames}` : surname
-          }
-
           const { error: insertError } = await supabase
             .from('administrative_officers')
             .insert({
               id: data.user.id,
               email_address: email.trim().toLowerCase(),
-              full_name: formattedName,
+              full_name: 'New User',
               is_approved: false,
               is_admin: false,
               needs_password_change: false,
@@ -186,20 +168,6 @@ export default function SignupPage() {
           <div className="space-y-4">
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
-                <User className="h-5 w-5" />
-              </div>
-              <input
-                type="text"
-                required
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
-                placeholder="Full Name"
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
                 <Mail className="h-5 w-5" />
               </div>
