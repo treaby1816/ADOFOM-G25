@@ -33,6 +33,7 @@ export default function DashboardPage() {
   const supabase = useMemo(() => createClient(), []);
   
   const [officers, setOfficers] = useState<Officer[]>([]);
+  const [debugStatus, setDebugStatus] = useState<string>("Initializing...");
 
   // State
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,6 +69,7 @@ export default function DashboardPage() {
       if (fetchError) {
         console.error("Error fetching officers:", fetchError);
         setConnectionError(true);
+        setDebugStatus(`Error: ${fetchError.message}`);
         toast.error("Directory sync failed.");
       } else if (data) {
         const processedData = (data as Officer[]).map(officer => ({
@@ -82,6 +84,7 @@ export default function DashboardPage() {
         );
         setOfficers(sortedData);
 
+        setDebugStatus(`Connected: Found ${data?.length || 0} officers`);
         if (user) {
           const currentUserObj = (data as Officer[]).find(o => o.id === user.id);
           if (currentUserObj?.is_admin === true) {
@@ -422,6 +425,10 @@ export default function DashboardPage() {
           <ShieldCheck size={28} />
         </Link>
       )}
+      {/* Mobile Debug Badge */}
+      <div className="fixed bottom-2 left-2 z-50 pointer-events-none opacity-20 text-[8px] text-slate-500 font-mono">
+        {debugStatus}
+      </div>
     </main>
   );
 }
