@@ -132,7 +132,7 @@ export default function SignupPage() {
         {/* Top Back Navigation */}
         <button 
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-white/80 hover:text-gold-500 mb-6 transition-colors w-fit"
+          className="flex items-center gap-2 text-yellow-500 border border-yellow-500/50 px-3 py-1 rounded-lg hover:bg-yellow-500/10 mb-6 transition-colors w-fit font-bold text-xs uppercase tracking-widest"
         >
           ← Back
         </button>
@@ -260,8 +260,8 @@ export default function SignupPage() {
         </div>
 
         {/* Version Check to force mobile refresh */}
-        <div className="mt-8 text-center opacity-10 text-[10px] text-white">
-          ADOFOM Portal v2.0 - Optimized
+        <div className="mt-8 text-center opacity-60 text-[12px] text-yellow-500 font-bold tracking-widest">
+          NEW VERSION: v2.0 LIVE
         </div>
       </div>
     </div>
