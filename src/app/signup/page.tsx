@@ -34,7 +34,7 @@ export default function SignupPage() {
       // Check if the email exists in the administrative_officers table (The Whitelist)
       const { data: whitelistData, error: whitelistError } = await supabase
         .from('administrative_officers')
-        .select('email_address')
+        .select('email_address, full_name, current_mda')
         .eq('email_address', email.trim().toLowerCase())
         .maybeSingle();
 
@@ -48,11 +48,18 @@ export default function SignupPage() {
       if (!whitelistData) {
         setMessage({ 
           type: 'error', 
-          text: `The email "${email.trim().toLowerCase()}" is not authorized to join. Please ensure you typed it exactly as it appears in the official register.` 
+          text: `The email "${email.trim().toLowerCase()}" is not authorized. Please contact the Administrator.` 
         });
         setIsLoading(false);
         return;
       }
+
+      // SMART CHECK: Is this an existing officer with a complete profile?
+      // Check if full_name is NOT 'New User' and MDA is filled
+      const isExistingAndComplete = 
+        whitelistData.full_name && 
+        whitelistData.full_name !== 'New User' && 
+        whitelistData.current_mda;
 
       // Step 2: Create Auth User
       const { data, error } = await supabase.auth.signUp({
@@ -60,7 +67,7 @@ export default function SignupPage() {
         password,
         options: {
           data: {
-            needs_setup: true // Force redirect to profile setup
+            needs_setup: !isExistingAndComplete // Skip setup if already complete
           }
         }
       })
@@ -113,9 +120,14 @@ export default function SignupPage() {
         }
 
         // Redirect to pending approval
-        // Redirect to Profile Setup
-        setMessage({ type: 'success', text: 'Authorized! Redirecting to profile setup...' });
-        setTimeout(() => router.push('/dashboard/setup-profile'), 1500);
+        // SMART REDIRECT
+        if (isExistingAndComplete) {
+          setMessage({ type: 'success', text: 'Welcome back! Redirecting to Dashboard...' });
+          setTimeout(() => router.push('/'), 1500);
+        } else {
+          setMessage({ type: 'success', text: 'Authorized! Redirecting to profile setup...' });
+          setTimeout(() => router.push('/dashboard/setup-profile'), 1500);
+        }
       }
     } catch (err: any) {
       console.error("Signup error:", err);
