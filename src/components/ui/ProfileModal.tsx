@@ -107,7 +107,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
     return (
         <>
             <div
-                className="fixed inset-0 z-[200] flex items-center justify-center p-4"
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4"
                 onClick={isFullscreen ? () => setIsFullscreen(false) : onClose}
             >
                 {/* Backdrop */}
@@ -115,7 +115,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
 
                 {/* Fullscreen Image Overlay */}
                 {isFullscreen && (
-                    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 sm:p-8 animate-fade-in bg-black/90 backdrop-blur-md" onClick={() => setIsFullscreen(false)}>
+                    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 sm:p-8 animate-fade-in bg-black/90 backdrop-blur-md" onClick={() => setIsFullscreen(false)}>
                         <button
                             className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white z-10 transition-colors"
                             onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }}

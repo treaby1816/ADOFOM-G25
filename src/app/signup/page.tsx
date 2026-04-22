@@ -52,48 +52,53 @@ export default function SignupPage() {
       }
       
       if (data.user) {
-        // Step 2: Insert into administrative_officers table
-        // is_approved = false (pending admin verification)
-        // needs_password_change = false (they just set their password)
-
-        // Standardize name format: SURNAME, Other Names
-        let formattedName = fullName.trim()
-        const cleanName = formattedName.replace(/,/g, ' ').trim()
-        const parts = cleanName.split(/\s+/)
-        if (parts.length > 0) {
-          const surname = parts[0].toUpperCase()
-          const otherNames = parts.slice(1).map(part =>
-            part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
-          ).join(' ')
-          formattedName = otherNames ? `${surname}, ${otherNames}` : surname
-        }
-
-        const { error: insertError } = await supabase
+        // Step 2: ACCOUNT CLAIMING LOGIC
+        // Check if this email already exists in our legacy directory (the 97 officers)
+        const { data: existingOfficer } = await supabase
           .from('administrative_officers')
-          .insert({
-            id: data.user.id,
-            email_address: email.trim().toLowerCase(),
-            full_name: formattedName,
-            phone_number: '',
-            birth_month_day: '',
-            current_mda: '',
-            grade_level: '',
-            lga: '',
-            hobbies: '',
-            about_me: '',
-            photo_url: '',
-            is_approved: false,
-            is_admin: false,
-            needs_password_change: false,
-          })
+          .select('email_address')
+          .eq('email_address', email.trim().toLowerCase())
+          .maybeSingle();
 
-        if (insertError) {
-          console.error('Profile insert error:', insertError)
-          // Don't block the user — the auth account was created, they just won't have a profile row yet
-          // The middleware/login flow will handle the pending state
+        if (existingOfficer) {
+          // CLAIM FLOW: Link the existing profile to this new Auth ID
+          const { error: updateError } = await supabase
+            .from('administrative_officers')
+            .update({
+              id: data.user.id,
+              needs_password_change: false // They just set their password
+            })
+            .eq('email_address', email.trim().toLowerCase());
+
+          if (updateError) console.error('Link error:', updateError);
+        } else {
+          // NEW USER FLOW: Create a fresh profile
+          let formattedName = fullName.trim()
+          const cleanName = formattedName.replace(/,/g, ' ').trim()
+          const parts = cleanName.split(/\s+/)
+          if (parts.length > 0) {
+            const surname = parts[0].toUpperCase()
+            const otherNames = parts.slice(1).map(part =>
+              part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+            ).join(' ')
+            formattedName = otherNames ? `${surname}, ${otherNames}` : surname
+          }
+
+          const { error: insertError } = await supabase
+            .from('administrative_officers')
+            .insert({
+              id: data.user.id,
+              email_address: email.trim().toLowerCase(),
+              full_name: formattedName,
+              is_approved: false,
+              is_admin: false,
+              needs_password_change: false,
+            })
+
+          if (insertError) console.error('Profile insert error:', insertError)
         }
 
-        // Redirect to pending approval — they need admin verification
+        // Redirect to pending approval
         router.push('/pending-approval')
       }
     } catch (err: unknown) {

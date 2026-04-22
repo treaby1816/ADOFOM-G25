@@ -183,7 +183,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
 
     if (success) {
         return (
-            <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-[500] flex items-center justify-center p-4">
                 <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
                 <div className="relative bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl max-w-sm w-full p-10 text-center animate-modal-in border border-white/60 dark:border-zinc-800">
                     <div className="inline-flex items-center justify-center p-4 bg-green-100 dark:bg-emerald-900/30 rounded-full mb-4">
@@ -200,7 +200,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
     const labelClass = "flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wide mb-1.5";
 
     return (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4" onClick={onClose}>
+        <div className="fixed inset-0 z-[500] flex items-center justify-center p-4" onClick={onClose}>
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" />
             <div
                 className="relative bg-gradient-to-br from-green-50 via-white to-emerald-50 dark:from-zinc-900 dark:via-zinc-900/95 dark:to-emerald-950/40 rounded-3xl shadow-[0_0_50px_-12px_rgba(16,185,129,0.3)] max-w-lg w-full max-h-[90vh] overflow-y-auto animate-modal-in border border-white/60 dark:border-zinc-800"

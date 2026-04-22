@@ -40,6 +40,14 @@ export default function ApprovalsPage() {
   // Admin access guard — verify before rendering any data
   useEffect(() => {
     async function verifyAdminAccess() {
+      // High Speed Cache: Check if we already verified this session
+      const cachedAdmin = sessionStorage.getItem('is_admin_verified');
+      if (cachedAdmin === 'true') {
+        setIsAuthorized(true);
+        setAuthChecking(false);
+        return;
+      }
+
       try {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
@@ -59,6 +67,7 @@ export default function ApprovalsPage() {
           return
         }
 
+        sessionStorage.setItem('is_admin_verified', 'true');
         setIsAuthorized(true)
       } catch (err) {
         console.error('Admin guard error:', err)
@@ -149,15 +158,17 @@ export default function ApprovalsPage() {
     setProcessingId(null)
   }
 
-  const filteredOfficers = officers.filter(o => {
-    const query = searchQuery.toLowerCase().trim()
-    const matchesSearch = o.full_name?.toLowerCase().includes(query) ||
-      o.email_address?.toLowerCase().includes(query)
-    const matchesFilter = filter === 'all' ||
-      (filter === 'pending' && !o.is_approved) ||
-      (filter === 'approved' && o.is_approved)
-    return matchesSearch && matchesFilter
-  })
+  const filteredOfficers = useMemo(() => {
+    return officers.filter(o => {
+      const query = searchQuery.toLowerCase().trim()
+      const matchesSearch = o.full_name?.toLowerCase().includes(query) ||
+        o.email_address?.toLowerCase().includes(query)
+      const matchesFilter = filter === 'all' ||
+        (filter === 'pending' && !o.is_approved) ||
+        (filter === 'approved' && o.is_approved)
+      return matchesSearch && matchesFilter
+    })
+  }, [officers, searchQuery, filter])
 
   return (
     <>

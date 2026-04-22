@@ -15,7 +15,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import NotificationDrawer from "@/components/ui/NotificationDrawer";
 import { Officer } from "@/types/officer";
 import { Users, Shield, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { normalizeLGA, normalizeMDA, formatBirthday } from "@/lib/dataConsolidation";
 
@@ -29,7 +29,9 @@ import SignOutButton from "@/components/SignOutButton";
 import Link from "next/link";
 import { Settings, ShieldCheck } from "lucide-react";
 
-export default function Home() {
+export default function DashboardPage() {
+  const supabase = useMemo(() => createClient(), []);
+  
   const [officers, setOfficers] = useState<Officer[]>([]);
 
   // State
@@ -136,30 +138,24 @@ export default function Home() {
     setNewOfficers(recentAdditions);
   }, [officers]);
 
-  // Filtered and Sorted officers
+  // 1. Memoized filtering for 60fps search performance
   const processedOfficers = useMemo(() => {
-    const result = officers.filter((o) => {
-      // Safe string matching, case-insensitive, ignores extra spaces
-      const safeName = (o.full_name || "").toLowerCase();
-      const safeQuery = (searchQuery || "").trim().toLowerCase();
-      const matchesSearch = !safeQuery || safeName.includes(safeQuery);
+    return officers.filter((officer) => {
+      const matchesSearch =
+        officer.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        officer.email_address?.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesLga = !lgaFilter || (o.lga || "").trim().toLowerCase().replace(/\s+/g, " ") === lgaFilter;
-      const matchesMonth =
-        !monthFilter || o.birth_month_day.startsWith(monthFilter);
-      const matchesMda = !mdaFilter || (o.current_mda || "").trim().toLowerCase().replace(/\s+/g, " ") === mdaFilter;
+      const matchesLga = !lgaFilter || (officer.lga || "").trim().toLowerCase().replace(/\s+/g, " ") === lgaFilter;
+      const matchesMonth = !monthFilter || officer.birth_month_day.startsWith(monthFilter);
+      const matchesMda = !mdaFilter || (officer.current_mda || "").trim().toLowerCase().replace(/\s+/g, " ") === mdaFilter;
+      
       return matchesSearch && matchesLga && matchesMonth && matchesMda;
-    });
-
-    // Sort Logic
-    result.sort((a, b) => {
+    }).sort((a, b) => {
       if (sortOption === "name-asc") {
         return a.full_name.localeCompare(b.full_name);
       } else if (sortOption === "name-desc") {
         return b.full_name.localeCompare(a.full_name);
       } else if (sortOption === "level-senior") {
-        // Very simple seniority sort based on Grade Level string (e.g. "GL 14" vs "GL 12")
-        // Assuming higher number = more senior
         const aLevel = parseInt(a.grade_level.replace(/\D/g, "")) || 0;
         const bLevel = parseInt(b.grade_level.replace(/\D/g, "")) || 0;
         return bLevel - aLevel;

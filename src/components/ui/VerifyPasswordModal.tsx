@@ -67,7 +67,7 @@ export default function VerifyPasswordModal({
     };
 
     return (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4" onClick={onClose}>
+        <div className="fixed inset-0 z-[600] flex items-center justify-center p-4" onClick={onClose}>
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-fade-in" />
 
             <div
