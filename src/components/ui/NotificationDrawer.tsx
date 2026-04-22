@@ -75,10 +75,10 @@ export default function NotificationDrawer() {
       </button>
 
       {/* Overlay */}
-      {isOpen && <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40" onClick={() => setIsOpen(false)} />}
+      {isOpen && <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[150]" onClick={() => setIsOpen(false)} />}
 
       {/* Drawer */}
-      <div className={`fixed top-0 right-0 h-full w-85 bg-[#0f172a] border-l border-white/10 shadow-2xl z-50 transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`fixed top-0 right-0 h-full w-[100%] sm:w-85 bg-[#0f172a] border-l border-white/10 shadow-2xl z-[200] transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="flex items-center justify-between p-5 border-b border-white/10 bg-emerald-950/20">
           <div className="flex items-center gap-2">
             <BellRing className="text-emerald-400" size={20} />
@@ -95,7 +95,13 @@ export default function NotificationDrawer() {
                 <span>Clear</span>
               </button>
             )}
-            <button onClick={() => setIsOpen(false)} className="text-white/40 hover:text-white"><X size={22} /></button>
+            <button 
+              onClick={() => setIsOpen(false)} 
+              className="p-2 rounded-full bg-white/10 hover:bg-red-500/20 text-white/60 hover:text-red-400 transition-all active:scale-95"
+              aria-label="Close"
+            >
+              <X size={24} />
+            </button>
           </div>
         </div>
 
