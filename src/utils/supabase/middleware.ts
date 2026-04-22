@@ -49,6 +49,17 @@ export async function updateSession(request: NextRequest) {
       return NextResponse.redirect(url)
   }
 
+  // FORCE PROFILE SETUP: If user has 'needs_setup' metadata, force them to the setup page
+  if (user && user.user_metadata?.needs_setup === true) {
+      if (request.nextUrl.pathname !== '/dashboard/setup-profile' && 
+          !request.nextUrl.pathname.startsWith('/_next') && 
+          !request.nextUrl.pathname.includes('api/auth')) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/dashboard/setup-profile'
+          return NextResponse.redirect(url)
+      }
+  }
+
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:

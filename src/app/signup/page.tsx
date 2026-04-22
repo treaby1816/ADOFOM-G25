@@ -29,20 +29,47 @@ export default function SignupPage() {
 
     if (password.length < 6) {
       setMessage({ type: 'error', text: 'Password must be at least 6 characters.' })
-      setIsLoading(false)
       return
     }
 
     try {
-      // Step 1: Create the auth user — NO email confirmation, NO OTP
+      setIsLoading(true)
+      setMessage(null)
+
+      // Step 1: WHITELIST CHECK
+      // Check if the email exists in the administrative_officers table (The Whitelist)
+      const { data: whitelistData, error: whitelistError } = await supabase
+        .from('administrative_officers')
+        .select('email_address')
+        .eq('email_address', email.trim().toLowerCase())
+        .maybeSingle();
+
+      if (whitelistError) {
+        console.error('Whitelist check error:', whitelistError);
+        setMessage({ type: 'error', text: 'Security check failed. Please try again.' });
+        setIsLoading(false);
+        return;
+      }
+
+      if (!whitelistData) {
+        setMessage({ 
+          type: 'error', 
+          text: 'This email is not authorized to join the portal. Please contact the Administrator to be added to the official register.' 
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Step 2: Create Auth User
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
-            full_name: fullName,
-          },
-        },
+            full_name: fullName.trim(),
+            needs_setup: true // Industry standard "Setup Guard"
+          }
+        }
       })
 
       if (error) {
@@ -104,9 +131,9 @@ export default function SignupPage() {
         }
 
         // Redirect to pending approval
-        // Redirect to pending approval
-        setMessage({ type: 'success', text: 'Account created! Redirecting to approval page...' });
-        setTimeout(() => router.push('/pending-approval'), 1500);
+        // Redirect to Profile Setup
+        setMessage({ type: 'success', text: 'Authorized! Redirecting to profile setup...' });
+        setTimeout(() => router.push('/dashboard/setup-profile'), 1500);
       }
     } catch (err: unknown) {
       setMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' })

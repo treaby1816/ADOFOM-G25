@@ -141,6 +141,11 @@ export default function SetupProfilePage() {
 
       if (dbError) throw dbError
 
+      // Update Auth Metadata to clear the "Needs Setup" guard
+      await supabase.auth.updateUser({
+        data: { needs_setup: false }
+      })
+
       setSuccess(true)
       setTimeout(() => router.push('/'), 2000)
     } catch (err: any) {
