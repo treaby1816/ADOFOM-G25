@@ -58,7 +58,8 @@ export default function PendingApproval() {
           router.push('/')
         } else {
           console.log('No officer record found for user ID:', user.id);
-        }
+      }
+    }
     checkApproval()
   }, [supabase, router])
 
