@@ -423,10 +423,6 @@ export default function DashboardPage() {
           <ShieldCheck size={28} />
         </Link>
       )}
-      {/* Mobile Debug Badge */}
-      <div className="fixed bottom-2 left-2 z-50 pointer-events-none opacity-20 text-[8px] text-slate-500 font-mono">
-        {debugStatus}
-      </div>
     </main>
   );
 }
