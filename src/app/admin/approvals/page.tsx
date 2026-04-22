@@ -28,6 +28,7 @@ export default function ApprovalsPage() {
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved'>('all')
   const [processingId, setProcessingId] = useState<string | null>(null) // Track specific button clicks
   const [error, setError] = useState<string | null>(null)
+  const [connectionError, setConnectionError] = useState(false)
   const [isAuthorized, setIsAuthorized] = useState(false)
   const [authChecking, setAuthChecking] = useState(true)
 
@@ -73,19 +74,26 @@ export default function ApprovalsPage() {
   const fetchOfficers = useCallback(async () => {
     setLoading(true)
     setError(null)
-    const { data, error: sbError } = await supabase
-      .from('administrative_officers')
-      .select('id, full_name, email_address, current_mda, is_approved, is_admin, created_at')
-      .order('is_approved', { ascending: true }) // Show pending at the top
-      .order('created_at', { ascending: false })
+    setConnectionError(false)
+    try {
+      const { data, error: sbError } = await supabase
+        .from('administrative_officers')
+        .select('id, full_name, email_address, current_mda, is_approved, is_admin, created_at')
+        .order('is_approved', { ascending: true }) // Show pending at the top
+        .order('created_at', { ascending: false })
 
-    if (sbError) {
+      if (sbError) {
+        throw sbError
+      } else if (data) {
+        setOfficers(data)
+      }
+    } catch (err: any) {
       setError("Failed to load officers. Please check your permissions.")
-      console.error(sbError)
-    } else if (data) {
-      setOfficers(data)
+      setConnectionError(true)
+      console.error(err)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [supabase])
 
   useEffect(() => {
@@ -226,6 +234,22 @@ export default function ApprovalsPage() {
             <div className="p-20 flex flex-col items-center justify-center text-slate-400 gap-4">
               <Loader2 className="animate-spin text-yellow-500" size={40} />
               <p className="font-medium animate-pulse uppercase tracking-widest text-xs">Syncing with database...</p>
+            </div>
+          ) : connectionError ? (
+            <div className="p-20 text-center flex flex-col items-center justify-center gap-6">
+              <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/20">
+                <AlertTriangle className="text-red-500" size={32} />
+              </div>
+              <div>
+                <p className="text-white font-bold text-lg mb-1">Database Sync Interrupted</p>
+                <p className="text-slate-400 text-sm max-w-xs mx-auto">We couldn't retrieve the officer list. This might be due to a temporary security update.</p>
+              </div>
+              <button
+                onClick={() => fetchOfficers()}
+                className="px-8 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-2xl shadow-lg shadow-red-500/30 transition-all active:scale-95"
+              >
+                Retry Connection
+              </button>
             </div>
           ) : filteredOfficers.length === 0 ? (
             <div className="p-20 text-center text-slate-500">

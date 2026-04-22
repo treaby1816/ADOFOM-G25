@@ -14,8 +14,9 @@ import ScrollButtons from "@/components/ui/ScrollButtons";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import NotificationDrawer from "@/components/ui/NotificationDrawer";
 import { Officer } from "@/types/officer";
-import { Users, Shield, ChevronLeft, ChevronRight } from "lucide-react";
+import { Users, Shield, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 import { normalizeLGA, normalizeMDA, formatBirthday } from "@/lib/dataConsolidation";
 
 // Month names for birthday matching
@@ -46,54 +47,55 @@ export default function Home() {
   const [birthdayOfficers, setBirthdayOfficers] = useState<Officer[]>([]);
   const [newOfficers, setNewOfficers] = useState<Officer[]>([]);
   const [isLoading, setIsLoading] = useState(true); // Added for skeleton demo
-
+  const [connectionError, setConnectionError] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
 
   // Fetch officers from Supabase
-  useEffect(() => {
-    const fetchOfficers = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        let fetchedIsAdmin = false;
+  const fetchOfficers = async () => {
+    setIsLoading(true);
+    setConnectionError(false);
+    setError(null);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
 
-        const { data, error: fetchError } = await supabase
-          .from("administrative_officers")
-          .select("*");
+      const { data, error: fetchError } = await supabase
+        .from("administrative_officers")
+        .select("*");
 
-        if (fetchError) {
-          console.error("Error fetching officers:", fetchError);
-          setError(`Supabase Error [${fetchError.code || 'UNKNOWN'}]: ${fetchError.message}. Env: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'MISSING'}`);
-        } else if (data) {
-          const processedData = (data as Officer[]).map(officer => ({
-            ...officer,
-            lga: normalizeLGA(officer.lga),
-            current_mda: normalizeMDA(officer.current_mda),
-            birth_month_day: formatBirthday(officer.birth_month_day)
-          }));
+      if (fetchError) {
+        console.error("Error fetching officers:", fetchError);
+        setConnectionError(true);
+        toast.error("Directory sync failed.");
+      } else if (data) {
+        const processedData = (data as Officer[]).map(officer => ({
+          ...officer,
+          lga: normalizeLGA(officer.lga),
+          current_mda: normalizeMDA(officer.current_mda),
+          birth_month_day: formatBirthday(officer.birth_month_day)
+        }));
 
-          const sortedData = processedData.sort((a, b) =>
-            a.full_name.localeCompare(b.full_name)
-          );
-          setOfficers(sortedData);
+        const sortedData = processedData.sort((a, b) =>
+          a.full_name.localeCompare(b.full_name)
+        );
+        setOfficers(sortedData);
 
-          if (user) {
-            const currentUserObj = (data as Officer[]).find(o => o.id === user.id);
-            if (currentUserObj?.is_admin === true) {
-              setIsAdmin(true);
-            }
+        if (user) {
+          const currentUserObj = (data as Officer[]).find(o => o.id === user.id);
+          if (currentUserObj?.is_admin === true) {
+            setIsAdmin(true);
           }
         }
-      } catch (err: any) {
-        console.error("Unexpected error:", err);
-        setError(`Unexpected Crash: ${err?.message || String(err)}. Env: ${process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Present' : 'MISSING'}`);
-      } finally {
-        setIsLoading(false);
       }
-    };
+    } catch (err: any) {
+      console.error("Unexpected error:", err);
+      setConnectionError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchOfficers();
   }, []);
 
@@ -287,12 +289,7 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-6">
 
         {/* Error Banner */}
-        {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl mb-6 flex flex-col gap-1 shadow-sm dark:bg-red-950/30 dark:border-red-500/50">
-            <h3 className="font-bold text-red-800 dark:text-red-400">Connection Error</h3>
-            <p className="text-red-600 dark:text-red-300 text-sm font-mono break-all">{error}</p>
-          </div>
-        )}
+
 
         {/* Search & Filter Bar */}
         <SearchAndFilter
@@ -332,6 +329,22 @@ export default function Home() {
               </div>
             ))}
           </div>
+        ) : connectionError ? (
+          <div className="text-center py-20 px-6 bg-red-50/30 dark:bg-red-950/10 rounded-[3rem] border border-red-200/50 dark:border-red-900/20 backdrop-blur-md">
+            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/30 mb-6">
+              <AlertCircle size={36} className="text-red-500" />
+            </div>
+            <h3 className="text-2xl font-black text-slate-800 dark:text-zinc-100 mb-2 tracking-tight">Sync Interrupted</h3>
+            <p className="text-slate-500 dark:text-zinc-400 max-w-sm mx-auto mb-8 font-medium">
+              We're having trouble reaching the directory. This might be due to a temporary network issue or a security update.
+            </p>
+            <button
+              onClick={() => fetchOfficers()}
+              className="px-8 py-3.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-2xl shadow-lg shadow-red-500/30 transition-all active:scale-95 cursor-pointer"
+            >
+              Retry Connection
+            </button>
+          </div>
         ) : paginatedOfficers.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-5">
             {paginatedOfficers.map((officer, index) => (
@@ -349,8 +362,8 @@ export default function Home() {
           </div>
         ) : (
           <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 mb-4">
-              <Users size={28} className="text-slate-400" />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-zinc-800/50 mb-4">
+              <Users size={28} className="text-slate-400 dark:text-zinc-600" />
             </div>
             <p className="text-lg font-semibold text-slate-600 dark:text-zinc-300">
               No officers found
