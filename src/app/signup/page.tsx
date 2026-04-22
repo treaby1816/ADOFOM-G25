@@ -117,8 +117,10 @@ export default function SignupPage() {
         setMessage({ type: 'success', text: 'Authorized! Redirecting to profile setup...' });
         setTimeout(() => router.push('/dashboard/setup-profile'), 1500);
       }
-    } catch (err: unknown) {
-      setMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' })
+    } catch (err: any) {
+      console.error("Signup error:", err);
+      const errorMsg = typeof err === 'string' ? err : (err?.message || 'An unexpected error occurred. Please try again.');
+      setMessage({ type: 'error', text: errorMsg })
     } finally {
       setIsLoading(false)
     }
@@ -167,7 +169,6 @@ export default function SignupPage() {
         <form className="mt-8 space-y-5" onSubmit={handleSignup}>
           <div className="space-y-4">
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
                 <Mail className="h-5 w-5" />
               </div>
@@ -256,6 +257,11 @@ export default function SignupPage() {
             </Link>
           </p>
         </div>
+        </div>
+
+        {/* Version Check to force mobile refresh */}
+        <div className="mt-8 text-center opacity-10 text-[10px] text-white">
+          ADOFOM Portal v2.0 - Optimized
         </div>
       </div>
     </div>
