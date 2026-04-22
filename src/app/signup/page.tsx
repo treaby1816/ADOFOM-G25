@@ -46,9 +46,14 @@ export default function SignupPage() {
       })
 
       if (error) {
-        setMessage({ type: 'error', text: error.message })
-        setIsLoading(false)
-        return
+        console.error('Signup Auth Error:', error.message);
+        if (error.message.toLowerCase().includes('already registered')) {
+          setMessage({ type: 'error', text: 'This email is already registered. Please go to the Login page instead.' })
+        } else {
+          setMessage({ type: 'error', text: error.message })
+        }
+        setIsLoading(false);
+        return;
       }
       
       if (data.user) {
@@ -99,7 +104,9 @@ export default function SignupPage() {
         }
 
         // Redirect to pending approval
-        router.push('/pending-approval')
+        // Redirect to pending approval
+        setMessage({ type: 'success', text: 'Account created! Redirecting to approval page...' });
+        setTimeout(() => router.push('/pending-approval'), 1500);
       }
     } catch (err: unknown) {
       setMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' })
