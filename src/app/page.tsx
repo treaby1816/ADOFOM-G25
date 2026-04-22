@@ -417,7 +417,7 @@ export default function DashboardPage() {
       {isAdmin && (
         <Link
           href="/admin/approvals"
-          className="md:hidden fixed bottom-6 right-6 z-[100] flex items-center justify-center w-14 h-14 bg-yellow-500 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.4)] border border-yellow-400 text-yellow-950 hover:scale-105 active:scale-95 transition-all text-xl"
+          className="md:hidden fixed bottom-6 left-6 z-[100] flex items-center justify-center w-14 h-14 bg-yellow-500 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.4)] border border-yellow-400 text-yellow-950 hover:scale-105 active:scale-95 transition-all text-xl"
           title="Admin Panel"
         >
           <ShieldCheck size={28} />
