@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { Clock, Mail, Phone, LogOut, ShieldCheck } from 'lucide-react'
 
 export default function PendingApproval() {
@@ -12,6 +13,37 @@ export default function PendingApproval() {
     await supabase.auth.signOut()
     router.push('/login')
   }
+
+  // SELF-HEALING: Auto-approve legacy officers stuck on this page
+  useEffect(() => {
+    const checkApproval = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        // Check if they are a legacy officer in the DB
+        const { data: officer } = await supabase
+          .from('administrative_officers')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle()
+
+        if (officer && !officer.is_approved) {
+          const isLegacyAndComplete = officer.full_name && officer.full_name !== 'New User' && officer.current_mda;
+          if (isLegacyAndComplete) {
+            console.log('Self-healing: Auto-approving legacy officer');
+            await supabase
+              .from('administrative_officers')
+              .update({ is_approved: true })
+              .eq('id', user.id);
+            
+            router.push('/') // Redirect to dashboard instantly
+          }
+        } else if (officer?.is_approved) {
+          router.push('/') // Already approved, just go
+        }
+      }
+    }
+    checkApproval()
+  }, [supabase, router])
 
   return (
     <div className="min-h-screen bg-hero-gradient flex items-center justify-center p-6 text-white">
