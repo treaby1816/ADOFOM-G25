@@ -19,6 +19,7 @@ interface EditProfileFormModalProps {
 interface ProfileFormValues {
     full_name: string;
     phone_number: string;
+    secondary_phone_number?: string;
     current_mda: string;
     grade_level: string;
     lga: string;
@@ -33,6 +34,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
         defaultValues: {
             full_name: officer.full_name || "",
             phone_number: officer.phone_number || "",
+            secondary_phone_number: officer.secondary_phone_number || "",
             current_mda: officer.current_mda || "",
             grade_level: officer.grade_level || "",
             lga: officer.lga || "",
@@ -154,6 +156,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
             const updateData = {
                 full_name: formattedName,
                 phone_number: data.phone_number.trim(),
+                secondary_phone_number: data.secondary_phone_number?.trim() || "",
                 current_mda: data.current_mda.trim(),
                 grade_level: data.grade_level.trim(),
                 lga: data.lga.trim(),
@@ -365,10 +368,17 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                         </div>
                         <div>
                             <label className={labelClass}>
-                                <Heart size={12} className="text-emerald-500" /> Hobbies
+                                <Phone size={12} className="text-emerald-500" /> Sec. Phone (Optional)
                             </label>
-                            <input type="text" {...register("hobbies")} className={inputClass} placeholder="Reading, Music" />
+                            <input type="tel" {...register("secondary_phone_number")} className={inputClass} placeholder="e.g. 2348012345679" />
                         </div>
+                    </div>
+
+                    <div>
+                        <label className={labelClass}>
+                            <Heart size={12} className="text-emerald-500" /> Hobbies
+                        </label>
+                        <input type="text" {...register("hobbies")} className={inputClass} placeholder="Reading, Music" />
                     </div>
 
                     <div>

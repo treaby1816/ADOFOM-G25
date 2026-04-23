@@ -9,6 +9,7 @@ export interface Officer {
     lga: string;
     birth_month_day: string;
     phone_number: string;
+    secondary_phone_number?: string;
     hobbies: string;
     about_me: string;
     is_admin?: boolean;

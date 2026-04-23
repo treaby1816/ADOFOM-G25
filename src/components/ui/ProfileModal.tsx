@@ -265,17 +265,27 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                         </div>
 
                         {/* Contact Buttons */}
-                        <div className="flex gap-4">
+                        <div className="flex flex-wrap gap-4">
                             <a
                                 href={`tel:+${currentOfficer.phone_number}`}
-                                className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-white dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 font-bold hover:bg-green-50 hover:text-green-700 hover:border-green-200 dark:hover:bg-emerald-950/40 dark:hover:border-emerald-800/50 shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95 transition-all duration-300 text-sm"
+                                className="flex-1 min-w-[100px] flex flex-col sm:flex-row items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-white dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 font-bold hover:bg-green-50 hover:text-green-700 hover:border-green-200 dark:hover:bg-emerald-950/40 dark:hover:border-emerald-800/50 shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95 transition-all duration-300 text-sm"
                             >
                                 <Phone size={18} className="text-slate-400 dark:text-zinc-400 group-hover:text-green-500 dark:group-hover:text-emerald-500" />
                                 Call
                             </a>
+                            {currentOfficer.secondary_phone_number && (
+                                <a
+                                    href={`tel:+${currentOfficer.secondary_phone_number}`}
+                                    className="flex-1 min-w-[100px] flex flex-col sm:flex-row items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-white dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 font-bold hover:bg-green-50 hover:text-green-700 hover:border-green-200 dark:hover:bg-emerald-950/40 dark:hover:border-emerald-800/50 shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95 transition-all duration-300 text-sm"
+                                    title="Call Secondary Number"
+                                >
+                                    <Phone size={18} className="text-slate-400 dark:text-zinc-400 group-hover:text-green-500 dark:group-hover:text-emerald-500" />
+                                    Call 2
+                                </a>
+                            )}
                             <a
                                 href={`mailto:${currentOfficer.email_address}`}
-                                className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-white dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 font-bold hover:bg-green-50 hover:text-green-700 hover:border-green-200 dark:hover:bg-emerald-950/40 dark:hover:border-emerald-800/50 shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95 transition-all duration-300 text-sm"
+                                className="flex-1 min-w-[100px] flex flex-col sm:flex-row items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-white dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700 text-slate-700 dark:text-zinc-200 font-bold hover:bg-green-50 hover:text-green-700 hover:border-green-200 dark:hover:bg-emerald-950/40 dark:hover:border-emerald-800/50 shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95 transition-all duration-300 text-sm"
                             >
                                 <Mail size={18} className="text-slate-400 dark:text-zinc-400 group-hover:text-green-500 dark:group-hover:text-emerald-500" />
                                 Email
@@ -284,7 +294,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                                 href={`https://wa.me/${currentOfficer.phone_number}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex-1 flex flex-col sm:flex-row items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold hover:from-green-500 hover:to-emerald-400 shadow-md hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-1 active:scale-95 transition-all duration-300 text-sm"
+                                className="flex-1 min-w-[100px] flex flex-col sm:flex-row items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold hover:from-green-500 hover:to-emerald-400 shadow-md hover:shadow-lg hover:shadow-green-500/30 hover:-translate-y-1 active:scale-95 transition-all duration-300 text-sm"
                             >
                                 <MessageCircle size={18} />
                                 WhatsApp

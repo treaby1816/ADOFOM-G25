@@ -21,6 +21,7 @@ export default function SetupProfilePage() {
     lga: '',
     birth_month_day: '',
     phone_number: '',
+    secondary_phone_number: '',
     hobbies: '',
     about_me: '',
     photo_url: ''
@@ -73,6 +74,7 @@ export default function SetupProfilePage() {
             lga: existingProfile.lga || '',
             birth_month_day: existingProfile.birth_month_day || '',
             phone_number: existingProfile.phone_number || '',
+            secondary_phone_number: existingProfile.secondary_phone_number || '',
             hobbies: existingProfile.hobbies || '',
             about_me: existingProfile.about_me || '',
             photo_url: existingProfile.photo_url || ''
@@ -86,6 +88,7 @@ export default function SetupProfilePage() {
             grade_level: whitelistEntry?.grade_level || '',
             lga: whitelistEntry?.lga || '',
             phone_number: whitelistEntry?.phone_number || '',
+            secondary_phone_number: '', // Whitelist doesn't have this field
             birth_month_day: whitelistEntry?.birth_month_day || '',
           }))
         }
@@ -229,6 +232,19 @@ export default function SetupProfilePage() {
                       name="phone_number"
                       required
                       value={formData.phone_number}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                      <Phone size={14} /> Sec. Phone (Optional)
+                    </label>
+                    <input
+                      type="tel"
+                      name="secondary_phone_number"
+                      value={formData.secondary_phone_number}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
                     />
