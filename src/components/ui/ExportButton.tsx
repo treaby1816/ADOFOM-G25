@@ -53,9 +53,9 @@ export default function ExportButton({ officers, filename = "ondo_admin_director
     return (
         <button
             onClick={handleExport}
-            disabled={officers.length === 0}
-            className="flex items-center gap-2 btn-gold shadow-sm hover:shadow-md transition-all duration-300 font-semibold text-sm px-4 py-2.5 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
-            title="Export to CSV Spreadsheet"
+            disabled={true}
+            className="flex items-center gap-2 btn-gold shadow-sm transition-all duration-300 font-semibold text-sm px-4 py-2.5 rounded-xl opacity-40 cursor-not-allowed"
+            title="Export disabled — Data protection policy"
         >
             <Download size={16} />
             <span className="hidden sm:inline">Export CSV</span>
