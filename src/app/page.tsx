@@ -18,6 +18,7 @@ import { Users, Shield, ChevronLeft, ChevronRight, AlertCircle } from "lucide-re
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { normalizeLGA, normalizeMDA, formatBirthday } from "@/lib/dataConsolidation";
+import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
 
 // Month names for birthday matching
 const MONTH_NAMES = [
@@ -88,7 +89,11 @@ export default function DashboardPage() {
         setDebugStatus(`Connected: Found ${data?.length || 0} officers`);
         if (user) {
           const currentUserObj = (data as Officer[]).find(o => o.id === user.id);
-          if (currentUserObj?.is_admin === true) {
+          const userEmail = user.email?.trim().toLowerCase() || '';
+          const whitelistEntry = WHITELIST_OFFICERS[userEmail];
+          
+          // Admin check: DB first, whitelist fallback
+          if (currentUserObj?.is_admin === true || whitelistEntry?.is_admin === true) {
             setIsAdmin(true);
           }
         }

@@ -19,16 +19,24 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
     const [showEditForm, setShowEditForm] = useState(false);
     const [currentOfficer, setCurrentOfficer] = useState(officer);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+    const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
 
-    // Fetch logged-in user's ID to gate the Edit button
+    // Fetch logged-in user's ID and email to gate the Edit button
     useEffect(() => {
         const supabase = createClient();
         supabase.auth.getUser().then(({ data: { user } }) => {
-            if (user) setCurrentUserId(user.id);
+            if (user) {
+                setCurrentUserId(user.id);
+                setCurrentUserEmail(user.email?.trim().toLowerCase() || null);
+            }
         });
     }, []);
 
-    const isOwnProfile = currentUserId !== null && currentOfficer.id === currentUserId;
+    // Match by ID first, then fallback to email match
+    const isOwnProfile = currentUserId !== null && (
+        currentOfficer.id === currentUserId ||
+        (currentUserEmail !== null && currentOfficer.email_address?.trim().toLowerCase() === currentUserEmail)
+    );
 
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
