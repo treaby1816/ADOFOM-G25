@@ -164,9 +164,11 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 photo_position: data.photo_position,
             };
 
-            // Use auth.uid() for the update filter — RLS policy requires id = auth.uid()
-            // officer.id might differ if the profile was matched by email fallback
-            const { data: returnedData, error: updateError } = await supabase
+            // Try updating by auth.uid() first (works for users who signed up)
+            // If no row matched, fall back to email (works for imported/pre-existing officers)
+            const userEmail = user.email?.trim().toLowerCase() || "";
+
+            let { data: returnedData, error: updateError } = await supabase
                 .from("administrative_officers")
                 .update(updateData)
                 .eq("id", authUid)
@@ -176,10 +178,26 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 setError(`Failed to save: ${updateError.message}`);
                 return;
             }
+
+            // Fallback: if auth ID didn't match any row, try by email address
             if (!returnedData || returnedData.length === 0) {
-                // Detailed diagnostic: the auth user has no matching row in the table
-                setError(`Update failed: No profile row found for your auth ID. Your account may need to be re-linked. Please contact the administrator.`);
-                setDebugInfo(`auth.uid=${authUid}, officer.id=${officer.id}, match=${authUid === officer.id}`);
+                if (userEmail) {
+                    const { data: emailData, error: emailError } = await supabase
+                        .from("administrative_officers")
+                        .update(updateData)
+                        .ilike("email_address", userEmail)
+                        .select();
+
+                    if (emailError) {
+                        setError(`Failed to save: ${emailError.message}`);
+                        return;
+                    }
+                    returnedData = emailData;
+                }
+            }
+
+            if (!returnedData || returnedData.length === 0) {
+                setError(`Update failed: No profile row found for your account. Please contact the administrator.`);
                 return;
             }
 
