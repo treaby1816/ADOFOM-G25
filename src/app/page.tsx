@@ -200,6 +200,7 @@ export default function DashboardPage() {
           <NavigationDrawer
             isAdmin={isAdmin}
             officers={officers}
+            filteredOfficers={processedOfficers}
             onViewOwnProfile={setSelectedOfficer}
           />
         </div>
