@@ -439,7 +439,7 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
 
             {/* Sign Out Confirmation Modal */}
             {showSignOutModal && (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center px-4 sm:px-0">
+                <div className="fixed inset-0 z-[10000] flex items-center justify-center px-4 sm:px-0">
                     <div 
                         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
                         onClick={() => setShowSignOutModal(false)}
