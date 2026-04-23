@@ -34,6 +34,9 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
     const [selfIsAdmin, setSelfIsAdmin] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
 
+    // Sign Out Modal State
+    const [showSignOutModal, setShowSignOutModal] = useState(false);
+
     // Export Modal State
     const [showExportModal, setShowExportModal] = useState(false);
     const [exportScope, setExportScope] = useState<'all' | 'filtered'>('all');
@@ -152,8 +155,12 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
     const showInitials = imgError || !myProfile?.photo_url || myProfile.photo_url === "/default-avatar.png";
     const avatarUrl = myProfile ? getDriveViewUrl(myProfile.photo_url) : "";
 
-    const handleSignOut = async () => {
-        if (!confirm("Are you sure you want to sign out?")) return;
+    const handleSignOut = () => {
+        setShowSignOutModal(true);
+    };
+
+    const confirmSignOut = async () => {
+        setShowSignOutModal(false);
         setIsOpen(false);
         await supabase.auth.signOut();
         router.push("/login");
@@ -429,6 +436,47 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
                 {/* Mobile bottom safe area */}
                 <div className="h-2 sm:hidden" />
             </div>
+
+            {/* Sign Out Confirmation Modal */}
+            {showSignOutModal && (
+                <div className="fixed inset-0 z-[70] flex items-center justify-center px-4 sm:px-0">
+                    <div 
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
+                        onClick={() => setShowSignOutModal(false)}
+                    />
+                    <div className="relative w-full max-w-sm bg-gradient-to-b from-[#111827] to-[#0d131f] border border-white/10 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                        {/* Header Banner */}
+                        <div className="h-1 bg-gradient-to-r from-red-500 to-orange-500 w-full" />
+                        
+                        <div className="p-6">
+                            <div className="flex items-center gap-4 mb-4">
+                                <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center border border-red-500/20 shrink-0">
+                                    <LogOut className="text-red-400" size={24} />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-white">Sign Out</h3>
+                                    <p className="text-sm text-white/60 mt-1">Are you sure you want to log out?</p>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3 mt-8">
+                                <button
+                                    onClick={() => setShowSignOutModal(false)}
+                                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-semibold text-white/70 hover:bg-white/10 hover:text-white transition-all border border-transparent hover:border-white/10"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={confirmSignOut}
+                                    className="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded-xl transition-all active:scale-95 shadow-lg shadow-red-500/20"
+                                >
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Export Options Modal */}
             {showExportModal && (
