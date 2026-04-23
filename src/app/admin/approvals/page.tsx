@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
 interface Officer {
   id: string
@@ -59,9 +60,15 @@ export default function ApprovalsPage() {
           .from('administrative_officers')
           .select('is_admin')
           .eq('id', user.id)
-          .single()
+          .maybeSingle()
 
-        if (profileError || !profile?.is_admin) {
+        const userEmail = user.email?.trim().toLowerCase() || ''
+        const whitelistEntry = WHITELIST_OFFICERS[userEmail]
+        
+        const isDbAdmin = profile?.is_admin === true
+        const isWhitelistAdmin = whitelistEntry?.is_admin === true
+
+        if (!isDbAdmin && !isWhitelistAdmin) {
           console.warn('Admin access denied — redirecting to home.')
           router.replace('/')
           return
