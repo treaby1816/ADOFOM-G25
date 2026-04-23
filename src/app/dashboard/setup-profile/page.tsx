@@ -129,9 +129,24 @@ export default function SetupProfilePage() {
       const finalApprovedStatus = isFelix || whitelistEntry?.is_approved || existingAuthStatus?.is_approved || false
       const finalAdminStatus = isFelix || whitelistEntry?.is_admin || existingAuthStatus?.is_admin || false
 
+      // Format full name to ensure SURNAME is capitalized
+      let formattedName = formData.full_name.trim();
+      if (formattedName) {
+          const cleanName = formattedName.replace(/,/g, ' ').trim();
+          const parts = cleanName.split(/\s+/);
+          if (parts.length > 0) {
+              const surname = parts[0].toUpperCase();
+              const otherNames = parts.slice(1).map(part =>
+                  part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+              ).join(' ');
+              formattedName = otherNames ? `${surname}, ${otherNames}` : surname;
+          }
+      }
+
       const profileData = {
         id: user.id,
         ...formData,
+        full_name: formattedName,
         birth_month_day: formatBirthday(formData.birth_month_day),
         email_address: user.email,
         is_approved: finalApprovedStatus,
