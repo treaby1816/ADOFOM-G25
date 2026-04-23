@@ -147,7 +147,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 current_mda: data.current_mda.trim(),
                 grade_level: data.grade_level.trim(),
                 lga: data.lga.trim(),
-                birth_month_day: parseFromDateInput(data.birth_month_day), // Convert back to MM-DD
+                birth_month_day: data.birth_month_day ? parseFromDateInput(data.birth_month_day) : (officer.birth_month_day || ""), // Preserve existing birthday if untouched
                 hobbies: data.hobbies.trim(),
                 about_me: data.about_me.trim(),
                 photo_url,
@@ -300,7 +300,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                             <label className={labelClass}>
                                 <Cake size={12} className="text-emerald-500" /> Birthday
                             </label>
-                            <input type="date" {...register("birth_month_day", { required: "Birthday is required" })} className={inputClass} />
+                            <input type="date" {...register("birth_month_day")} className={inputClass} />
                             {errors.birth_month_day && <span className="text-[10px] text-red-500 mt-1">{errors.birth_month_day.message}</span>}
                         </div>
                     </div>
