@@ -78,13 +78,14 @@ export default function NotificationDrawer() {
       {isOpen && <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[150]" onClick={() => setIsOpen(false)} />}
 
       {/* Drawer */}
-      <div className={`fixed top-0 right-0 h-full w-[100%] sm:w-85 bg-[#0f172a] border-l border-white/10 shadow-2xl z-[200] transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex items-center justify-between p-5 border-b border-white/10 bg-emerald-950/20">
+      <div className={`fixed inset-0 sm:inset-auto sm:top-0 sm:right-0 sm:h-full sm:w-85 bg-[#0f172a] border-l border-white/10 shadow-2xl z-[200] transform transition-transform duration-300 flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        {/* Header with close button — always visible */}
+        <div className="flex items-center justify-between p-4 pt-5 border-b border-white/10 bg-emerald-950/20 shrink-0">
           <div className="flex items-center gap-2">
             <BellRing className="text-emerald-400" size={20} />
             <h2 className="text-lg font-bold text-white">Activity Feed</h2>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {notifications.length > 0 && (
               <button 
                 onClick={clearAll}
@@ -97,14 +98,15 @@ export default function NotificationDrawer() {
             )}
             <button 
               onClick={() => setIsOpen(false)} 
-              className="p-2 rounded-full bg-white/10 hover:bg-red-500/20 text-white/60 hover:text-red-400 transition-all active:scale-95"
-              aria-label="Close"
+              className="p-2.5 rounded-full bg-white/10 hover:bg-red-500/20 text-white hover:text-red-400 transition-all active:scale-90 border border-white/10"
+              aria-label="Close notifications"
             >
-              <X size={24} />
+              <X size={22} />
             </button>
           </div>
         </div>
 
+        {/* Notification list — scrollable */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {notifications.length > 0 ? (
             notifications.map((n) => (
@@ -135,6 +137,17 @@ export default function NotificationDrawer() {
               <p className="text-sm italic text-balance px-10">All quiet for now. New alerts will appear here.</p>
             </div>
           )}
+        </div>
+
+        {/* Mobile bottom close button — easy to reach with thumb */}
+        <div className="sm:hidden shrink-0 p-4 border-t border-white/10 bg-[#0f172a]">
+          <button 
+            onClick={() => setIsOpen(false)}
+            className="w-full py-3.5 bg-white/10 hover:bg-red-500/20 text-white font-bold rounded-xl border border-white/10 active:scale-95 transition-all flex items-center justify-center gap-2"
+          >
+            <X size={18} />
+            Close Notifications
+          </button>
         </div>
       </div>
     </>
