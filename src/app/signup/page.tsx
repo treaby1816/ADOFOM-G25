@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react'
+import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -85,49 +86,21 @@ export default function SignupPage() {
       }
       
       if (data.user) {
-        // Step 2: ACCOUNT CLAIMING LOGIC
-        // Check if this email already exists in our legacy directory (the 97 officers)
-        const { data: existingOfficer } = await supabase
-          .from('administrative_officers')
-          .select('email_address')
-          .eq('email_address', email.trim().toLowerCase())
-          .maybeSingle();
+        // The database trigger (handle_new_user) automatically:
+        // - Links the auth user to the existing profile
+        // - Sets is_approved = true for legacy officers
+        // - Creates a new profile for unknown emails
+        // We just need to decide where to redirect.
 
-        if (existingOfficer) {
-          // CLAIM FLOW: Link the existing profile to this new Auth ID
-          const { error: updateError } = await supabase
-            .from('administrative_officers')
-            .update({
-              id: data.user.id,
-              is_approved: true, // AUTO-APPROVE existing officers during claim
-              needs_password_change: false 
-            })
-            .eq('email_address', email.trim().toLowerCase());
+        const normalizedEmail = email.trim().toLowerCase()
+        const whitelistEntry = WHITELIST_OFFICERS[normalizedEmail]
+        const isLegacyOfficer = !!whitelistEntry
 
-          if (updateError) console.error('Link error:', updateError);
-        } else {
-          // NEW USER FLOW: Create a fresh profile
-          const { error: insertError } = await supabase
-            .from('administrative_officers')
-            .insert({
-              id: data.user.id,
-              email_address: email.trim().toLowerCase(),
-              full_name: 'New User',
-              is_approved: false,
-              is_admin: false,
-              needs_password_change: false,
-            })
-
-          if (insertError) console.error('Profile insert error:', insertError)
-        }
-
-        // Redirect to pending approval
-        // SMART REDIRECT
-        if (isExistingAndComplete) {
+        if (isLegacyOfficer) {
           setMessage({ type: 'success', text: 'Welcome back! Redirecting to Dashboard...' });
           setTimeout(() => router.push('/'), 1500);
         } else {
-          setMessage({ type: 'success', text: 'Authorized! Redirecting to profile setup...' });
+          setMessage({ type: 'success', text: 'Account created! Redirecting to profile setup...' });
           setTimeout(() => router.push('/dashboard/setup-profile'), 1500);
         }
       }

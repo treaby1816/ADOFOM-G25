@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react'
+import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -83,8 +84,9 @@ export default function LoginPage() {
         return
       }
 
-      // 2. Not approved and not Felix? → Pending approval
-      if (!isFelix && profile?.is_approved !== true) {
+      // 2. Not approved? Check whitelist before sending to pending
+      const isOnWhitelist = !!WHITELIST_OFFICERS[cleanEmail]
+      if (!isFelix && !isOnWhitelist && profile?.is_approved !== true) {
         router.push('/pending-approval')
         return
       }

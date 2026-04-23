@@ -82,25 +82,6 @@ export default function DashboardPage() {
         const sortedData = processedData.sort((a, b) =>
           a.full_name.localeCompare(b.full_name)
         );
-        
-        // SELF-HEALING: Auto-approve legacy officers who are stuck in pending
-        if (user) {
-          const currentUserObj = (data as Officer[]).find(o => o.id === user.id);
-          if (currentUserObj && !currentUserObj.is_approved) {
-            const isLegacyAndComplete = currentUserObj.full_name && currentUserObj.full_name !== 'New User' && currentUserObj.current_mda;
-            if (isLegacyAndComplete) {
-              console.log('Self-healing: Auto-approving legacy officer');
-              await supabase
-                .from('administrative_officers')
-                .update({ is_approved: true })
-                // PHANTOM APPROVAL: Grant access to legacy officers even if database says false
-      const isLegacyAndComplete = currentUserObj.full_name && currentUserObj.full_name !== 'New User' && currentUserObj.current_mda;
-      const finalApprovalState = currentUserObj?.is_approved || isLegacyAndComplete;
-
-      currentUserObj.is_approved = finalApprovalState;
-            }
-          }
-        }
 
         setOfficers(sortedData);
 
