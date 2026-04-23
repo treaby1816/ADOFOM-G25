@@ -32,21 +32,17 @@ export default function SignupPage() {
       setMessage(null)
 
       // Step 1: WHITELIST CHECK
-      // Check if the email exists in the administrative_officers table (The Whitelist)
-      const { data: whitelistData, error: whitelistError } = await supabase
+      const normalizedEmail = email.trim().toLowerCase();
+      const whitelistEntry = WHITELIST_OFFICERS[normalizedEmail];
+
+      // Check the database just to see if they already have a completed profile
+      const { data: dbData } = await supabase
         .from('administrative_officers')
         .select('email_address, full_name, current_mda')
-        .eq('email_address', email.trim().toLowerCase())
+        .eq('email_address', normalizedEmail)
         .maybeSingle();
 
-      if (whitelistError) {
-        console.error('Whitelist check error:', whitelistError);
-        setMessage({ type: 'error', text: 'Security check failed. Please try again.' });
-        setIsLoading(false);
-        return;
-      }
-
-      if (!whitelistData) {
+      if (!whitelistEntry && !dbData) {
         setMessage({ 
           type: 'error', 
           text: `The email "${email.trim().toLowerCase()}" is not authorized. Please contact the Administrator.` 
@@ -56,11 +52,10 @@ export default function SignupPage() {
       }
 
       // SMART CHECK: Is this an existing officer with a complete profile?
-      // Check if full_name is NOT 'New User' and MDA is filled
+      // Use either the DB data or the local whitelist data to bypass setup
       const isExistingAndComplete = 
-        whitelistData.full_name && 
-        whitelistData.full_name !== 'New User' && 
-        whitelistData.current_mda;
+        (dbData?.full_name && dbData?.full_name !== 'New User' && dbData?.current_mda) ||
+        (whitelistEntry?.full_name && whitelistEntry?.current_mda);
 
       // Step 2: Create Auth User
       const { data, error } = await supabase.auth.signUp({
