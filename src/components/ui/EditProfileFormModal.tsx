@@ -7,7 +7,7 @@ import {
     MapPin, Cake, Heart, Phone, Mail, Award, FileText, CheckCircle2
 } from "lucide-react";
 import { Officer } from "@/types/officer";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/utils/supabase/client";
 import { formatToDateInput, parseFromDateInput } from "@/lib/dataConsolidation";
 
 interface EditProfileFormModalProps {
@@ -82,6 +82,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
     const onSubmit = async (data: ProfileFormValues) => {
         setSaving(true);
         setError(null);
+        const supabase = createClient();
 
         try {
             let photo_url = officer.photo_url;
