@@ -39,7 +39,7 @@ export default function SignupPage() {
       const { data: dbData } = await supabase
         .from('administrative_officers')
         .select('email_address, full_name, current_mda')
-        .eq('email_address', normalizedEmail)
+        .ilike('email_address', normalizedEmail)
         .maybeSingle();
 
       if (!whitelistEntry && !dbData) {
