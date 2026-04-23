@@ -50,6 +50,11 @@ export default function ExportButton({ officers, filename = "ondo_admin_director
         document.body.removeChild(link);
     };
 
+    // Disabled per user privacy policy - return null to hide it completely
+    // When needed in the future, remove this return null and uncomment the button below
+    return null;
+
+    /*
     return (
         <button
             onClick={handleExport}
@@ -61,4 +66,5 @@ export default function ExportButton({ officers, filename = "ondo_admin_director
             <span className="hidden sm:inline">Export CSV</span>
         </button>
     );
+    */
 }
