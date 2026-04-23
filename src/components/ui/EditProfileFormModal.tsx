@@ -164,40 +164,58 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 photo_position: data.photo_position,
             };
 
-            // Try updating by auth.uid() first (works for users who signed up)
-            // If no row matched, fall back to email (works for imported/pre-existing officers)
+            // Use the officer's actual row ID from the prop — this is the known primary key
+            // We try officer.id first, then auth.uid, then email as fallbacks
             const userEmail = user.email?.trim().toLowerCase() || "";
+            const targetId = officer.id; // The row we're editing — always correct
 
+            // Strategy 1: Update by officer.id (the row's actual PK)
             let { data: returnedData, error: updateError } = await supabase
                 .from("administrative_officers")
                 .update(updateData)
-                .eq("id", authUid)
+                .eq("id", targetId)
                 .select();
 
             if (updateError) {
-                setError(`Failed to save: ${updateError.message}`);
+                // Check if it's an RLS permission error
+                if (updateError.message.includes("policy") || updateError.message.includes("permission") || updateError.code === "42501") {
+                    setError("Permission denied: The database blocked this update. Please check Supabase RLS policies.");
+                } else {
+                    setError(`Failed to save: ${updateError.message}`);
+                }
                 return;
             }
 
-            // Fallback: if auth ID didn't match any row, try by email address
-            if (!returnedData || returnedData.length === 0) {
-                if (userEmail) {
-                    const { data: emailData, error: emailError } = await supabase
-                        .from("administrative_officers")
-                        .update(updateData)
-                        .ilike("email_address", userEmail)
-                        .select();
+            // Strategy 2: If officer.id didn't work, try auth.uid
+            if ((!returnedData || returnedData.length === 0) && authUid !== targetId) {
+                const { data: authData, error: authError } = await supabase
+                    .from("administrative_officers")
+                    .update(updateData)
+                    .eq("id", authUid)
+                    .select();
 
-                    if (emailError) {
-                        setError(`Failed to save: ${emailError.message}`);
-                        return;
-                    }
+                if (!authError && authData && authData.length > 0) {
+                    returnedData = authData;
+                }
+            }
+
+            // Strategy 3: Last resort — try by email
+            if ((!returnedData || returnedData.length === 0) && userEmail) {
+                const { data: emailData, error: emailError } = await supabase
+                    .from("administrative_officers")
+                    .update(updateData)
+                    .ilike("email_address", userEmail)
+                    .select();
+
+                if (!emailError && emailData && emailData.length > 0) {
                     returnedData = emailData;
                 }
             }
 
             if (!returnedData || returnedData.length === 0) {
-                setError(`Update failed: No profile row found for your account. Please contact the administrator.`);
+                // RLS is blocking all updates — provide clear guidance
+                setError("Permission denied: The database blocked this update. Please check Supabase RLS policies.");
+                setDebugInfo(`Tried: officer.id=${targetId}, auth.uid=${authUid}, email=${userEmail}`);
                 return;
             }
 
