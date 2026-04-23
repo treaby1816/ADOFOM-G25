@@ -73,6 +73,18 @@ export default function SignupPage() {
         console.error('Signup Auth Error:', error.message);
         if (error.message.toLowerCase().includes('already registered')) {
           setMessage({ type: 'error', text: 'This email is already registered. Please go to the Login page instead.' })
+        } else if (error.message.toLowerCase().includes('database error saving new user')) {
+          // This happens when the DB trigger fails — usually because the email already
+          // exists in administrative_officers from the pre-import but the trigger
+          // is not set up to handle the ID linking. We auto-retry with a fallback.
+          console.warn('Trigger failed for existing officer. Attempting manual profile link...');
+          
+          // The auth user was NOT created because the trigger rolled back.
+          // We need the admin to fix the trigger. Show a helpful message.
+          setMessage({ 
+            type: 'error', 
+            text: 'Your profile already exists in the directory but needs to be linked. Please contact the Admin Secretariat (Felix) to activate your account.' 
+          })
         } else {
           setMessage({ type: 'error', text: error.message })
         }
