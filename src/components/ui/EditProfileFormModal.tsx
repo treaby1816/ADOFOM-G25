@@ -85,11 +85,20 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
         const supabase = createClient();
 
         try {
+            // Get the authenticated user's ID — RLS requires id = auth.uid()
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                setError("Session expired. Please log in again.");
+                setSaving(false);
+                return;
+            }
+            const authUid = user.id;
+
             let photo_url = officer.photo_url;
 
             if (photoFile) {
                 const fileExt = photoFile.name.split('.').pop();
-                const fileName = `${officer.id}_${Date.now()}.${fileExt}`;
+                const fileName = `${authUid}_${Date.now()}.${fileExt}`;
                 const bucketNames = ["officer-photos", "OFFICER-PHOTOS"];
                 let uploadSuccessful = false;
                 let lastUploadError: any = null;
@@ -155,10 +164,12 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 photo_position: data.photo_position,
             };
 
+            // Use auth.uid() for the update filter — RLS policy requires id = auth.uid()
+            // officer.id might differ if the profile was matched by email fallback
             const { data: returnedData, error: updateError } = await supabase
                 .from("administrative_officers")
                 .update(updateData)
-                .eq("id", officer.id)
+                .eq("id", authUid)
                 .select();
 
             if (updateError) {
@@ -166,7 +177,9 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 return;
             }
             if (!returnedData || returnedData.length === 0) {
-                setError("Permission denied: The database blocked this update. Please check Supabase RLS policies.");
+                // Detailed diagnostic: the auth user has no matching row in the table
+                setError(`Update failed: No profile row found for your auth ID. Your account may need to be re-linked. Please contact the administrator.`);
+                setDebugInfo(`auth.uid=${authUid}, officer.id=${officer.id}, match=${authUid === officer.id}`);
                 return;
             }
 

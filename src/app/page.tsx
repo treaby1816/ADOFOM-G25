@@ -11,7 +11,7 @@ import ImageSlider from "@/components/ui/ImageSlider";
 import ExportButton from "@/components/ui/ExportButton";
 import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 import ScrollButtons from "@/components/ui/ScrollButtons";
-import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import NavigationDrawer from "@/components/ui/NavigationDrawer";
 import NotificationDrawer from "@/components/ui/NotificationDrawer";
 import { Officer } from "@/types/officer";
 import { Users, Shield, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
@@ -26,9 +26,7 @@ const MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December",
 ];
 
-import SignOutButton from "@/components/SignOutButton";
 import Link from "next/link";
-import { Settings, ShieldCheck } from "lucide-react";
 
 export default function DashboardPage() {
   const supabase = useMemo(() => createClient(), []);
@@ -198,27 +196,12 @@ export default function DashboardPage() {
           </h2>
         </div>
         
-        <div className="flex items-center gap-4">
-          {isAdmin && (
-            <Link 
-              href="/admin/approvals" 
-              className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/20 text-yellow-400 hover:bg-yellow-500/20 transition-all text-xs font-bold uppercase tracking-wider"
-              title="Admin Approval Dashboard"
-            >
-              <ShieldCheck size={16} />
-              <span>Admin Panel</span>
-            </Link>
-          )}
-          <Link
-            href="/dashboard/settings"
-            className="p-2 rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
-            title="Account Settings"
-          >
-            <Settings size={18} />
-          </Link>
-          <ThemeToggle />
-          <div className="h-6 w-[1px] bg-white/20 mx-1 hidden sm:block" />
-          <SignOutButton />
+        <div className="flex items-center gap-3">
+          <NavigationDrawer
+            isAdmin={isAdmin}
+            officers={officers}
+            onViewOwnProfile={setSelectedOfficer}
+          />
         </div>
       </header>
 
@@ -419,16 +402,7 @@ export default function DashboardPage() {
       {/* Floating Scroll Buttons */}
       <ScrollButtons />
 
-      {/* Mobile Admin FAB */}
-      {isAdmin && (
-        <Link
-          href="/admin/approvals"
-          className="md:hidden fixed bottom-6 left-6 z-[100] flex items-center justify-center w-14 h-14 bg-yellow-500 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.4)] border border-yellow-400 text-yellow-950 hover:scale-105 active:scale-95 transition-all text-xl"
-          title="Admin Panel"
-        >
-          <ShieldCheck size={28} />
-        </Link>
-      )}
+
     </main>
   );
 }
