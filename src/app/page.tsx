@@ -17,14 +17,9 @@ import { Officer } from "@/types/officer";
 import { Users, Shield, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
-import { normalizeLGA, normalizeMDA, formatBirthday } from "@/lib/dataConsolidation";
+import { normalizeLGA, normalizeMDA, formatBirthday, isBirthdayToday } from "@/lib/dataConsolidation";
 import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
-
-// Month names for birthday matching
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
+import BirthdayBanner from "@/components/ui/BirthdayBanner";
 
 import Link from "next/link";
 
@@ -112,27 +107,15 @@ export default function DashboardPage() {
   useEffect(() => {
     if (officers.length === 0) return;
 
-    const now = new Date();
-    const m = now.getMonth();
-    const d = now.getDate();
-
-    const todayFull = `${MONTH_NAMES[m]}/${d}`; // e.g. March/22
-    const todayFullWithSpace = `${MONTH_NAMES[m]} ${d}`; // e.g. March 22
-    const todayNumeric = `${m + 1}/${d}`; // e.g. 3/22
-    const todayDashed = `${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`; // e.g. 03-22
-    const todayMonthSlash = `${MONTH_NAMES[m]}/${String(d).padStart(2, '0')}`; // e.g. March/02
-
-    // Find all birthday officers
-    const bdayMatches = officers.filter((o) => {
-      const bday = (o.birth_month_day || "").trim();
-      return bday === todayFull || bday === todayNumeric || bday === todayFullWithSpace || bday === todayDashed || bday === todayMonthSlash;
-    });
+    // Use the robust format-agnostic birthday matcher
+    const bdayMatches = officers.filter((o) => isBirthdayToday(o.birth_month_day));
 
     if (bdayMatches.length > 0) {
       setBirthdayOfficers(bdayMatches);
     }
 
     // Find new officers (added within last 7 days)
+    const now = new Date();
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(now.getDate() - 7);
 
@@ -384,6 +367,14 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+
+      {/* Birthday Celebration Banner */}
+      {birthdayOfficers.length > 0 && (
+        <BirthdayBanner
+          officers={birthdayOfficers}
+          onClose={() => setBirthdayOfficers([])}
+        />
+      )}
 
       {/* Profile Modal */}
       {selectedOfficer && (

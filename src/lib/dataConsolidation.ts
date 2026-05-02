@@ -316,6 +316,46 @@ export function formatBirthday(bday: string | null | undefined): string {
     return clean;
 }
 
+/**
+ * Universal birthday parser — handles ALL known formats stored in the DB:
+ *   "05-03", "5/3", "May/03", "May 3", "May/3", "Mar/03", "March 14", etc.
+ * Returns { month, day } as 1-indexed numbers, or null if unparsable.
+ */
+export function parseBirthdayToMonthDay(bday: string | null | undefined): { month: number; day: number } | null {
+    if (!bday) return null;
+    const clean = bday.trim();
+    if (!clean) return null;
+
+    // Try numeric formats first: "05-03", "5/3", "12-25"
+    const numericMatch = clean.match(/^(\d{1,2})\s*[-/]\s*(\d{1,2})$/);
+    if (numericMatch) {
+        const m = parseInt(numericMatch[1], 10);
+        const d = parseInt(numericMatch[2], 10);
+        if (m >= 1 && m <= 12 && d >= 1 && d <= 31) return { month: m, day: d };
+    }
+
+    // Try text formats: "May/03", "March 14", "Mar/3", "February 20"
+    const textMatch = clean.match(/^([A-Za-z]+)\s*[/\s]\s*(\d{1,2})$/);
+    if (textMatch) {
+        const monthStr = textMatch[1].toLowerCase();
+        const d = parseInt(textMatch[2], 10);
+        const monthIndex = MONTH_NAMES.findIndex(m => m.toLowerCase() === monthStr || m.substring(0, 3).toLowerCase() === monthStr);
+        if (monthIndex >= 0 && d >= 1 && d <= 31) return { month: monthIndex + 1, day: d };
+    }
+
+    return null;
+}
+
+/**
+ * Check if a birthday string matches today's date, regardless of format.
+ */
+export function isBirthdayToday(bday: string | null | undefined): boolean {
+    const parsed = parseBirthdayToMonthDay(bday);
+    if (!parsed) return false;
+    const now = new Date();
+    return parsed.month === (now.getMonth() + 1) && parsed.day === now.getDate();
+}
+
 // Convert DB format (05-27) to date input format (2024-05-27)
 export function formatToDateInput(mmdd: string | null | undefined): string {
     if (!mmdd) return "";
