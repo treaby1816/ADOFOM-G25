@@ -296,8 +296,20 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
                     flex flex-col overflow-hidden
                 `}
             >
+                {/* Background Watermark */}
+                {myProfile && !showInitials && avatarUrl && (
+                    <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] sm:opacity-[0.05]">
+                        <img 
+                            src={avatarUrl} 
+                            alt="Background Watermark" 
+                            className="w-full h-full object-cover object-top mix-blend-overlay grayscale"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f172a]/50 to-[#0f172a]" />
+                    </div>
+                )}
+
                 {/* Mobile close button */}
-                <div className="flex items-center justify-between p-4 border-b border-white/10 sm:hidden">
+                <div className="relative z-10 flex items-center justify-between p-4 border-b border-white/10 sm:hidden">
                     <span className="text-xs font-bold text-white/50 uppercase tracking-widest">Menu</span>
                     <button
                         onClick={() => setIsOpen(false)}
@@ -310,7 +322,7 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
                 {/* Profile Card */}
                 <div
                     onClick={handleProfileClick}
-                    className={`p-5 ${onViewOwnProfile ? 'cursor-pointer hover:bg-white/5' : ''} transition-colors`}
+                    className={`relative z-10 p-5 ${onViewOwnProfile ? 'cursor-pointer hover:bg-white/5' : ''} transition-colors`}
                 >
                     <div className="flex items-center gap-4">
                         {/* Avatar */}
@@ -350,10 +362,10 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-4" />
+                <div className="relative z-10 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-4" />
 
                 {/* Menu Items */}
-                <nav className="flex-1 overflow-y-auto p-3 space-y-1">
+                <nav className="relative z-10 flex-1 overflow-y-auto p-3 space-y-1">
                     {/* Theme Toggle */}
                     <button
                         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

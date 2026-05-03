@@ -197,7 +197,7 @@ export default function DashboardPage() {
       <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-green-950/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] shadow-lg transition-all duration-300">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full p-0.5 overflow-hidden shadow-md ring-2 ring-emerald-500/20" style={{ backgroundColor: "white" }}>
-            <img src="/logo2.jpg" alt="Ondo State Logo" className="w-full h-full object-contain rounded-full hover:scale-110 transition-transform" />
+            <img src="/logo2.jpg" alt="Ondo State Logo" className="w-full h-full object-cover rounded-full bg-white hover:scale-110 transition-transform" />
           </div>
           <h2 className="text-lg font-bold text-white tracking-tight hidden sm:block">
             ADOFOM Portal
@@ -223,11 +223,11 @@ export default function DashboardPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 text-center w-full z-10">
           <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="w-20 h-20 rounded-full backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ backgroundColor: "white" }}>
-              <img src="/Ondo-Logo.png" alt="Ondo State" className="w-full h-full object-contain" />
+            <div className="w-20 h-20 rounded-full flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ backgroundColor: "white" }}>
+              <img src="/Ondo-Logo.png" alt="Ondo State" className="w-full h-full object-cover rounded-full bg-white" />
             </div>
-            <div className="w-20 h-20 rounded-full backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ backgroundColor: "white", animationDelay: "500ms" }}>
-              <img src="/logo2.jpg" alt="Secondary Logo" className="w-full h-full object-contain rounded-full" />
+            <div className="w-20 h-20 rounded-full flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ backgroundColor: "white", animationDelay: "500ms" }}>
+              <img src="/logo2.jpg" alt="Secondary Logo" className="w-full h-full object-cover rounded-full bg-white" />
             </div>
           </div>
 
@@ -238,8 +238,8 @@ export default function DashboardPage() {
             </span>
           </h1>
           
-          <p className="text-green-50/80 text-lg md:text-xl max-w-2xl mx-auto font-medium mb-12 leading-relaxed">
-            Excellence in service, integrity in administration. Connect with the cadre driving Ondo State forward.
+          <p className="text-green-50/90 text-lg md:text-xl max-w-2xl mx-auto italic font-serif font-light tracking-wide mb-12 leading-relaxed drop-shadow-sm">
+            "Excellence in service, integrity in administration. Connect with the cadre driving Ondo State forward."
           </p>
 
           {/* Stats Bar */}
