@@ -155,11 +155,11 @@ export default function DashboardPage() {
     const checkAuthAndGlobal = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       
-      // Fetch some global stats (limited for performance)
+      // Fetch global data — include all fields needed by NavigationDrawer to find user profile
       const { data: globalData } = await supabase
         .from("administrative_officers")
-        .select("id, full_name, lga, current_mda, birth_month_day, is_admin")
-        .limit(1000); // Reasonable limit for stats
+        .select("*")
+        .limit(1000);
 
       if (globalData) {
         setAllOfficers(globalData as Officer[]);
@@ -189,7 +189,7 @@ export default function DashboardPage() {
       {/* Top Navigation */}
       <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-green-950/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] shadow-lg transition-all duration-300">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full p-1 border border-white/20 overflow-hidden ring-2 ring-emerald-500/20">
+          <div className="w-10 h-10 rounded-full p-0.5 bg-white border border-white/30 overflow-hidden shadow-md ring-2 ring-emerald-500/20">
             <img src="/logo2.jpg" alt="Ondo State Logo" className="w-full h-full object-contain rounded-full hover:scale-110 transition-transform" />
           </div>
           <h2 className="text-lg font-bold text-white tracking-tight hidden sm:block">
@@ -216,11 +216,11 @@ export default function DashboardPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 text-center w-full z-10">
           <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="w-20 h-20 bg-white/10 rounded-3xl backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-2xl animate-float p-2">
+            <div className="w-20 h-20 bg-white rounded-full backdrop-blur-xl flex items-center justify-center border-2 border-white/30 shadow-2xl animate-float p-2.5 overflow-hidden">
               <img src="/Ondo-Logo.png" alt="Ondo State" className="w-full h-full object-contain" />
             </div>
-            <div className="w-20 h-20 bg-white/10 rounded-3xl backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-2xl animate-float p-2" style={{ animationDelay: "500ms" }}>
-              <img src="/logo2.jpg" alt="Secondary Logo" className="w-full h-full object-contain rounded-xl" />
+            <div className="w-20 h-20 bg-white rounded-full backdrop-blur-xl flex items-center justify-center border-2 border-white/30 shadow-2xl animate-float p-2.5 overflow-hidden" style={{ animationDelay: "500ms" }}>
+              <img src="/logo2.jpg" alt="Secondary Logo" className="w-full h-full object-contain rounded-full" />
             </div>
           </div>
 
@@ -360,31 +360,31 @@ export default function DashboardPage() {
 
         {/* Pagination */}
         {!isLoading && totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-16">
+          <div className="flex flex-wrap justify-center items-center gap-3 mt-16 px-2">
             <button
               onClick={() => updateFilters({ page: pageParam - 1 })}
               disabled={pageParam === 1}
-              className="p-3 rounded-2xl bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 shadow-sm hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 disabled:opacity-30 transition-all cursor-pointer"
+              className="p-3 rounded-2xl bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 shadow-sm hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 disabled:opacity-30 transition-all cursor-pointer flex-shrink-0"
             >
-              <ChevronLeft size={24} />
+              <ChevronLeft size={20} />
             </button>
             
-            <div className="flex gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
               {[...Array(totalPages)].map((_, i) => {
                 const p = i + 1;
                 // Show a limited range of pages if totalPages is large
-                if (totalPages > 7 && Math.abs(p - pageParam) > 2 && p !== 1 && p !== totalPages) {
-                  if (Math.abs(p - pageParam) === 3) return <span key={p} className="px-2 self-end">...</span>;
+                if (totalPages > 5 && Math.abs(p - pageParam) > 1 && p !== 1 && p !== totalPages) {
+                  if (Math.abs(p - pageParam) === 2) return <span key={p} className="w-10 h-10 flex items-center justify-center text-slate-400 dark:text-zinc-500">...</span>;
                   return null;
                 }
                 return (
                   <button
                     key={p}
                     onClick={() => updateFilters({ page: p })}
-                    className={`w-12 h-12 rounded-2xl font-bold transition-all ${
+                    className={`w-10 h-10 rounded-xl text-sm font-bold transition-all flex-shrink-0 ${
                       pageParam === p 
                         ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 scale-110" 
-                        : "bg-white dark:bg-zinc-900 text-slate-500 hover:bg-slate-100 dark:hover:bg-zinc-800"
+                        : "bg-white dark:bg-zinc-900 text-slate-500 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800"
                     }`}
                   >
                     {p}
@@ -396,9 +396,9 @@ export default function DashboardPage() {
             <button
               onClick={() => updateFilters({ page: pageParam + 1 })}
               disabled={pageParam === totalPages}
-              className="p-3 rounded-2xl bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 shadow-sm hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 disabled:opacity-30 transition-all cursor-pointer"
+              className="p-3 rounded-2xl bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 shadow-sm hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 disabled:opacity-30 transition-all cursor-pointer flex-shrink-0"
             >
-              <ChevronRight size={24} />
+              <ChevronRight size={20} />
             </button>
           </div>
         )}
