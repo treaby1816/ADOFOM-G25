@@ -12,6 +12,9 @@ export interface Officer {
     secondary_phone_number?: string;
     hobbies: string;
     about_me: string;
+    facebook_url?: string;
+    twitter_url?: string;
+    instagram_url?: string;
     is_admin?: boolean;
     is_approved?: boolean;
     needs_password_change?: boolean;

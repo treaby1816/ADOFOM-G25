@@ -4,7 +4,8 @@ import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import {
     X, Save, Loader2, Camera, User, Briefcase,
-    MapPin, Cake, Heart, Phone, Mail, Award, FileText, CheckCircle2
+    MapPin, Cake, Heart, Phone, Mail, Award, FileText, CheckCircle2,
+    Facebook, Twitter, Instagram, Share2
 } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { createClient } from "@/utils/supabase/client";
@@ -27,6 +28,9 @@ interface ProfileFormValues {
     hobbies: string;
     about_me: string;
     photo_position: string;
+    facebook_url?: string;
+    twitter_url?: string;
+    instagram_url?: string;
 }
 
 export default function EditProfileFormModal({ officer, onSave, onClose }: EditProfileFormModalProps) {
@@ -42,6 +46,9 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
             hobbies: officer.hobbies || "",
             about_me: officer.about_me || "",
             photo_position: officer.photo_position || "object-center",
+            facebook_url: officer.facebook_url || "",
+            twitter_url: officer.twitter_url || "",
+            instagram_url: officer.instagram_url || "",
         }
     });
 
@@ -165,6 +172,9 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 about_me: data.about_me.trim(),
                 photo_url,
                 photo_position: data.photo_position,
+                facebook_url: data.facebook_url?.trim() || "",
+                twitter_url: data.twitter_url?.trim() || "",
+                instagram_url: data.instagram_url?.trim() || "",
             };
 
             // Use the officer's actual row ID from the prop — this is the known primary key
@@ -379,6 +389,32 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                             <Heart size={12} className="text-emerald-500" /> Hobbies
                         </label>
                         <input type="text" {...register("hobbies")} className={inputClass} placeholder="Reading, Music" />
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-200/50 dark:border-zinc-800/50">
+                        <p className="text-xs font-black text-slate-800 dark:text-zinc-200 uppercase tracking-widest mb-3 flex items-center gap-2">
+                            <Share2 size={14} className="text-emerald-500" /> Social Links (Optional)
+                        </p>
+                        <div className="space-y-3">
+                            <div>
+                                <label className={labelClass}>
+                                    <Facebook size={12} className="text-blue-600 dark:text-blue-400" /> Facebook Profile URL
+                                </label>
+                                <input type="url" {...register("facebook_url")} className={inputClass} placeholder="https://facebook.com/username" />
+                            </div>
+                            <div>
+                                <label className={labelClass}>
+                                    <Twitter size={12} className="text-sky-500" /> X (Twitter) Profile URL
+                                </label>
+                                <input type="url" {...register("twitter_url")} className={inputClass} placeholder="https://x.com/username" />
+                            </div>
+                            <div>
+                                <label className={labelClass}>
+                                    <Instagram size={12} className="text-pink-600 dark:text-pink-400" /> Instagram Profile URL
+                                </label>
+                                <input type="url" {...register("instagram_url")} className={inputClass} placeholder="https://instagram.com/username" />
+                            </div>
+                        </div>
                     </div>
 
                     <div>

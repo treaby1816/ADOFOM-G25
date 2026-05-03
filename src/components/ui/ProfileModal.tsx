@@ -1,6 +1,6 @@
 "use client";
 
-import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award, Pencil, Eye } from "lucide-react";
+import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award, Pencil, Eye, Facebook, Twitter, Instagram } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { useEffect, useState } from "react";
 import VerifyPasswordModal from "./VerifyPasswordModal";
@@ -300,6 +300,45 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                                 WhatsApp
                             </a>
                         </div>
+
+                        {/* Social Links (only show if any exist) */}
+                        {(currentOfficer.facebook_url || currentOfficer.twitter_url || currentOfficer.instagram_url) && (
+                            <div className="mt-6 flex justify-center gap-3">
+                                {currentOfficer.facebook_url && (
+                                    <a
+                                        href={currentOfficer.facebook_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-3 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:-translate-y-1 transition-all shadow-sm"
+                                        title="Facebook Profile"
+                                    >
+                                        <Facebook size={20} />
+                                    </a>
+                                )}
+                                {currentOfficer.twitter_url && (
+                                    <a
+                                        href={currentOfficer.twitter_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-3 rounded-full bg-sky-50 dark:bg-sky-900/20 text-sky-500 hover:bg-sky-100 dark:hover:bg-sky-900/40 hover:-translate-y-1 transition-all shadow-sm"
+                                        title="X (Twitter) Profile"
+                                    >
+                                        <Twitter size={20} />
+                                    </a>
+                                )}
+                                {currentOfficer.instagram_url && (
+                                    <a
+                                        href={currentOfficer.instagram_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-3 rounded-full bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 hover:bg-pink-100 dark:hover:bg-pink-900/40 hover:-translate-y-1 transition-all shadow-sm"
+                                        title="Instagram Profile"
+                                    >
+                                        <Instagram size={20} />
+                                    </a>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
