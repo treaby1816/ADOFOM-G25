@@ -298,13 +298,13 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
             >
                 {/* Background Watermark */}
                 {myProfile && !showInitials && avatarUrl && (
-                    <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] sm:opacity-[0.05]">
+                    <div className="absolute inset-0 z-0 pointer-events-none opacity-20 sm:opacity-[0.25]">
                         <img 
                             src={avatarUrl} 
                             alt="Background Watermark" 
-                            className="w-full h-full object-cover object-top mix-blend-overlay grayscale"
+                            className="w-full h-full object-cover object-top mix-blend-overlay"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0f172a]/50 to-[#0f172a]" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-[#0f172a]/40 via-[#0f172a]/70 to-[#0f172a]" />
                     </div>
                 )}
 
