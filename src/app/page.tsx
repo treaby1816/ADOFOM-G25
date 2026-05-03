@@ -75,6 +75,13 @@ export default function DashboardPage() {
     }
 
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
+
+    // Scroll to results area when page changes
+    if (updates.page) {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }, 100);
+    }
   }, [searchParams, pathname, router]);
 
   // Handle debounced search
@@ -216,10 +223,10 @@ export default function DashboardPage() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 text-center w-full z-10">
           <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="w-20 h-20 bg-white rounded-full backdrop-blur-xl flex items-center justify-center border-2 border-white/30 shadow-2xl animate-float p-2.5 overflow-hidden">
+            <div className="w-20 h-20 bg-white rounded-full backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden">
               <img src="/Ondo-Logo.png" alt="Ondo State" className="w-full h-full object-contain" />
             </div>
-            <div className="w-20 h-20 bg-white rounded-full backdrop-blur-xl flex items-center justify-center border-2 border-white/30 shadow-2xl animate-float p-2.5 overflow-hidden" style={{ animationDelay: "500ms" }}>
+            <div className="w-20 h-20 bg-white rounded-full backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ animationDelay: "500ms" }}>
               <img src="/logo2.jpg" alt="Secondary Logo" className="w-full h-full object-contain rounded-full" />
             </div>
           </div>
