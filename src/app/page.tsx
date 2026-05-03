@@ -1,11 +1,9 @@
 "use client";
 
-// Deployment Trigger: 2026-02-26 05:25
-
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import ProfileCard from "@/components/ui/ProfileCard";
 import ProfileModal from "@/components/ui/ProfileModal";
-
 import SearchAndFilter from "@/components/filters/SearchAndFilter";
 import ImageSlider from "@/components/ui/ImageSlider";
 import ExportButton from "@/components/ui/ExportButton";
@@ -14,58 +12,115 @@ import ScrollButtons from "@/components/ui/ScrollButtons";
 import NavigationDrawer from "@/components/ui/NavigationDrawer";
 import NotificationDrawer from "@/components/ui/NotificationDrawer";
 import { Officer } from "@/types/officer";
-import { Users, Shield, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
+import { Users, Shield, ChevronLeft, ChevronRight, AlertCircle, Search as SearchIcon } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { normalizeLGA, normalizeMDA, formatBirthday, isBirthdayToday } from "@/lib/dataConsolidation";
 import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
 import BirthdayBanner from "@/components/ui/BirthdayBanner";
+import { useDebounce } from "@/hooks/useDebounce";
 
-import Link from "next/link";
+const ITEMS_PER_PAGE = 20;
 
 export default function DashboardPage() {
   const supabase = useMemo(() => createClient(), []);
-  
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // State from URL
+  const queryParam = searchParams.get("q") || "";
+  const lgaParam = searchParams.get("lga") || "";
+  const mdaParam = searchParams.get("mda") || "";
+  const monthParam = searchParams.get("month") || "";
+  const sortParam = searchParams.get("sort") || "name-asc";
+  const pageParam = parseInt(searchParams.get("page") || "1");
+
+  // Local state for immediate UI feedback (search input)
+  const [searchInput, setSearchInput] = useState(queryParam);
+  const debouncedSearch = useDebounce(searchInput, 500);
+
+  // Data state
   const [officers, setOfficers] = useState<Officer[]>([]);
-  const [debugStatus, setDebugStatus] = useState<string>("Initializing...");
-
-  // State
-  const [searchQuery, setSearchQuery] = useState("");
-  const [lgaFilter, setLgaFilter] = useState("");
-  const [monthFilter, setMonthFilter] = useState("");
-  const [mdaFilter, setMdaFilter] = useState("");
-  const [sortOption, setSortOption] = useState("name-asc"); // Default sort
-
-  // Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // Can be adjusted
-
-  const [selectedOfficer, setSelectedOfficer] = useState<Officer | null>(null);
-  const [birthdayOfficers, setBirthdayOfficers] = useState<Officer[]>([]);
-  const [newOfficers, setNewOfficers] = useState<Officer[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Added for skeleton demo
-  const [connectionError, setConnectionError] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [selectedOfficer, setSelectedOfficer] = useState<Officer | null>(null);
+  const [birthdayOfficers, setBirthdayOfficers] = useState<Officer[]>([]);
+  
+  // For filters - we still need some "all" data or official lists
+  const [allOfficers, setAllOfficers] = useState<Officer[]>([]); 
 
-  // Fetch officers from Supabase
-  const fetchOfficers = async () => {
+  // Sync search input with URL if URL changes externally
+  useEffect(() => {
+    setSearchInput(queryParam);
+  }, [queryParam]);
+
+  // Update URL when filters change
+  const updateFilters = useCallback((updates: Record<string, string | number | null>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === null || value === "") {
+        params.delete(key);
+      } else {
+        params.set(key, value.toString());
+      }
+    });
+
+    // Reset to page 1 if any filter other than page changes
+    if (!updates.page) {
+      params.set("page", "1");
+    }
+
+    router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [searchParams, pathname, router]);
+
+  // Handle debounced search
+  useEffect(() => {
+    if (debouncedSearch !== queryParam) {
+      updateFilters({ q: debouncedSearch });
+    }
+  }, [debouncedSearch, queryParam, updateFilters]);
+
+  // Fetch Officers with Pagination and Filtering
+  const fetchOfficers = useCallback(async () => {
     setIsLoading(true);
-    setConnectionError(false);
     setError(null);
+    
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      const { data, error: fetchError } = await supabase
+      let query = supabase
         .from("administrative_officers")
-        .select("*");
+        .select("*", { count: "exact" });
 
-      if (fetchError) {
-        console.error("Error fetching officers:", fetchError);
-        setConnectionError(true);
-        setDebugStatus(`Error: ${fetchError.message}`);
-        toast.error("Directory sync failed.");
-      } else if (data) {
+      // Apply server-side filters
+      // Note: This is a basic match. For dirty data, we might need more complex logic.
+      if (queryParam) {
+        query = query.ilike("full_name", `%${queryParam}%`);
+      }
+      if (lgaParam) {
+        query = query.ilike("lga", `%${lgaParam}%`);
+      }
+      if (mdaParam) {
+        query = query.ilike("current_mda", `%${mdaParam}%`);
+      }
+
+      // Sort
+      if (sortParam === "name-asc") query = query.order("full_name", { ascending: true });
+      if (sortParam === "name-desc") query = query.order("full_name", { ascending: false });
+      if (sortParam === "level-senior") query = query.order("grade_level", { ascending: false });
+
+      // Pagination
+      const from = (pageParam - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+      query = query.range(from, to);
+
+      const { data, count, error: fetchError } = await query;
+
+      if (fetchError) throw fetchError;
+
+      if (data) {
         const processedData = (data as Officer[]).map(officer => ({
           ...officer,
           lga: normalizeLGA(officer.lga),
@@ -73,106 +128,69 @@ export default function DashboardPage() {
           birth_month_day: formatBirthday(officer.birth_month_day)
         }));
 
-        const sortedData = processedData.sort((a, b) =>
-          a.full_name.localeCompare(b.full_name)
-        );
+        // Client-side month filtering (Supabase doesn't support complex date string logic easily without RPC)
+        let finalData = processedData;
+        if (monthParam) {
+          finalData = processedData.filter(o => o.birth_month_day.startsWith(monthParam.substring(0, 3)));
+        }
 
-        setOfficers(sortedData);
+        setOfficers(finalData);
+        setTotalCount(count || 0);
+      }
+    } catch (err: any) {
+      console.error("Fetch error:", err);
+      setError(err.message);
+      toast.error("Failed to sync directory.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [supabase, queryParam, lgaParam, mdaParam, monthParam, sortParam, pageParam]);
 
-        setDebugStatus(`Connected: Found ${data?.length || 0} officers`);
+  useEffect(() => {
+    fetchOfficers();
+  }, [fetchOfficers]);
+
+  // Initial Auth & Global Data Check
+  useEffect(() => {
+    const checkAuthAndGlobal = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      // Fetch some global stats (limited for performance)
+      const { data: globalData } = await supabase
+        .from("administrative_officers")
+        .select("id, full_name, lga, current_mda, birth_month_day, is_admin")
+        .limit(1000); // Reasonable limit for stats
+
+      if (globalData) {
+        setAllOfficers(globalData as Officer[]);
+        
+        // Birthday check
+        const bdayMatches = (globalData as Officer[]).filter((o) => isBirthdayToday(o.birth_month_day));
+        setBirthdayOfficers(bdayMatches);
+
         if (user) {
-          const currentUserObj = (data as Officer[]).find(o => o.id === user.id);
+          const currentUserObj = (globalData as Officer[]).find(o => o.id === user.id);
           const userEmail = user.email?.trim().toLowerCase() || '';
           const whitelistEntry = WHITELIST_OFFICERS[userEmail];
           
-          // Admin check: DB first, whitelist fallback
           if (currentUserObj?.is_admin === true || whitelistEntry?.is_admin === true) {
             setIsAdmin(true);
           }
         }
       }
-    } catch (err: any) {
-      console.error("Unexpected error:", err);
-      setConnectionError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+    checkAuthAndGlobal();
+  }, [supabase]);
 
-  useEffect(() => {
-    fetchOfficers();
-  }, []);
-
-  // Birthday Engine & New Officer Logic
-  useEffect(() => {
-    if (officers.length === 0) return;
-
-    // Use the robust format-agnostic birthday matcher
-    const bdayMatches = officers.filter((o) => isBirthdayToday(o.birth_month_day));
-
-    if (bdayMatches.length > 0) {
-      setBirthdayOfficers(bdayMatches);
-    }
-
-    // Find new officers (added within last 7 days)
-    const now = new Date();
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(now.getDate() - 7);
-
-    const recentAdditions = officers.filter((o) => {
-      if (!o.created_at) return false;
-      const createdAtDate = new Date(o.created_at);
-      return createdAtDate > sevenDaysAgo;
-    });
-
-    setNewOfficers(recentAdditions);
-  }, [officers]);
-
-  // 1. Memoized filtering for 60fps search performance
-  const processedOfficers = useMemo(() => {
-    return officers.filter((officer) => {
-      const matchesSearch =
-        officer.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        officer.email_address?.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesLga = !lgaFilter || lgaFilter === "" || (officer.lga || "").trim().toLowerCase().replace(/\s+/g, " ") === lgaFilter.toLowerCase();
-      const matchesMonth = !monthFilter || monthFilter === "" || officer.birth_month_day.startsWith(monthFilter);
-      const matchesMda = !mdaFilter || mdaFilter === "" || (officer.current_mda || "").trim().toLowerCase().replace(/\s+/g, " ") === mdaFilter.toLowerCase();
-      
-      return matchesSearch && matchesLga && matchesMonth && matchesMda;
-    }).sort((a, b) => {
-      if (sortOption === "name-asc") {
-        return a.full_name.localeCompare(b.full_name);
-      } else if (sortOption === "name-desc") {
-        return b.full_name.localeCompare(a.full_name);
-      } else if (sortOption === "level-senior") {
-        const aLevel = parseInt(a.grade_level.replace(/\D/g, "")) || 0;
-        const bLevel = parseInt(b.grade_level.replace(/\D/g, "")) || 0;
-        return bLevel - aLevel;
-      }
-      return 0;
-    });
-  }, [officers, searchQuery, lgaFilter, monthFilter, mdaFilter, sortOption]);
-
-  // Reset page to 1 when filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, lgaFilter, monthFilter, mdaFilter, sortOption]);
-
-  // Pagination Logic
-  const totalPages = Math.ceil(processedOfficers.length / itemsPerPage);
-  const paginatedOfficers = processedOfficers.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
-    <main className="min-h-screen">
-      {/* Top Professional Header */}
-      <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-green-950/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] shadow-lg">
+    <main className="min-h-screen pb-20">
+      {/* Top Navigation */}
+      <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-green-950/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] shadow-lg transition-all duration-300">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full p-1 border border-white/20 overflow-hidden" style={{ zIndex: 50 }}>
-            <img src="/logo2.jpg" alt="Ondo State Logo" className="w-full h-full object-contain rounded-full" />
+          <div className="w-10 h-10 rounded-full p-1 border border-white/20 overflow-hidden ring-2 ring-emerald-500/20">
+            <img src="/logo2.jpg" alt="Ondo State Logo" className="w-full h-full object-contain rounded-full hover:scale-110 transition-transform" />
           </div>
           <h2 className="text-lg font-bold text-white tracking-tight hidden sm:block">
             ADOFOM Portal
@@ -182,146 +200,138 @@ export default function DashboardPage() {
         <div className="flex items-center gap-3">
           <NavigationDrawer
             isAdmin={isAdmin}
-            officers={officers}
-            filteredOfficers={processedOfficers}
+            officers={allOfficers}
+            filteredOfficers={officers}
             onViewOwnProfile={setSelectedOfficer}
           />
         </div>
       </header>
 
-      {/* Hero Section Header (Existing Slider) */}
-      <header className="relative overflow-hidden text-white shadow-xl min-h-[350px] flex flex-col justify-center">
-        {/* Background Slider */}
+      {/* Hero Section */}
+      <header className="relative overflow-hidden text-white shadow-2xl min-h-[400px] flex flex-col justify-center">
         <ImageSlider />
-
-        {/* Controls Overlay */}
-        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-3">
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
           <NotificationDrawer />
         </div>
 
-        {/* Content Overlay */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 text-center w-full z-10 flex flex-col items-center">
-          <div className="flex items-center justify-center gap-4 sm:gap-6 mb-6">
-            {/* Logo Left */}
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/10 rounded-full backdrop-blur-md flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden">
-              <img src="/Ondo-Logo.png" alt="Ondo State Logo" className="w-full h-full object-contain drop-shadow-md" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('hidden'); }} />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 text-center w-full z-10">
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="w-20 h-20 bg-white/10 rounded-3xl backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-2xl animate-float p-2">
+              <img src="/Ondo-Logo.png" alt="Ondo State" className="w-full h-full object-contain" />
             </div>
-
-            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/10 rounded-full backdrop-blur-md flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ animationDelay: "400ms" }}>
-              <img src="/logo2.jpg" alt="Secondary Logo" className="w-full h-full object-contain drop-shadow-md rounded-full" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement?.classList.add('hidden'); }} />
+            <div className="w-20 h-20 bg-white/10 rounded-3xl backdrop-blur-xl flex items-center justify-center border border-white/20 shadow-2xl animate-float p-2" style={{ animationDelay: "500ms" }}>
+              <img src="/logo2.jpg" alt="Secondary Logo" className="w-full h-full object-contain rounded-xl" />
             </div>
           </div>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tight mb-4 drop-shadow-2xl leading-tight">
-            Ondo State <br className="sm:hidden" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-teal-200 to-green-100 animate-pulse-slow block sm:inline">
-              Admin Directory
+
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-tight">
+            Administrative <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-100 drop-shadow-sm">
+              Officers Directory
             </span>
           </h1>
-          <p className="text-green-50/90 text-base sm:text-lg md:text-xl max-w-2xl mx-auto font-medium mb-10 leading-relaxed px-4 drop-shadow-md">
-            The official portal for the Administrative Officers Cadre. Discover, connect, and collaborate with excellence.
+          
+          <p className="text-green-50/80 text-lg md:text-xl max-w-2xl mx-auto font-medium mb-12 leading-relaxed">
+            Excellence in service, integrity in administration. Connect with the cadre driving Ondo State forward.
           </p>
 
-          {/* Stats Glassmorphism Container */}
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-green-50 font-semibold bg-white/10 w-fit mx-auto px-8 py-4 rounded-3xl backdrop-blur-xl border border-white/30 shadow-2xl text-sm sm:text-base transition-all duration-300 hover:bg-white/20 hover:scale-105 hover:shadow-green-500/30 hover:border-white/50 cursor-default">
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-green-500/30 rounded-lg">
-                <Users size={20} className="text-green-200" />
-              </div>
-              <span className="tracking-wide text-lg">{officers.length} <span className="text-green-200 text-sm opacity-90 font-normal">Officers</span></span>
+          {/* Stats Bar */}
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-12 bg-black/20 backdrop-blur-2xl px-10 py-6 rounded-[2.5rem] border border-white/10 w-fit mx-auto shadow-2xl">
+            <div className="flex flex-col items-center">
+              <span className="text-3xl font-black text-emerald-300">{allOfficers.length || "---"}</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">Officers</span>
             </div>
-            <div className="w-1 h-8 rounded-full bg-white/20 hidden sm:block" />
-            <div className="flex items-center gap-2">
-              <span className="tracking-wide text-lg">
-                {new Set(officers.map((o) => (o.current_mda || "").trim().toLowerCase().replace(/\s+/g, " "))).size}{" "}
-                <span className="text-green-200 text-sm opacity-90 font-normal">MDAs</span>
+            <div className="w-px h-10 bg-white/10 hidden sm:block" />
+            <div className="flex flex-col items-center">
+              <span className="text-3xl font-black text-emerald-300">
+                {new Set(allOfficers.map(o => normalizeMDA(o.current_mda))).size || "---"}
               </span>
+              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">Ministries</span>
             </div>
-            <div className="w-1 h-8 rounded-full bg-white/20 hidden sm:block" />
-            <div className="flex items-center gap-2">
-              <span className="tracking-wide text-lg">
-                {new Set(officers.map((o) => (o.lga || "").trim().toLowerCase().replace(/\s+/g, " "))).size}{" "}
-                <span className="text-green-200 text-sm opacity-90 font-normal">LGAs</span>
-              </span>
+            <div className="w-px h-10 bg-white/10 hidden sm:block" />
+            <div className="flex flex-col items-center">
+              <span className="text-3xl font-black text-emerald-300">18</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">LGAs</span>
             </div>
           </div>
         </div>
 
-        {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 right-0 translate-y-1 z-10">
-          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto text-white/95" preserveAspectRatio="none">
-            <path d="M0 60V20C240 0 480 0 720 20C960 40 1200 40 1440 20V60H0Z" fill="currentColor" opacity="0.5" />
-            <path d="M0 60V30C240 10 480 10 720 30C960 50 1200 50 1440 30V60H0Z" fill="currentColor" />
+        {/* Decorative Wave */}
+        <div className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none">
+          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto text-slate-50 dark:text-zinc-950 fill-current">
+            <path d="M0 120V60C240 30 480 30 720 60C960 90 1200 90 1440 60V120H0Z" opacity="0.5" />
+            <path d="M0 120V80C240 50 480 50 720 80C960 110 1200 110 1440 80V120H0Z" />
           </svg>
         </div>
       </header>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 mt-6">
-
-        {/* Error Banner */}
-
-
-        {/* Search & Filter Bar */}
+      {/* Main Content Area */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 -mt-8 relative z-20">
+        
+        {/* Search & Filters */}
         <SearchAndFilter
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          lgaFilter={lgaFilter}
-          onLgaChange={setLgaFilter}
-          monthFilter={monthFilter}
-          onMonthChange={setMonthFilter}
-          mdaFilter={mdaFilter}
-          onMdaChange={setMdaFilter}
-          sortOption={sortOption}
-          onSortChange={setSortOption}
-          officers={officers}
+          searchQuery={searchInput}
+          onSearchChange={setSearchInput}
+          lgaFilter={lgaParam}
+          onLgaChange={(val) => updateFilters({ lga: val })}
+          monthFilter={monthParam}
+          onMonthChange={(val) => updateFilters({ month: val })}
+          mdaFilter={mdaParam}
+          onMdaChange={(val) => updateFilters({ mda: val })}
+          sortOption={sortParam}
+          onSortChange={(val) => updateFilters({ sort: val })}
+          officers={allOfficers}
         />
 
-        {/* Results Count & Export */}
-        <div className="flex items-center justify-between mb-4 mt-2">
-          <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium">
-            Showing{" "}
-            <span className="font-bold text-slate-700 dark:text-zinc-300">
-              {paginatedOfficers.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}-
-              {Math.min(currentPage * itemsPerPage, processedOfficers.length)}
-            </span>{" "}
-            of {processedOfficers.length} officers
-          </p>
-
-          <ExportButton officers={processedOfficers} />
+        {/* Results Header */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
+              <Users size={20} className="text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100">Personnel Registry</h3>
+              <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium">
+                Displaying <span className="text-emerald-600 font-bold">{totalCount}</span> registered officers
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <ExportButton officers={allOfficers} />
+          </div>
         </div>
 
-        {/* Profile Grid */}
+        {/* Loading Overlay or Grid */}
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-5">
-            {[...Array(10)].map((_, i) => (
-              <div key={i} className="h-full">
-                <ProfileSkeleton />
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[...Array(8)].map((_, i) => (
+              <ProfileSkeleton key={i} />
             ))}
           </div>
-        ) : connectionError ? (
-          <div className="text-center py-20 px-6 bg-red-50/30 dark:bg-red-950/10 rounded-[3rem] border border-red-200/50 dark:border-red-900/20 backdrop-blur-md">
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/30 mb-6">
-              <AlertCircle size={36} className="text-red-500" />
+        ) : error ? (
+          <div className="text-center py-24 bg-white dark:bg-zinc-900 rounded-[3rem] border border-slate-200 dark:border-zinc-800 shadow-xl">
+             <div className="w-20 h-20 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <AlertCircle size={40} className="text-red-500" />
             </div>
-            <h3 className="text-2xl font-black text-slate-800 dark:text-zinc-100 mb-2 tracking-tight">Sync Interrupted</h3>
-            <p className="text-slate-500 dark:text-zinc-400 max-w-sm mx-auto mb-8 font-medium">
-              We're having trouble reaching the directory. This might be due to a temporary network issue or a security update.
+            <h3 className="text-2xl font-black text-slate-800 dark:text-zinc-100 mb-3">Sync Error</h3>
+            <p className="text-slate-500 dark:text-zinc-400 max-w-md mx-auto mb-10 font-medium">
+              We couldn't load the directory data. Please check your connection and try again.
             </p>
-            <button
+            <button 
               onClick={() => fetchOfficers()}
-              className="px-8 py-3.5 bg-red-500 hover:bg-red-600 text-white font-bold rounded-2xl shadow-lg shadow-red-500/30 transition-all active:scale-95 cursor-pointer"
+              className="px-10 py-4 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-bold rounded-2xl hover:scale-105 transition-all active:scale-95"
             >
-              Retry Connection
+              Retry Sync
             </button>
           </div>
-        ) : paginatedOfficers.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-5">
-            {paginatedOfficers.map((officer, index) => (
+        ) : officers.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
+            {officers.map((officer, index) => (
               <div
                 key={officer.id}
-                className="card-enter h-full"
-                style={{ animationDelay: `${index * 60}ms` }}
+                className="card-enter"
+                style={{ animationDelay: `${index * 50}ms` }}
               >
                 <ProfileCard
                   officer={officer}
@@ -331,44 +341,70 @@ export default function DashboardPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-zinc-800/50 mb-4">
-              <Users size={28} className="text-slate-400 dark:text-zinc-600" />
+          <div className="text-center py-32 bg-white dark:bg-zinc-900 rounded-[3rem] border border-slate-200 dark:border-zinc-800 shadow-xl">
+            <div className="w-20 h-20 bg-slate-50 dark:bg-zinc-800/50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <SearchIcon size={40} className="text-slate-300 dark:text-zinc-600" />
             </div>
-            <p className="text-lg font-semibold text-slate-600 dark:text-zinc-300">
-              No officers found
+            <h3 className="text-2xl font-black text-slate-800 dark:text-zinc-100 mb-2">No Matches Found</h3>
+            <p className="text-slate-500 dark:text-zinc-400 font-medium mb-8">
+              Adjust your filters or try a different search term.
             </p>
-            <p className="text-sm text-slate-400 dark:text-zinc-500 mt-1">
-              Try adjusting your search or filters.
-            </p>
+            <button 
+              onClick={() => updateFilters({ q: "", lga: "", mda: "", month: "" })}
+              className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline"
+            >
+              Clear all filters
+            </button>
           </div>
         )}
 
-        {/* Pagination Controls */}
+        {/* Pagination */}
         {!isLoading && totalPages > 1 && (
-          <div className="flex justify-center items-center gap-4 mt-12 mb-8">
+          <div className="flex justify-center items-center gap-4 mt-16">
             <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-              disabled={currentPage === 1}
-              className="p-2 rounded-xl bg-white dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 shadow-sm hover:bg-green-50 dark:hover:bg-emerald-900/40 hover:text-green-600 dark:hover:text-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              onClick={() => updateFilters({ page: pageParam - 1 })}
+              disabled={pageParam === 1}
+              className="p-3 rounded-2xl bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 shadow-sm hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 disabled:opacity-30 transition-all cursor-pointer"
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={24} />
             </button>
-            <div className="text-sm font-semibold text-slate-600 dark:text-zinc-400 bg-white dark:bg-zinc-800 px-4 py-2 rounded-xl border border-slate-200 dark:border-zinc-700 shadow-sm">
-              Page <span className="text-green-600 dark:text-emerald-400">{currentPage}</span> of {totalPages}
+            
+            <div className="flex gap-2">
+              {[...Array(totalPages)].map((_, i) => {
+                const p = i + 1;
+                // Show a limited range of pages if totalPages is large
+                if (totalPages > 7 && Math.abs(p - pageParam) > 2 && p !== 1 && p !== totalPages) {
+                  if (Math.abs(p - pageParam) === 3) return <span key={p} className="px-2 self-end">...</span>;
+                  return null;
+                }
+                return (
+                  <button
+                    key={p}
+                    onClick={() => updateFilters({ page: p })}
+                    className={`w-12 h-12 rounded-2xl font-bold transition-all ${
+                      pageParam === p 
+                        ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 scale-110" 
+                        : "bg-white dark:bg-zinc-900 text-slate-500 hover:bg-slate-100 dark:hover:bg-zinc-800"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                );
+              })}
             </div>
+
             <button
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-              disabled={currentPage === totalPages}
-              className="p-2 rounded-xl bg-white dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-700 shadow-sm hover:bg-green-50 dark:hover:bg-emerald-900/40 hover:text-green-600 dark:hover:text-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              onClick={() => updateFilters({ page: pageParam + 1 })}
+              disabled={pageParam === totalPages}
+              className="p-3 rounded-2xl bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 shadow-sm hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 disabled:opacity-30 transition-all cursor-pointer"
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={24} />
             </button>
           </div>
         )}
       </div>
 
-      {/* Birthday Celebration Banner */}
+      {/* Overlays */}
       {birthdayOfficers.length > 0 && (
         <BirthdayBanner
           officers={birthdayOfficers}
@@ -376,25 +412,20 @@ export default function DashboardPage() {
         />
       )}
 
-      {/* Profile Modal */}
       {selectedOfficer && (
         <ProfileModal
           officer={selectedOfficer}
           onClose={() => setSelectedOfficer(null)}
           onOfficerUpdated={(updated) => {
-            setOfficers((prev) =>
-              prev.map((o) => (o.id === updated.id ? updated : o))
-            );
+            setOfficers((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
             setSelectedOfficer(updated);
+            // Also update global list for drawers/stats
+            setAllOfficers(prev => prev.map(o => o.id === updated.id ? updated : o));
           }}
         />
       )}
 
-
-      {/* Floating Scroll Buttons */}
       <ScrollButtons />
-
-
     </main>
   );
 }

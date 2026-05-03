@@ -2,7 +2,7 @@
 // Handles standardizing LGA names to the 18 official LGAs in Ondo State
 // and merging synonymous MDA names.
 
-const ONDO_LGAS = [
+export const ONDO_LGAS = [
     "Akoko North-East",
     "Akoko North-West",
     "Akoko South-East",

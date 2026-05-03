@@ -1,7 +1,8 @@
 "use client";
 
-import { Search, SlidersHorizontal, ArrowUpDown, X } from "lucide-react";
+import { Search, SlidersHorizontal, ArrowUpDown, X, Filter } from "lucide-react";
 import { Officer } from "@/types/officer";
+import { ONDO_LGAS } from "@/lib/dataConsolidation";
 
 interface SearchAndFilterProps {
     searchQuery: string;
@@ -30,14 +31,17 @@ export default function SearchAndFilter({
     onSortChange,
     officers,
 }: SearchAndFilterProps) {
-    const uniqueLgas = [...new Set(officers.map((o) => (o.lga || "").trim().toLowerCase().replace(/\s+/g, " ")))].filter(Boolean).sort();
+    // Use ONDO_LGAS for consistency, fallback to data if somehow missing
+    const displayLgas = ONDO_LGAS.length > 0 ? ONDO_LGAS : [...new Set(officers.map((o) => (o.lga || "").trim()))].filter(Boolean).sort();
+    
     const uniqueMdas = [...new Set(officers.map((o) => (o.current_mda || "").trim().toLowerCase().replace(/\s+/g, " ")))].filter(Boolean).sort();
+    
     const months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December",
     ];
 
-    const selectClasses = "bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl text-sm font-medium text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm appearance-none flex-1";
+    const selectClasses = "bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 hover:border-emerald-400/50 transition-all duration-300 shadow-sm appearance-none flex-1";
 
     return (
         <div className="bg-white/60 dark:bg-zinc-900/40 backdrop-blur-2xl border border-white/80 dark:border-zinc-800/60 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-black/20 p-3 mb-8">
@@ -79,12 +83,12 @@ export default function SearchAndFilter({
                         <select
                             value={lgaFilter}
                             onChange={(e) => onLgaChange(e.target.value)}
-                            className={`px-4 py-3 cursor-pointer z-10 ${selectClasses} min-w-[150px] w-full pr-10`}
+                            className={`px-4 py-3 cursor-pointer z-10 ${selectClasses} min-w-[150px] w-full pr-10 ${lgaFilter ? "border-emerald-500 bg-emerald-50/30 dark:bg-emerald-900/10" : ""}`}
                         >
                             <option value="">All LGAs</option>
-                            {uniqueLgas.map((lga) => (
+                            {displayLgas.map((lga: string) => (
                                 <option key={lga} value={lga} className="capitalize">
-                                    {lga.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                    {lga}
                                 </option>
                             ))}
                         </select>

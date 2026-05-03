@@ -176,7 +176,30 @@ html.dark body {
 
 /* Staggered card animation */
 .card-enter {
-  animation: slide-up 0.4s ease-out both;
+  animation: slide-up 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Advanced Shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0) 0%, 
+    rgba(255,255,255,0.05) 50%, 
+    rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+html.dark .animate-shimmer {
+  background: linear-gradient(90deg, 
+    rgba(255,255,255,0) 0%, 
+    rgba(255,255,255,0.02) 50%, 
+    rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
 }
 
 /* Bulletproof Input Styling to override Tailwind v4 Reset */

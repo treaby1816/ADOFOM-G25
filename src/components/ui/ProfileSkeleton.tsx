@@ -1,39 +1,34 @@
 export default function ProfileSkeleton() {
     return (
-        <div className="h-full group bg-white/50 backdrop-blur-sm rounded-3xl border border-white/40 shadow-sm overflow-hidden flex flex-col animate-pulse">
-            {/* Decorative top accent placeholder */}
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-slate-200/50" />
-
+        <div className="h-full bg-white/40 dark:bg-zinc-900/40 backdrop-blur-md rounded-[2.5rem] border border-white/60 dark:border-zinc-800/60 shadow-sm overflow-hidden flex flex-col relative">
+            <div className="absolute inset-0 animate-shimmer pointer-events-none" />
+            
             {/* Photo Section Skeleton */}
-            <div className="flex justify-center pt-8 pb-4 relative">
-                <div className="w-32 h-32 rounded-full bg-slate-200" />
+            <div className="flex justify-center pt-10 pb-6 relative">
+                <div className="w-32 h-32 rounded-full bg-slate-200/50 dark:bg-zinc-800/50 ring-4 ring-white/50 dark:ring-zinc-800/50" />
             </div>
 
             {/* Info Section Skeleton */}
-            <div className="px-6 pb-6 flex-1 text-center flex flex-col items-center">
+            <div className="px-6 pb-8 flex-1 text-center flex flex-col items-center">
                 {/* Name */}
-                <div className="w-3/4 h-6 bg-slate-200 rounded-md mb-3" />
+                <div className="w-3/4 h-7 bg-slate-200/60 dark:bg-zinc-800/60 rounded-xl mb-4" />
                 {/* MDA badge */}
-                <div className="w-1/2 h-6 bg-slate-100 rounded-full mb-3" />
-                {/* Grade Level */}
-                <div className="w-1/3 h-4 bg-slate-100 rounded-md mb-5" />
-
-                {/* Meta row */}
-                <div className="flex items-center justify-center gap-4 w-full">
-                    <div className="w-20 h-5 bg-slate-100 rounded-md" />
-                    <div className="w-24 h-5 bg-slate-100 rounded-md" />
+                <div className="w-1/2 h-6 bg-emerald-100/30 dark:bg-emerald-900/10 rounded-full mb-6" />
+                
+                {/* Stats placeholders */}
+                <div className="flex gap-3 w-full justify-center">
+                    <div className="w-16 h-4 bg-slate-100/50 dark:bg-zinc-800/40 rounded-lg" />
+                    <div className="w-20 h-4 bg-slate-100/50 dark:bg-zinc-800/40 rounded-lg" />
                 </div>
             </div>
 
-            {/* Quick Actions Skeleton */}
-            <div className="border-t border-slate-100/50 px-5 py-4 flex items-center justify-between">
+            {/* Footer Actions Skeleton */}
+            <div className="border-t border-slate-100/40 dark:border-zinc-800/40 px-6 py-5 flex items-center justify-between bg-slate-50/30 dark:bg-zinc-900/20">
                 <div className="flex gap-2">
-                    <div className="w-9 h-9 rounded-full bg-slate-100" />
-                    <div className="w-9 h-9 rounded-full bg-slate-100" />
-                    <div className="w-9 h-9 rounded-full bg-slate-100" />
+                    <div className="w-10 h-10 rounded-full bg-slate-100/60 dark:bg-zinc-800/60" />
+                    <div className="w-10 h-10 rounded-full bg-slate-100/60 dark:bg-zinc-800/60" />
                 </div>
-
-                <div className="w-28 h-9 rounded-full bg-slate-200" />
+                <div className="w-28 h-10 rounded-2xl bg-slate-200/60 dark:bg-zinc-800/60" />
             </div>
         </div>
     );

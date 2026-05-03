@@ -7,9 +7,35 @@ import AuthGuardLayout from "@/components/auth/AuthGuardLayout";
 import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
-  title: "Ondo State Admin Directory",
-  description:
-    "Official staff directory for the Ondo State Administrative Officers Cadre. Browse profiles, contact officers, and celebrate birthdays.",
+  metadataBase: new URL("https://adofom.vercel.app"),
+  title: {
+    default: "Ondo State Admin Directory",
+    template: "%s | ADOFOM Portal"
+  },
+  description: "Official staff directory for the Ondo State Administrative Officers Cadre. Browse profiles, contact officers, and celebrate birthdays with professional excellence.",
+  keywords: ["Ondo State", "Admin Directory", "Administrative Officers", "ADOFOM", "Civil Service", "Nigeria"],
+  authors: [{ name: "Ondo State Government" }],
+  creator: "Ondo State Administrative Officers Cadre",
+  openGraph: {
+    type: "website",
+    locale: "en_NG",
+    url: "https://directory.ondostate.gov.ng",
+    title: "Ondo State Administrative Officers Directory",
+    description: "The official portal for the Administrative Officers Cadre. Discover, connect, and collaborate with excellence.",
+    siteName: "ADOFOM Portal",
+    images: [{
+      url: "/logo2.jpg",
+      width: 800,
+      height: 600,
+      alt: "Ondo State Administrative Officers Directory Logo",
+    }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ondo State Admin Directory",
+    description: "Official staff directory for the Ondo State Administrative Officers Cadre.",
+    images: ["/logo2.jpg"],
+  },
   manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
