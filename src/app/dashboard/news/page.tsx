@@ -15,6 +15,7 @@ interface NewsArticle {
   category: string
   author_name: string
   pinned: boolean
+  image_url: string | null
   created_at: string
   updated_at: string
 }
@@ -42,6 +43,13 @@ function timeAgo(dateStr: string): string {
   return date.toLocaleDateString('en-NG', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
+function getDriveViewUrl(url: string | null | undefined): string {
+  if (!url) return ''
+  if (!url.includes('drive.google.com/open?id=')) return url
+  const id = url.split('id=')[1]
+  return id ? `/api/image-proxy?id=${id}` : url
+}
+
 export default function NewsPage() {
   const supabase = useMemo(() => createClient(), [])
   const [articles, setArticles] = useState<NewsArticle[]>([])
@@ -54,6 +62,7 @@ export default function NewsPage() {
   // Compose form state
   const [newTitle, setNewTitle] = useState('')
   const [newContent, setNewContent] = useState('')
+  const [newImageUrl, setNewImageUrl] = useState('')
   const [newCategory, setNewCategory] = useState('general')
   const [newPinned, setNewPinned] = useState(false)
   const [publishing, setPublishing] = useState(false)
@@ -139,6 +148,7 @@ export default function NewsPage() {
       const { error } = await supabase.from('adofom_news').insert({
         title: newTitle.trim(),
         content: newContent.trim(),
+        image_url: newImageUrl.trim() || null,
         category: newCategory,
         pinned: newPinned,
         is_published: true,
@@ -151,6 +161,7 @@ export default function NewsPage() {
       } else {
         setNewTitle('')
         setNewContent('')
+        setNewImageUrl('')
         setNewCategory('general')
         setNewPinned(false)
         setShowComposer(false)
@@ -257,6 +268,17 @@ export default function NewsPage() {
                 placeholder="Write the full article content..."
                 rows={5}
                 className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-sm sm:text-base text-slate-800 dark:text-zinc-100 placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all resize-none leading-relaxed"
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">Photo URL (Optional)</label>
+              <input
+                type="text"
+                value={newImageUrl}
+                onChange={(e) => setNewImageUrl(e.target.value)}
+                placeholder="Paste an image URL (e.g. Google Drive link)"
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-sm sm:text-base text-slate-800 dark:text-zinc-100 font-semibold placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all"
               />
             </div>
 
@@ -404,6 +426,18 @@ export default function NewsPage() {
                       }`}>
                         {article.content}
                       </p>
+                      
+                      {article.image_url && (!isLong || isExpanded) && (
+                        <div className="mt-4 w-full rounded-xl overflow-hidden border border-slate-200 dark:border-zinc-800/80 shadow-sm bg-slate-50 dark:bg-zinc-900/50 flex justify-center">
+                          <img 
+                            src={getDriveViewUrl(article.image_url)} 
+                            alt={article.title}
+                            className="max-h-[400px] w-auto object-contain bg-black/5" 
+                            loading="lazy"
+                          />
+                        </div>
+                      )}
+
                       {isLong && (
                         <button
                           onClick={() => setExpandedId(isExpanded ? null : article.id)}
