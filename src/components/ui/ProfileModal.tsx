@@ -302,7 +302,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                         </div>
 
                         {/* Social Links (only show if any exist) */}
-                        {(currentOfficer.facebook_url || currentOfficer.twitter_url || currentOfficer.instagram_url) && (
+                        {(currentOfficer.facebook_url || currentOfficer.twitter_url || currentOfficer.instagram_url || currentOfficer.linkedin_url) && (
                             <div className="mt-6 flex justify-center gap-3">
                                 {currentOfficer.facebook_url && (
                                     <a
@@ -335,6 +335,17 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                                         title="Instagram Profile"
                                     >
                                         <Instagram size={20} />
+                                    </a>
+                                )}
+                                {currentOfficer.linkedin_url && (
+                                    <a
+                                        href={currentOfficer.linkedin_url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-3 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:-translate-y-1 transition-all shadow-sm"
+                                        title="LinkedIn Profile"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
                                     </a>
                                 )}
                             </div>

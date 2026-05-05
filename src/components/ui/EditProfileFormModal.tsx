@@ -32,6 +32,7 @@ interface ProfileFormValues {
     facebook_url?: string;
     twitter_url?: string;
     instagram_url?: string;
+    linkedin_url?: string;
     exco_portfolio?: string;
 }
 
@@ -51,6 +52,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
             facebook_url: officer.facebook_url || "",
             twitter_url: officer.twitter_url || "",
             instagram_url: officer.instagram_url || "",
+            linkedin_url: officer.linkedin_url || "",
             exco_portfolio: officer.exco_portfolio || "",
         }
     });
@@ -198,6 +200,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 facebook_url: data.facebook_url?.trim() || "",
                 twitter_url: data.twitter_url?.trim() || "",
                 instagram_url: data.instagram_url?.trim() || "",
+                linkedin_url: data.linkedin_url?.trim() || "",
             };
 
             if (isAdmin) {
@@ -449,6 +452,12 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                                     <Instagram size={12} className="text-pink-600 dark:text-pink-400" /> Instagram Profile URL
                                 </label>
                                 <input type="url" {...register("instagram_url")} className={inputClass} placeholder="https://instagram.com/username" />
+                            </div>
+                            <div>
+                                <label className={labelClass}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-700 dark:text-blue-500"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg> LinkedIn Profile URL
+                                </label>
+                                <input type="url" {...register("linkedin_url")} className={inputClass} placeholder="https://linkedin.com/in/username" />
                             </div>
                         </div>
                     </div>

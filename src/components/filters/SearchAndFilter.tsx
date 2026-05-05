@@ -50,7 +50,7 @@ export default function SearchAndFilter({
                 <div className="relative flex-1 group md:flex-1">
                     <Search
                         size={18}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 group-focus-within:text-green-500 dark:group-focus-within:text-emerald-400 transition-colors z-10 pointer-events-none"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 group-focus-within:text-green-500 dark:group-focus-within:text-emerald-400 transition-colors z-30 pointer-events-none"
                     />
                     <input
                         id="officer-search"
@@ -59,13 +59,13 @@ export default function SearchAndFilter({
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
                         autoComplete="off"
-                        style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a', backgroundColor: 'white' }}
-                        className="search-input w-full py-3 pr-12 pl-12 border border-slate-200 dark:border-zinc-800 rounded-2xl text-base sm:text-sm font-medium placeholder:text-slate-400 dark:placeholder:text-zinc-500 caret-emerald-500 focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm relative z-20"
+                        style={{ color: '#000000', WebkitTextFillColor: '#000000', caretColor: '#000000', backgroundColor: '#ffffff' }}
+                        className="search-input w-full py-3 pr-12 pl-12 border border-slate-200 dark:border-zinc-800 rounded-2xl text-base sm:text-sm font-medium placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm relative z-20"
                     />
                     {searchQuery && (
                         <button
                             onClick={() => onSearchChange("")}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all z-10 cursor-pointer"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all z-30 cursor-pointer"
                             title="Clear search"
                         >
                             <X size={16} />

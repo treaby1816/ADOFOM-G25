@@ -62,7 +62,7 @@ export default function NewsPage() {
   // Compose form state
   const [newTitle, setNewTitle] = useState('')
   const [newContent, setNewContent] = useState('')
-  const [newImageUrl, setNewImageUrl] = useState('')
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [newCategory, setNewCategory] = useState('general')
   const [newPinned, setNewPinned] = useState(false)
   const [publishing, setPublishing] = useState(false)
@@ -145,10 +145,31 @@ export default function NewsPage() {
         .eq('id', user.id)
         .maybeSingle()
 
+      let finalImageUrl: string | null = null;
+
+      if (selectedFile) {
+        const fileExt = selectedFile.name.split('.').pop()
+        const fileName = `news/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+        
+        const { error: uploadError } = await supabase.storage
+          .from('avatars') // Using existing public bucket
+          .upload(fileName, selectedFile)
+
+        if (uploadError) {
+          throw new Error('Failed to upload image: ' + uploadError.message)
+        }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('avatars')
+          .getPublicUrl(fileName)
+          
+        finalImageUrl = publicUrl
+      }
+
       const { error } = await supabase.from('adofom_news').insert({
         title: newTitle.trim(),
         content: newContent.trim(),
-        image_url: newImageUrl.trim() || null,
+        image_url: finalImageUrl,
         category: newCategory,
         pinned: newPinned,
         is_published: true,
@@ -161,16 +182,15 @@ export default function NewsPage() {
       } else {
         setNewTitle('')
         setNewContent('')
-        setNewImageUrl('')
+        setSelectedFile(null)
         setNewCategory('general')
         setNewPinned(false)
         setShowComposer(false)
         setPublishError(null)
-        // Realtime will auto-refresh, but also fetch immediately for the publisher
         await fetchNews()
       }
-    } catch (err) {
-      setPublishError('Network error. Please try again.')
+    } catch (err: any) {
+      setPublishError(err.message || 'Network error. Please try again.')
     }
     setPublishing(false)
   }
@@ -272,14 +292,14 @@ export default function NewsPage() {
             </div>
 
             <div>
-              <label className="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">Photo URL (Optional)</label>
+              <label className="block text-[11px] sm:text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-1.5">Attach Photo (Optional)</label>
               <input
-                type="text"
-                value={newImageUrl}
-                onChange={(e) => setNewImageUrl(e.target.value)}
-                placeholder="Paste an image URL (e.g. Google Drive link)"
-                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-sm sm:text-base text-slate-800 dark:text-zinc-100 font-semibold placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-sm sm:text-base text-slate-800 dark:text-zinc-100 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
+              {selectedFile && <p className="text-xs text-slate-500 mt-2 font-medium">Selected: {selectedFile.name}</p>}
             </div>
 
             {/* Category + Pin — stacks vertically on mobile */}
