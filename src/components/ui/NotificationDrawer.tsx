@@ -2,15 +2,26 @@
 
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { Bell, X, Cake, BellRing, ShieldAlert, Info, Check, Trash2 } from 'lucide-react'
+import { Bell, X, Cake, BellRing, ShieldAlert, Info, Check, Trash2, Newspaper } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
+import { useRouter } from 'next/navigation'
 
 interface AppNotification {
   id: string
   title: string
   message: string
-  type: 'birthday' | 'admin' | 'system'
+  type: 'birthday' | 'admin' | 'system' | 'news'
   is_read: boolean
+  created_at: string
+  link?: string
+}
+
+interface NewsArticle {
+  id: string
+  title: string
+  content: string
+  category: string
+  author_name: string
   created_at: string
 }
 
@@ -18,13 +29,15 @@ export default function NotificationDrawer() {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const [notifications, setNotifications] = useState<AppNotification[]>([])
+  const [newsAlerts, setNewsAlerts] = useState<AppNotification[]>([])
   const supabase = createClient()
+  const router = useRouter()
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  // 1. Fetch real notifications from the new table
+  // 1. Fetch real notifications from the notifications table
   const fetchNotifications = async () => {
     const { data, error } = await supabase
       .from('notifications')
@@ -35,25 +48,65 @@ export default function NotificationDrawer() {
     if (!error && data) setNotifications(data)
   }
 
+  // 2. Fetch recent news as alerts (last 24 hours)
+  const fetchNewsAlerts = async () => {
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+    const { data, error } = await supabase
+      .from('adofom_news')
+      .select('id, title, content, category, author_name, created_at')
+      .gte('created_at', oneDayAgo)
+      .eq('is_published', true)
+      .order('created_at', { ascending: false })
+      .limit(10)
+
+    if (!error && data) {
+      const alerts: AppNotification[] = data.map((article: NewsArticle) => ({
+        id: `news-${article.id}`,
+        title: `📰 ${article.title}`,
+        message: `${article.content.substring(0, 80)}${article.content.length > 80 ? '...' : ''} — by ${article.author_name}`,
+        type: 'news' as const,
+        is_read: false,
+        created_at: article.created_at,
+        link: '/dashboard/news',
+      }))
+      setNewsAlerts(alerts)
+    }
+  }
+
   useEffect(() => {
     fetchNotifications()
+    fetchNewsAlerts()
     
-    // Optional: Set up a real-time subscription so the badge updates instantly
-    const channel = supabase
-      .channel('schema-db-changes')
+    // Real-time subscription for new notifications
+    const notifChannel = supabase
+      .channel('notif-changes')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications' }, fetchNotifications)
       .subscribe()
 
-    return () => { supabase.removeChannel(channel) }
+    // Real-time subscription for new news articles
+    const newsChannel = supabase
+      .channel('news-alert-changes')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'adofom_news' }, fetchNewsAlerts)
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(notifChannel)
+      supabase.removeChannel(newsChannel)
+    }
   }, [])
 
-  // 2. Logic to mark as read
+  // 3. Logic to mark as read
   const markAsRead = async (id: string) => {
+    if (id.startsWith('news-')) {
+      // News alerts — just hide from UI
+      setNewsAlerts(prev => prev.filter(n => n.id !== id))
+      return
+    }
     await supabase.from('notifications').update({ is_read: true }).eq('id', id)
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
   }
 
-  // 3. Clear All Function
+  // 4. Clear All Function
   const clearAll = async () => {
     if (!confirm("Are you sure you want to clear all notifications?")) return;
 
@@ -61,12 +114,23 @@ export default function NotificationDrawer() {
     
     if (!error) {
       setNotifications([]) // Optimistic UI update
+      setNewsAlerts([])    // Also clear news alerts
     } else {
       console.error("Error clearing notifications:", error.message)
     }
   }
 
-  const unreadCount = notifications.filter(n => !n.is_read).length
+  // Handle clicking a notification with a link
+  const handleNotificationClick = (notification: AppNotification) => {
+    if (notification.link) {
+      setIsOpen(false)
+      router.push(notification.link)
+    }
+  }
+
+  // Merge all notifications, news first
+  const allNotifications = [...newsAlerts, ...notifications]
+  const unreadCount = newsAlerts.length + notifications.filter(n => !n.is_read).length
 
   return (
     <>
@@ -75,7 +139,7 @@ export default function NotificationDrawer() {
         <Bell className="text-white/80" size={20} />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white ring-2 ring-[#0f172a]">
-            {unreadCount}
+            {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
@@ -92,9 +156,14 @@ export default function NotificationDrawer() {
               <div className="flex items-center gap-2">
                 <BellRing className="text-emerald-400" size={20} />
                 <h2 className="text-lg font-bold text-white">Activity Feed</h2>
+                {unreadCount > 0 && (
+                  <span className="text-[10px] font-bold bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full border border-red-500/30">
+                    {unreadCount} new
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-3">
-                {notifications.length > 0 && (
+                {allNotifications.length > 0 && (
                   <button 
                     onClick={clearAll}
                     className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-red-400/70 hover:text-red-400 transition-colors"
@@ -116,26 +185,42 @@ export default function NotificationDrawer() {
 
             {/* Notification list — scrollable */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {notifications.length > 0 ? (
-                notifications.map((n) => (
-                  <div key={n.id} className={`p-4 rounded-2xl border transition-all ${n.is_read ? 'bg-white/5 border-white/5 opacity-60' : 'bg-white/10 border-white/20 shadow-lg'}`}>
+              {allNotifications.length > 0 ? (
+                allNotifications.map((n) => (
+                  <div 
+                    key={n.id} 
+                    className={`p-4 rounded-2xl border transition-all ${
+                      n.type === 'news' 
+                        ? 'bg-blue-500/10 border-blue-500/20 shadow-lg hover:bg-blue-500/15 cursor-pointer' 
+                        : n.is_read 
+                          ? 'bg-white/5 border-white/5 opacity-60' 
+                          : 'bg-white/10 border-white/20 shadow-lg'
+                    }`}
+                    onClick={() => n.link && handleNotificationClick(n)}
+                  >
                     <div className="flex items-start gap-3">
                       <div className="mt-1">
                         {n.type === 'birthday' && <Cake className="text-pink-400" size={18} />}
                         {n.type === 'admin' && <ShieldAlert className="text-amber-400" size={18} />}
                         {n.type === 'system' && <Info className="text-blue-400" size={18} />}
+                        {n.type === 'news' && <Newspaper className="text-blue-400" size={18} />}
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between items-start">
                           <p className="text-sm font-bold text-white">{n.title}</p>
-                          {!n.is_read && (
-                            <button onClick={() => markAsRead(n.id)} className="p-1 hover:bg-emerald-500/20 rounded text-emerald-400">
+                          {!n.is_read && n.type !== 'news' && (
+                            <button onClick={(e) => { e.stopPropagation(); markAsRead(n.id); }} className="p-1 hover:bg-emerald-500/20 rounded text-emerald-400">
                               <Check size={14} />
                             </button>
                           )}
                         </div>
                         <p className="text-xs text-white/70 mt-1 leading-relaxed">{n.message}</p>
-                        <p className="text-[10px] text-white/30 mt-2">{new Date(n.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        <div className="flex items-center justify-between mt-2">
+                          <p className="text-[10px] text-white/30">{new Date(n.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                          {n.link && (
+                            <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wider">Tap to view →</span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
