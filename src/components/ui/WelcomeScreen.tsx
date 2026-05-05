@@ -18,8 +18,8 @@ const slides = [
   },
   {
     image: '/slide3.jpg',
-    tagline: 'United',
-    subtext: 'Building a stronger future together.'
+    tagline: 'United for a Stronger Future',
+    subtext: 'Building a legacy of administrative brilliance through collaboration and unity.'
   }
 ];
 
