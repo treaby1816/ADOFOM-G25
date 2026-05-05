@@ -13,8 +13,8 @@ const slides = [
   },
   {
     image: '/slide2.jpg',
-    tagline: 'Empowering Leadership',
-    subtext: 'Fostering integrity, innovation, and service.'
+    tagline: 'Empowering Professional Leadership',
+    subtext: 'Fostering integrity, innovation, and service across the Ondo State Civil Service.'
   },
   {
     image: '/slide3.jpg',
