@@ -296,7 +296,17 @@ export default function NewsPage() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  if (file && file.size > 2 * 1024 * 1024) {
+                    setPublishError("Image must be less than 2MB.");
+                    e.target.value = ""; // Reset the input
+                    setSelectedFile(null);
+                  } else {
+                    setPublishError(null);
+                    setSelectedFile(file);
+                  }
+                }}
                 className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-slate-50 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl text-sm sm:text-base text-slate-800 dark:text-zinc-100 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/50 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
               {selectedFile && <p className="text-xs text-slate-500 mt-2 font-medium">Selected: {selectedFile.name}</p>}
