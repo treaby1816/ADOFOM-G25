@@ -80,9 +80,9 @@ export default function WelcomeScreen() {
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-yellow-500/10 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="max-w-xl w-full space-y-8 z-10 text-center flex flex-col items-center">
+        <div className="max-w-xl w-full space-y-8 z-10 text-center md:text-left">
           {/* Logo Section */}
-          <div className="flex justify-center items-center gap-6 md:gap-8">
+          <div className="flex justify-center items-center gap-6 md:gap-8 w-full">
             {/* Logo 1: ADOFOM */}
             <div className="relative group">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-yellow-400 via-yellow-600 to-emerald-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 animate-pulse" />
@@ -111,10 +111,10 @@ export default function WelcomeScreen() {
           </div>
 
           {/* Dynamic Text Section */}
-          <div className="space-y-6 min-h-[220px] flex flex-col justify-center items-center">
+          <div className="space-y-6 min-h-[220px] flex flex-col justify-center">
             <h1 
               key={`tag-${currentSlide}`}
-              className="text-3xl md:text-4xl lg:text-6xl font-extrabold text-white leading-[1.1] animate-slide-up tracking-tight text-center"
+              className="text-3xl md:text-4xl lg:text-6xl font-extrabold text-white leading-[1.1] animate-slide-up tracking-tight"
               style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-600 drop-shadow-sm">
@@ -123,26 +123,26 @@ export default function WelcomeScreen() {
             </h1>
             <p 
               key={`sub-${currentSlide}`}
-              className="text-base md:text-lg lg:text-xl text-slate-100/90 font-medium animate-fade-in leading-relaxed max-w-2xl text-center px-4"
+              className="text-base md:text-lg lg:text-xl text-slate-100/90 font-medium animate-fade-in leading-relaxed max-w-2xl border-l-4 border-yellow-500 pl-6 text-left"
             >
               {slides[currentSlide].subtext}
             </p>
           </div>
 
           {/* CTA Buttons */}
-          <nav className="flex flex-col sm:flex-row gap-5 pt-6 justify-center w-full">
+          <nav className="flex flex-col sm:flex-row gap-5 pt-6 justify-center md:justify-start w-full">
             <Link 
               href="/signup" 
-              className="flex-1 max-w-[200px] group flex items-center justify-center gap-3 px-8 py-4 btn-gold rounded-[1.5rem] shadow-2xl hover:shadow-yellow-500/40 transition-all text-lg"
+              className="flex-1 group flex items-center justify-center gap-3 px-10 py-5 btn-gold rounded-[1.5rem] shadow-2xl hover:shadow-yellow-500/40 transition-all text-xl"
             >
-              <UserPlus className="w-5 h-5" />
+              <UserPlus className="w-6 h-6" />
               <span>Get Started</span>
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+              <ChevronRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
             </Link>
             
             <Link 
               href="/login" 
-              className="flex-1 max-w-[200px] group flex items-center justify-center gap-3 px-8 py-4 bg-white/5 backdrop-blur-xl border border-white/10 text-white rounded-[1.5rem] hover:bg-white/10 transition-all text-lg shadow-2xl"
+              className="flex-1 group flex items-center justify-center gap-3 px-10 py-5 bg-white/5 backdrop-blur-xl border border-white/10 text-white rounded-[1.5rem] hover:bg-white/10 transition-all text-xl shadow-2xl"
 
             >
               <LogIn className="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform" />
