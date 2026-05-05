@@ -187,10 +187,10 @@ const MDA_MAPPING: Record<string, string> = {
     "local government service commission": "Local Government Service Commission",
     "lgsc": "Local Government Service Commission",
 
-    "board for adult, technical and vocational education (batve)": "Board for Adult, Technical and vocational education",
-    "board of adult, technical & vocational education": "Board for Adult, Technical and vocational education",
-    "board for adult": "Board for Adult, Technical and vocational education",
-    "batve": "Board for Adult, Technical and vocational education",
+    "board for adult, technical and vocational education (batve)": "Board for Adult, Technical and Vocational Education",
+    "board of adult, technical & vocational education": "Board for Adult, Technical and Vocational Education",
+    "board for adult": "Board for Adult, Technical and Vocational Education",
+    "batve": "Board for Adult, Technical and Vocational Education",
 
     "cabinet and special services": "Cabinet and Special Services Department",
     "cabinet and special service": "Cabinet and Special Services Department",
@@ -230,6 +230,7 @@ const MDA_MAPPING: Record<string, string> = {
 
     "ministry of physical planning and urban": "Ministry of Physical Planning and Urban Development",
     "ministry of physical planning &urban": "Ministry of Physical Planning and Urban Development",
+    "ministry of physical planning & urban development": "Ministry of Physical Planning and Urban Development",
     "ministry of physical planning and urban development": "Ministry of Physical Planning and Urban Development",
 
     "ministry of land and housing": "Ministry of Lands and Housing",
@@ -240,6 +241,14 @@ const MDA_MAPPING: Record<string, string> = {
     "general administration department": "General Administration Department",
     "general administration department (gad)": "General Administration Department",
     "gad": "General Administration Department",
+
+    "office of establishment and training": "Office of Establishments and Training",
+    "office of establishments and training": "Office of Establishments and Training",
+    "the office of establishment and training": "Office of Establishments and Training",
+    
+    "department of public service reform & development (dpsrd)": "Department of Public Service Reform and Development",
+    "department of public service reform and development": "Department of Public Service Reform and Development",
+    "dpsrd": "Department of Public Service Reform and Development",
 };
 
 // Check direct mapping

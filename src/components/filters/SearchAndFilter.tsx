@@ -45,12 +45,12 @@ export default function SearchAndFilter({
 
     return (
         <div className="bg-white/60 dark:bg-zinc-900/40 backdrop-blur-2xl border border-white/80 dark:border-zinc-800/60 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-black/20 p-3 mb-8">
-            <div className="flex flex-col md:flex-row gap-3">
+            <div className="flex flex-col lg:flex-row gap-3">
                 {/* Search */}
-                <div className="relative flex-[3] group">
+                <div className="relative flex-[2] lg:flex-[3] group">
                     <Search
-                        size={20}
-                        className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 group-focus-within:text-green-500 dark:group-focus-within:text-emerald-400 transition-colors z-30 pointer-events-none"
+                        size={18}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 group-focus-within:text-green-500 dark:group-focus-within:text-emerald-400 transition-colors z-30 pointer-events-none"
                     />
                     <input
                         id="officer-search"
@@ -60,32 +60,90 @@ export default function SearchAndFilter({
                         onChange={(e) => onSearchChange(e.target.value)}
                         autoComplete="off"
                         style={{ WebkitTextFillColor: 'initial' }}
-                        className="search-input w-full py-4 pr-14 pl-14 border border-slate-200 dark:border-zinc-800 rounded-2xl text-lg font-medium placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm relative z-20 text-slate-900 dark:text-white bg-white dark:bg-zinc-900/50"
+                        className="search-input w-full py-3 pr-12 pl-12 border border-slate-200 dark:border-zinc-800 rounded-2xl text-base font-medium placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm relative z-20 text-slate-900 dark:text-white bg-white dark:bg-zinc-900/50"
                     />
                     {searchQuery && (
                         <button
                             onClick={() => onSearchChange("")}
-                            className="absolute right-5 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all z-30 cursor-pointer"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all z-30 cursor-pointer"
                             title="Clear search"
                         >
-                            <X size={18} />
+                            <X size={16} />
                         </button>
                     )}
                 </div>
 
-                {/* Sort */}
-                <div className="relative flex-1 min-w-[200px]">
-                    <select
-                        value={sortOption}
-                        onChange={(e) => onSortChange(e.target.value)}
-                        className={`px-5 py-4 cursor-pointer z-20 relative ${selectClasses} w-full pr-12 text-base`}
-                    >
-                        <option value="name-asc">Sort: Name (A-Z)</option>
-                        <option value="name-desc">Sort: Name (Z-A)</option>
-                        <option value="level-senior">Sort: Seniority</option>
-                    </select>
-                    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-3 z-30">
-                        <ArrowUpDown size={16} />
+                {/* Filters Row 1 */}
+                <div className="flex flex-col sm:flex-row gap-2 flex-1">
+                    <div className="relative flex-1">
+                        <select
+                            value={lgaFilter}
+                            onChange={(e) => onLgaChange(e.target.value)}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} w-full pr-10 text-ellipsis overflow-hidden whitespace-nowrap ${lgaFilter ? "border-emerald-500" : ""}`}
+                        >
+                            <option value="">All LGAs</option>
+                            {displayLgas.map((lga: string) => (
+                                <option key={lga} value={lga} className="capitalize">
+                                    {lga}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">
+                            <ArrowUpDown size={14} />
+                        </div>
+                    </div>
+
+                    <div className="relative flex-1">
+                        <select
+                            value={monthFilter}
+                            onChange={(e) => onMonthChange(e.target.value)}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} w-full pr-10 text-ellipsis overflow-hidden whitespace-nowrap ${monthFilter ? "border-emerald-500" : ""}`}
+                        >
+                            <option value="">Birth Month</option>
+                            {months.map((m) => (
+                                <option key={m} value={m}>{m}</option>
+                            ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">
+                            <ArrowUpDown size={14} />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Filters Row 2 - MDA and Sort */}
+                <div className="flex flex-col sm:flex-row gap-2 flex-1">
+                    <div className="relative flex-[2]">
+                        <select
+                            value={mdaFilter}
+                            onChange={(e) => onMdaChange(e.target.value)}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} w-full pr-10 text-ellipsis overflow-hidden whitespace-nowrap ${mdaFilter ? "border-emerald-500" : ""}`}
+                            style={{ maxWidth: '100%' }}
+                        >
+                            <option value="">All MDAs</option>
+                            {uniqueMdas.map((mda) => (
+                                <option key={mda} value={mda} className="capitalize">
+                                    {mda.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">
+                            <ArrowUpDown size={14} />
+                        </div>
+                    </div>
+
+                    <div className="relative flex-1">
+                        <select
+                            value={sortOption}
+                            onChange={(e) => onSortChange(e.target.value)}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} w-full pr-10 text-ellipsis overflow-hidden whitespace-nowrap`}
+                        >
+                            <option value="name-asc">A-Z</option>
+                            <option value="name-desc">Z-A</option>
+                            <option value="level-senior">GL</option>
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">
+                            <ArrowUpDown size={14} />
+                        </div>
                     </div>
                 </div>
             </div>
