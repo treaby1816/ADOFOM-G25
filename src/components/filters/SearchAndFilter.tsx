@@ -59,8 +59,7 @@ export default function SearchAndFilter({
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
                         autoComplete="off"
-                        style={{ color: '#000000', WebkitTextFillColor: '#000000', caretColor: '#000000', backgroundColor: '#ffffff' }}
-                        className="search-input w-full py-3 pr-12 pl-12 border border-slate-200 dark:border-zinc-800 rounded-2xl text-base sm:text-sm font-medium placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm relative z-20"
+                        className="search-input w-full py-3 pr-12 pl-12 border border-slate-200 dark:border-zinc-800 rounded-2xl text-base sm:text-sm font-medium placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm relative z-20 text-slate-900 dark:text-zinc-100 bg-white dark:bg-zinc-900/50"
                     />
                     {searchQuery && (
                         <button
@@ -84,7 +83,6 @@ export default function SearchAndFilter({
                         <select
                             value={lgaFilter}
                             onChange={(e) => onLgaChange(e.target.value)}
-                            style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a', backgroundColor: 'white' }}
                             className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} min-w-[150px] w-full pr-10 ${lgaFilter ? "border-emerald-500" : ""}`}
                         >
                             <option value="">All LGAs</option>
@@ -103,8 +101,7 @@ export default function SearchAndFilter({
                         <select
                             value={monthFilter}
                             onChange={(e) => onMonthChange(e.target.value)}
-                            style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a', backgroundColor: 'white' }}
-                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} min-w-[170px] w-full pr-10`}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} min-w-[150px] w-full pr-10 ${monthFilter ? "border-emerald-500" : ""}`}
                         >
                             <option value="">All Birth Months</option>
                             {months.map((m) => (
@@ -123,8 +120,7 @@ export default function SearchAndFilter({
                         <select
                             value={mdaFilter}
                             onChange={(e) => onMdaChange(e.target.value)}
-                            style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a', backgroundColor: 'white' }}
-                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} min-w-[200px] w-full pr-10`}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} min-w-[150px] w-full pr-10 ${mdaFilter ? "border-emerald-500" : ""}`}
                         >
                             <option value="">All MDAs</option>
                             {uniqueMdas.map((mda) => (
@@ -142,14 +138,13 @@ export default function SearchAndFilter({
                         <select
                             value={sortOption}
                             onChange={(e) => onSortChange(e.target.value)}
-                            style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a', backgroundColor: 'white' }}
-                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} w-full pl-10`}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} min-w-[150px] w-full pr-10`}
                         >
                             <option value="name-asc">Name (A-Z)</option>
                             <option value="name-desc">Name (Z-A)</option>
                             <option value="level-senior">Seniority (GL)</option>
                         </select>
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">
                             <ArrowUpDown size={14} />
                         </div>
                     </div>
