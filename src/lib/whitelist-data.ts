@@ -854,5 +854,9 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "grade_level": "GL. 09",
     "lga": "Ilaje",
     "is_approved": true
+  },
+  "omolaji.femi@gmail.com": {
+    "email_address": "omolaji.femi@gmail.com",
+    "is_approved": false
   }
 };
