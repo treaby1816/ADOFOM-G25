@@ -108,10 +108,27 @@ export default function DashboardPage() {
         query = query.ilike("full_name", `%${queryParam}%`);
       }
       if (lgaParam) {
+        // Similar strategy for LGAs if needed, but LGAs are fairly consistent. We can do an ilike.
         query = query.ilike("lga", `%${lgaParam}%`);
       }
+      
       if (mdaParam) {
-        query = query.ilike("current_mda", `%${mdaParam}%`);
+        // mdaParam is now the NORMALIZED string. We must find all matching raw strings in the DB.
+        if (allOfficers.length > 0) {
+           const matchingRawMdas = [...new Set(
+              allOfficers
+                .filter(o => normalizeMDA(o.current_mda) === mdaParam && o.current_mda)
+                .map(o => o.current_mda)
+           )];
+           
+           if (matchingRawMdas.length > 0) {
+              query = query.in("current_mda", matchingRawMdas);
+           } else {
+              query = query.ilike("current_mda", `%${mdaParam}%`);
+           }
+        } else {
+           query = query.ilike("current_mda", `%${mdaParam}%`);
+        }
       }
 
       // Sort
@@ -152,7 +169,7 @@ export default function DashboardPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [supabase, queryParam, lgaParam, mdaParam, monthParam, sortParam, pageParam]);
+  }, [supabase, queryParam, lgaParam, mdaParam, monthParam, sortParam, pageParam, allOfficers]);
 
   useEffect(() => {
     fetchOfficers();

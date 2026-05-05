@@ -2,7 +2,7 @@
 
 import { Search, SlidersHorizontal, ArrowUpDown, X, Filter } from "lucide-react";
 import { Officer } from "@/types/officer";
-import { ONDO_LGAS } from "@/lib/dataConsolidation";
+import { ONDO_LGAS, normalizeMDA } from "@/lib/dataConsolidation";
 
 interface SearchAndFilterProps {
     searchQuery: string;
@@ -34,7 +34,8 @@ export default function SearchAndFilter({
     // Use ONDO_LGAS for consistency, fallback to data if somehow missing
     const displayLgas = ONDO_LGAS.length > 0 ? ONDO_LGAS : [...new Set(officers.map((o) => (o.lga || "").trim()))].filter(Boolean).sort();
     
-    const uniqueMdas = [...new Set(officers.map((o) => (o.current_mda || "").trim().toLowerCase().replace(/\s+/g, " ")))].filter(Boolean).sort();
+    // Normalize MDAs to ensure duplicates are merged in the dropdown
+    const uniqueMdas = [...new Set(officers.map((o) => normalizeMDA(o.current_mda)))].filter(mda => mda && mda !== "Unknown MDA").sort();
     
     const months = [
         "January", "February", "March", "April", "May", "June",
