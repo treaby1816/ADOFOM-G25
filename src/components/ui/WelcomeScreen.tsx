@@ -80,13 +80,13 @@ export default function WelcomeScreen() {
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-yellow-500/10 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="max-w-xl w-full space-y-8 z-10 text-center md:text-left">
+        <div className="max-w-xl w-full space-y-4 md:space-y-8 z-10 text-center md:text-left">
           {/* Logo Section */}
-          <div className="flex justify-center items-center gap-6 md:gap-8 w-full">
+          <div className="flex justify-center items-center gap-4 md:gap-8 w-full">
             {/* Logo 1: ADOFOM */}
             <div className="relative group">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-yellow-400 via-yellow-600 to-emerald-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 animate-pulse" />
-              <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full shadow-xl overflow-hidden border border-white/20 animate-float bg-white/5 backdrop-blur-sm">
+              <div className="relative w-16 h-16 md:w-28 md:h-28 rounded-full shadow-xl overflow-hidden border border-white/20 animate-float bg-white/5 backdrop-blur-sm">
                 <Image 
                   src="/logo2.jpg" 
                   alt="ADOFOM Official Logo" 
@@ -99,7 +99,7 @@ export default function WelcomeScreen() {
             {/* Logo 2: Ondo State Seal */}
             <div className="relative group">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500 via-green-600 to-yellow-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 animate-pulse delay-700" />
-              <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full shadow-xl overflow-hidden border border-white/20 animate-float bg-white/5 backdrop-blur-sm" style={{ animationDelay: "1s" }}>
+              <div className="relative w-16 h-16 md:w-28 md:h-28 rounded-full shadow-xl overflow-hidden border border-white/20 animate-float bg-white/5 backdrop-blur-sm" style={{ animationDelay: "1s" }}>
                 <Image 
                   src="/ondo-seal.png" 
                   alt="Ondo State Seal" 
@@ -111,13 +111,13 @@ export default function WelcomeScreen() {
           </div>
 
           {/* Dynamic Text Section */}
-          <div className="space-y-6 min-h-[220px] flex flex-col justify-center">
+          <div className="space-y-3 md:space-y-6 min-h-[140px] md:min-h-[220px] flex flex-col justify-center">
             <h1 
               key={`tag-${currentSlide}`}
               className={`font-extrabold text-white leading-[1.1] animate-slide-up tracking-tight ${
                 currentSlide === 0 
-                  ? "text-xl md:text-2xl lg:text-4xl" 
-                  : "text-2xl md:text-3xl lg:text-5xl"
+                  ? "text-lg md:text-2xl lg:text-4xl" 
+                  : "text-xl md:text-3xl lg:text-5xl"
               }`}
               style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
@@ -127,29 +127,29 @@ export default function WelcomeScreen() {
             </h1>
             <p 
               key={`sub-${currentSlide}`}
-              className="text-base md:text-lg lg:text-xl text-slate-100/90 font-medium animate-fade-in leading-relaxed max-w-2xl border-l-4 border-yellow-500 pl-6 text-left"
+              className="text-sm md:text-lg lg:text-xl text-slate-100/90 font-medium animate-fade-in leading-relaxed max-w-2xl border-l-4 border-yellow-500 pl-4 md:pl-6 text-left"
             >
               {slides[currentSlide].subtext}
             </p>
           </div>
 
           {/* CTA Buttons */}
-          <nav className="flex flex-col sm:flex-row gap-5 pt-6 justify-center md:justify-start w-full">
+          <nav className="flex flex-col sm:flex-row gap-3 md:gap-5 pt-2 md:pt-6 justify-center md:justify-start w-full">
             <Link 
               href="/signup" 
-              className="flex-1 group flex items-center justify-center gap-3 px-10 py-5 btn-gold rounded-[1.5rem] shadow-2xl hover:shadow-yellow-500/40 transition-all text-xl"
+              className="flex-1 group flex items-center justify-center gap-2 md:gap-3 px-6 py-3 md:px-10 md:py-5 btn-gold rounded-[1.2rem] md:rounded-[1.5rem] shadow-2xl hover:shadow-yellow-500/40 transition-all text-base md:text-xl"
             >
-              <UserPlus className="w-6 h-6" />
+              <UserPlus className="w-5 h-5 md:w-6 md:h-6" />
               <span>Get Started</span>
-              <ChevronRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform" />
+              <ChevronRight className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1.5 transition-transform" />
             </Link>
             
             <Link 
               href="/login" 
-              className="flex-1 group flex items-center justify-center gap-3 px-10 py-5 bg-white/5 backdrop-blur-xl border border-white/10 text-white rounded-[1.5rem] hover:bg-white/10 transition-all text-xl shadow-2xl"
+              className="flex-1 group flex items-center justify-center gap-2 md:gap-3 px-6 py-3 md:px-10 md:py-5 bg-white/5 backdrop-blur-xl border border-white/10 text-white rounded-[1.2rem] md:rounded-[1.5rem] hover:bg-white/10 transition-all text-base md:text-xl shadow-2xl"
 
             >
-              <LogIn className="w-6 h-6 text-emerald-400 group-hover:scale-110 transition-transform" />
+              <LogIn className="w-5 h-5 md:w-6 md:h-6 text-emerald-400 group-hover:scale-110 transition-transform" />
               <span>Login</span>
             </Link>
           </nav>
