@@ -13,13 +13,13 @@ const slides = [
   },
   {
     image: '/slide2.jpg',
-    tagline: 'Empowering Professional Leadership',
+    tagline: 'Empowering Leadership',
     subtext: 'Fostering integrity, innovation, and service.'
   },
   {
     image: '/slide3.jpg',
-    tagline: 'United for a Stronger Future',
-    subtext: 'Building a legacy of administrative brilliance through collaboration and unity.'
+    tagline: 'A Stronger Future',
+    subtext: 'Building a legacy through collaboration and unity.'
   }
 ];
 
