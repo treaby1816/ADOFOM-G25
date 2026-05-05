@@ -271,7 +271,7 @@ export default function DashboardPage() {
             <div className="w-px h-10 bg-white/10 hidden sm:block" />
             <div className="flex flex-col items-center">
               <span className="text-3xl font-black text-emerald-300">
-                {new Set(allOfficers.map(o => normalizeMDA(o.current_mda))).size || "---"}
+                {new Set(allOfficers.map(o => normalizeMDA(o.current_mda)).filter(mda => mda && mda !== "Unknown MDA")).size || "---"}
               </span>
               <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">Ministries</span>
             </div>
