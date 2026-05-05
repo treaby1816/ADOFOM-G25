@@ -9,7 +9,7 @@ const slides = [
   {
     image: '/slide1.jpg',
     tagline: 'Driving Excellence in Administration',
-    subtext: 'ADOFOM is the Ondo State Administrative Officers Forum for Administrative Officers.'
+    subtext: 'The premier professional network dedicated to uniting and advancing the administrative cadre of Ondo State.'
   },
   {
     image: '/slide2.jpg',
