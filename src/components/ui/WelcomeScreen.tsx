@@ -8,8 +8,8 @@ import { ChevronRight, LogIn, UserPlus } from 'lucide-react';
 const slides = [
   {
     image: '/slide1.jpg',
-    tagline: "Administrative Officers' Forum Ondo State - ADOFOM",
-    subtext: 'Driving Excellence in Administration across the Ondo State Civil Service.'
+    tagline: "Administrative Officers' Forum",
+    subtext: 'Ondo State (ADOFOM) - Driving Excellence in Administration.'
   },
   {
     image: '/slide2.jpg',
@@ -18,8 +18,8 @@ const slides = [
   },
   {
     image: '/slide3.jpg',
-    tagline: 'A Stronger Future',
-    subtext: 'Building a legacy through collaboration and unity.'
+    tagline: 'United',
+    subtext: 'Building a stronger future together.'
   }
 ];
 
