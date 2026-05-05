@@ -80,41 +80,41 @@ export default function WelcomeScreen() {
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-yellow-500/10 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="max-w-xl w-full space-y-10 z-10 text-center md:text-left">
+        <div className="max-w-xl w-full space-y-8 z-10 text-center md:text-left">
           {/* Logo Section */}
-          <div className="flex justify-center md:justify-start items-center gap-8 md:gap-12">
+          <div className="flex justify-center md:justify-start items-center gap-6 md:gap-8">
             {/* Logo 1: ADOFOM */}
             <div className="relative group">
-              <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-yellow-600 to-emerald-500 rounded-full blur opacity-40 group-hover:opacity-80 transition duration-1000 animate-pulse" />
-              <div className="relative w-32 h-32 md:w-44 md:h-44 bg-white rounded-full p-3 shadow-2xl overflow-hidden border-4 border-white/20 animate-float">
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-yellow-400 via-yellow-600 to-emerald-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 animate-pulse" />
+              <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white rounded-full p-2.5 shadow-xl overflow-hidden border-2 border-white/20 animate-float">
                 <Image 
                   src="/logo2.jpg" 
                   alt="ADOFOM Official Logo" 
                   fill
-                  className="object-contain p-3 transform group-hover:scale-110 transition-transform duration-700"
+                  className="object-contain p-2.5 transform group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
             </div>
 
             {/* Logo 2: Ondo State Seal */}
             <div className="relative group">
-              <div className="absolute -inset-2 bg-gradient-to-r from-emerald-500 via-green-600 to-yellow-500 rounded-full blur opacity-40 group-hover:opacity-80 transition duration-1000 animate-pulse delay-700" />
-              <div className="relative w-32 h-32 md:w-44 md:h-44 bg-white rounded-full p-1 shadow-2xl overflow-hidden border-4 border-white/20 animate-float" style={{ animationDelay: "1s" }}>
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500 via-green-600 to-yellow-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 animate-pulse delay-700" />
+              <div className="relative w-24 h-24 md:w-32 md:h-32 bg-white rounded-full p-1 shadow-xl overflow-hidden border-2 border-white/20 animate-float" style={{ animationDelay: "1s" }}>
                 <Image 
                   src="/ondo-seal.png" 
                   alt="Ondo State Seal" 
                   fill
-                  className="object-contain transform group-hover:scale-110 transition-transform duration-700"
+                  className="object-contain transform group-hover:scale-105 transition-transform duration-700"
                 />
               </div>
             </div>
           </div>
 
           {/* Dynamic Text Section */}
-          <div className="space-y-8 min-h-[240px] flex flex-col justify-center">
+          <div className="space-y-6 min-h-[220px] flex flex-col justify-center">
             <h1 
               key={`tag-${currentSlide}`}
-              className="text-4xl md:text-5xl lg:text-7xl font-black text-white leading-[1.1] animate-slide-up tracking-tighter"
+              className="text-3xl md:text-4xl lg:text-6xl font-extrabold text-white leading-[1.1] animate-slide-up tracking-tight"
               style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-600 drop-shadow-sm">
@@ -123,7 +123,7 @@ export default function WelcomeScreen() {
             </h1>
             <p 
               key={`sub-${currentSlide}`}
-              className="text-lg md:text-xl lg:text-2xl text-slate-100/90 font-medium animate-fade-in leading-relaxed max-w-2xl border-l-[6px] border-yellow-500 pl-8"
+              className="text-base md:text-lg lg:text-xl text-slate-100/90 font-medium animate-fade-in leading-relaxed max-w-2xl border-l-4 border-yellow-500 pl-6"
             >
               {slides[currentSlide].subtext}
             </p>
