@@ -249,6 +249,10 @@ const MDA_MAPPING: Record<string, string> = {
     "department of public service reform & development (dpsrd)": "Department of Public Service Reform and Development",
     "department of public service reform and development": "Department of Public Service Reform and Development",
     "dpsrd": "Department of Public Service Reform and Development",
+    
+    // Explicit exclusions (map to Unknown MDA to hide from dropdown)
+    "admin cadre": "Unknown MDA",
+    "admin. cadre": "Unknown MDA",
 };
 
 // Check direct mapping
