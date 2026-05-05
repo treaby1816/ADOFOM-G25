@@ -102,8 +102,8 @@ export async function proxy(request: NextRequest) {
             // Non-blocking: continue as unprivileged user if query fails
         }
 
-        const isOnWhitelist = !!WHITELIST_OFFICERS[cleanEmail]
-        const isApproved = isFelix || isOnWhitelist || profile?.is_approved === true
+        const whitelistEntry = WHITELIST_OFFICERS[cleanEmail]
+        const isApproved = isFelix || whitelistEntry?.is_approved === true || profile?.is_approved === true
         const isAdmin = isFelix || profile?.is_admin === true
         const needsPasswordChange = profile?.needs_password_change === true
 
@@ -125,7 +125,17 @@ export async function proxy(request: NextRequest) {
             return NextResponse.redirect(new URL('/', request.url))
         }
 
-        // Removed Approval Enforcement here so that new officers can access the dashboard directly.
+        // D. Approval Enforcement
+        if (!isApproved) {
+            if (!isPendingPage && !isSetupPage && !isForcePasswordPage && !isSettingsRoute) {
+                return NextResponse.redirect(new URL('/pending-approval', request.url))
+            }
+        } else {
+            // E. Approved user on pending page → redirect away
+            if (isPendingPage) {
+                return NextResponse.redirect(new URL('/', request.url))
+            }
+        }
 
         return response
     } catch (err) {

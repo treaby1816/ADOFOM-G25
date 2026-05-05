@@ -150,7 +150,8 @@ export default function SetupProfilePage() {
         birth_month_day: formatBirthday(formData.birth_month_day),
         email_address: user.email,
         is_approved: finalApprovedStatus,
-        is_admin: finalAdminStatus
+        is_admin: finalAdminStatus,
+        needs_password_change: false
       }
 
       const { error: dbError } = await supabase
@@ -165,7 +166,13 @@ export default function SetupProfilePage() {
       })
 
       setSuccess(true)
-      setTimeout(() => router.push('/'), 2000)
+      setTimeout(() => {
+        if (finalApprovedStatus) {
+          router.push('/')
+        } else {
+          router.push('/pending-approval')
+        }
+      }, 2000)
     } catch (err: any) {
       setError(err.message || 'An error occurred while saving your profile.')
     } finally {
