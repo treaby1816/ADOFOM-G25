@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
     Moon, Sun, Settings, ShieldCheck, LogOut, User,
-    X, ChevronRight, Briefcase
+    X, ChevronRight, Briefcase, Award, Newspaper
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { createClient } from "@/utils/supabase/client";
@@ -396,6 +396,30 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
                             <Settings size={16} className="text-emerald-400" />
                         </div>
                         <span className="text-sm font-semibold">Settings</span>
+                    </Link>
+
+                    {/* Leadership */}
+                    <Link
+                        href="/dashboard/leadership"
+                        onClick={() => setIsOpen(false)}
+                        className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-white/80 hover:text-white hover:bg-yellow-500/10 transition-all duration-200 group"
+                    >
+                        <div className="p-2 bg-yellow-500/10 group-hover:bg-yellow-500/20 rounded-lg transition-colors">
+                            <Award size={16} className="text-yellow-400" />
+                        </div>
+                        <span className="text-sm font-semibold">Leadership</span>
+                    </Link>
+
+                    {/* News Feed */}
+                    <Link
+                        href="/dashboard/news"
+                        onClick={() => setIsOpen(false)}
+                        className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-white/80 hover:text-white hover:bg-blue-500/10 transition-all duration-200 group"
+                    >
+                        <div className="p-2 bg-blue-500/10 group-hover:bg-blue-500/20 rounded-lg transition-colors">
+                            <Newspaper size={16} className="text-blue-400" />
+                        </div>
+                        <span className="text-sm font-semibold">News</span>
                     </Link>
 
                     {/* Admin Portal — admin only */}

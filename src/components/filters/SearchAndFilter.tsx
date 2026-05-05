@@ -47,10 +47,10 @@ export default function SearchAndFilter({
         <div className="bg-white/60 dark:bg-zinc-900/40 backdrop-blur-2xl border border-white/80 dark:border-zinc-800/60 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-black/20 p-3 mb-8">
             <div className="flex flex-col xl:flex-row gap-3">
                 {/* Search */}
-                <div className="relative flex-1 group">
+                <div className="relative flex-1 group md:flex-1">
                     <Search
                         size={18}
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 group-focus-within:text-green-500 dark:group-focus-within:text-emerald-400 transition-colors z-10"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 group-focus-within:text-green-500 dark:group-focus-within:text-emerald-400 transition-colors z-10 pointer-events-none"
                     />
                     <input
                         id="officer-search"
@@ -59,7 +59,7 @@ export default function SearchAndFilter({
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
                         autoComplete="off"
-                        className="search-input w-full py-3 pr-12 pl-12 bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm flex-1"
+                        className="search-input w-full md:w-full md:flex-1 py-3 pr-12 pl-12 bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm flex-1"
                     />
                     {searchQuery && (
                         <button

@@ -15,6 +15,7 @@ export interface Officer {
     facebook_url?: string;
     twitter_url?: string;
     instagram_url?: string;
+    exco_portfolio?: string;
     is_admin?: boolean;
     is_approved?: boolean;
     needs_password_change?: boolean;

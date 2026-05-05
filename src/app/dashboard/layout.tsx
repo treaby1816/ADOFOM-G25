@@ -56,7 +56,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             <ArrowLeft size={20} className="group-hover:-translate-x-0.5 transition-transform" />
           </button>
           
-          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+          <Link href="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-10 h-10 rounded-full p-1 border border-white/20 overflow-hidden" style={{ zIndex: 50 }}>
               <img src="/logo2.jpg" alt="Ondo State Logo" className="w-full h-full object-contain rounded-full" />
             </div>

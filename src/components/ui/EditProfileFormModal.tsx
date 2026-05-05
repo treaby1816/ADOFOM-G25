@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
     X, Save, Loader2, Camera, User, Briefcase,
@@ -10,6 +10,7 @@ import {
 import { Officer } from "@/types/officer";
 import { createClient } from "@/utils/supabase/client";
 import { formatToDateInput, parseFromDateInput } from "@/lib/dataConsolidation";
+import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
 
 interface EditProfileFormModalProps {
     officer: Officer;
@@ -31,6 +32,7 @@ interface ProfileFormValues {
     facebook_url?: string;
     twitter_url?: string;
     instagram_url?: string;
+    exco_portfolio?: string;
 }
 
 export default function EditProfileFormModal({ officer, onSave, onClose }: EditProfileFormModalProps) {
@@ -49,6 +51,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
             facebook_url: officer.facebook_url || "",
             twitter_url: officer.twitter_url || "",
             instagram_url: officer.instagram_url || "",
+            exco_portfolio: officer.exco_portfolio || "",
         }
     });
 
@@ -59,7 +62,27 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
     const [error, setError] = useState<string | null>(null);
     const [debugInfo, setDebugInfo] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Check if the current user is an admin
+    useEffect(() => {
+        const checkAdmin = async () => {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const userEmail = user.email?.trim().toLowerCase() || "";
+                const whitelistEntry = WHITELIST_OFFICERS[userEmail];
+                if (whitelistEntry?.is_admin) {
+                    setIsAdmin(true);
+                    return;
+                }
+                const { data } = await supabase.from('administrative_officers').select('is_admin').eq('id', user.id).maybeSingle();
+                if (data?.is_admin) setIsAdmin(true);
+            }
+        };
+        checkAdmin();
+    }, []);
 
     const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -160,7 +183,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 }
             }
 
-            const updateData = {
+            const updateData: Record<string, string | null | undefined> = {
                 full_name: formattedName,
                 phone_number: data.phone_number.trim(),
                 secondary_phone_number: data.secondary_phone_number?.trim() || "",
@@ -176,6 +199,10 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 twitter_url: data.twitter_url?.trim() || "",
                 instagram_url: data.instagram_url?.trim() || "",
             };
+
+            if (isAdmin) {
+                updateData.exco_portfolio = data.exco_portfolio?.trim() || null;
+            }
 
             // Use the officer's actual row ID from the prop — this is the known primary key
             // We try officer.id first, then auth.uid, then email as fallbacks
@@ -351,6 +378,15 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                             <input type="text" {...register("grade_level")} className={inputClass} placeholder="e.g. GL 12" />
                         </div>
                     </div>
+
+                    {isAdmin && (
+                        <div>
+                            <label className={labelClass}>
+                                <Award size={12} className="text-emerald-500" /> Exco Portfolio
+                            </label>
+                            <input type="text" {...register("exco_portfolio")} className={inputClass} placeholder="e.g. President, Secretary, PRO, Treasurer" />
+                        </div>
+                    )}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
