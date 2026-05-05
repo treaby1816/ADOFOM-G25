@@ -150,20 +150,35 @@ export default function NewsPage() {
       if (selectedFile) {
         const fileExt = selectedFile.name.split('.').pop()
         const fileName = `news/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
-        
-        const { error: uploadError } = await supabase.storage
-          .from('avatars') // Using existing public bucket
-          .upload(fileName, selectedFile)
+        const bucketNames = ['officer-photos', 'OFFICER-PHOTOS', 'avatars']
+        let uploadSuccessful = false
+        let lastUploadError: any = null
 
-        if (uploadError) {
-          throw new Error('Failed to upload image: ' + uploadError.message)
+        for (const bucket of bucketNames) {
+          const { error: uploadError, data: uploadData } = await supabase.storage
+            .from(bucket)
+            .upload(fileName, selectedFile, { cacheControl: '3600', upsert: true })
+
+          if (uploadError) {
+            lastUploadError = uploadError
+            if (uploadError.message.toLowerCase().includes('not found') || (uploadError as any).status === 404) {
+              continue // Try next bucket
+            }
+            break
+          }
+          if (uploadData) {
+            const { data: { publicUrl } } = supabase.storage
+              .from(bucket)
+              .getPublicUrl(uploadData.path)
+            finalImageUrl = publicUrl
+            uploadSuccessful = true
+            break
+          }
         }
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('avatars')
-          .getPublicUrl(fileName)
-          
-        finalImageUrl = publicUrl
+        if (!uploadSuccessful) {
+          throw new Error('Failed to upload image: ' + (lastUploadError?.message || 'No storage bucket found. Please create one in Supabase Storage.'))
+        }
       }
 
       const { error } = await supabase.from('adofom_news').insert({
