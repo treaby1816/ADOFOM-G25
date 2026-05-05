@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Phone, Mail, MessageCircle, Eye } from "lucide-react";
 import { Officer } from "@/types/officer";
 
@@ -85,12 +86,14 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
                             {getInitials(officer.full_name)}
                         </div>
                     ) : (
-                        <img
+                        <Image
                             src={getDriveViewUrl(officer.photo_url)}
                             alt={officer.full_name}
-                            className={`w-full h-full object-cover ${getPhotoPosition(officer.full_name, officer.photo_position)}`}
+                            fill
+                            className={`object-cover ${getPhotoPosition(officer.full_name, officer.photo_position)}`}
                             style={getCustomPositionStyle(officer.full_name, officer.photo_position)}
                             onError={() => setImgError(true)}
+                            sizes="128px"
                         />
                     )}
                 </div>

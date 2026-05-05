@@ -185,29 +185,57 @@ export default function DashboardPage() {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       setUser(authUser);
       
-      // Fetch global data — include all fields needed by NavigationDrawer to find user profile
+      if (authUser) {
+        // Fetch only current user's profile and admin status
+        const { data: profile } = await supabase
+          .from("administrative_officers")
+          .select("id, is_admin, is_approved")
+          .eq("id", authUser.id)
+          .maybeSingle();
+
+        const userEmail = authUser.email?.trim().toLowerCase() || '';
+        const whitelistEntry = WHITELIST_OFFICERS[userEmail];
+        
+        if (profile?.is_admin === true || whitelistEntry?.is_admin === true) {
+          setIsAdmin(true);
+        }
+      }
+
+      // Fetch summary data for stats (Total count)
+      const { count } = await supabase
+        .from("administrative_officers")
+        .select("*", { count: 'exact', head: true });
+      
+      setTotalCount(count || 0);
+
+      // Fetch birthdays only for today (Targeted query)
+      const today = new Date();
+      const month = today.toLocaleString('default', { month: 'short' });
+      const day = today.getDate().toString().padStart(2, '0');
+      const bdayQuery = `${month} ${day}`;
+
+      const { data: bdayData } = await supabase
+        .from("administrative_officers")
+        .select("*")
+        .ilike("birth_month_day", `%${bdayQuery}%`);
+
+      if (bdayData) {
+        setBirthdayOfficers(bdayData as Officer[]);
+      }
+
+      // For the search filter dropdowns, we still need unique MDAs. 
+      // Instead of 1000 records, we can fetch unique values if possible, 
+      // but for now, let's keep a smaller, optimized fetch for global context if needed.
+      // Actually, let's just fetch all officers once but in a more controlled way.
       const { data: globalData } = await supabase
         .from("administrative_officers")
         .select("*")
-        .limit(1000);
+        .limit(2000);
 
       if (globalData) {
         setAllOfficers(globalData as Officer[]);
-        
-        // Birthday check
-        const bdayMatches = (globalData as Officer[]).filter((o) => isBirthdayToday(o.birth_month_day));
-        setBirthdayOfficers(bdayMatches);
-
-        if (authUser) {
-          const currentUserObj = (globalData as Officer[]).find(o => o.id === authUser.id);
-          const userEmail = authUser.email?.trim().toLowerCase() || '';
-          const whitelistEntry = WHITELIST_OFFICERS[userEmail];
-          
-          if (currentUserObj?.is_admin === true || whitelistEntry?.is_admin === true) {
-            setIsAdmin(true);
-          }
-        }
       }
+
       setIsAuthLoading(false);
     };
     checkAuthAndGlobal();

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
 export default function LoginPage() {
@@ -113,8 +113,16 @@ export default function LoginPage() {
       <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-yellow-600/10 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Glassmorphism Card */}
-      <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-2xl p-8 relative z-10">
+      <div className="w-full max-w-md bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl rounded-[2.5rem] p-10 relative z-10 overflow-hidden">
         
+        {/* Back Button */}
+        <Link 
+          href="/" 
+          className="absolute top-6 left-6 p-2 text-slate-400 hover:text-yellow-500 hover:bg-white/5 rounded-full transition-all group"
+          title="Back to Welcome"
+        >
+          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+        </Link>        
         {/* Logo Section */}
         <div className="flex justify-center mb-8 text-center">
           <div className="relative" style={{ zIndex: 50 }}>

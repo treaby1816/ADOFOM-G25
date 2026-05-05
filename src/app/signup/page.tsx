@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react'
+import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff, ArrowLeft, ShieldCheck, User, Phone } from 'lucide-react'
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
 export default function SignupPage() {
@@ -119,15 +119,16 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-hero-gradient flex flex-col items-center justify-center p-4">
       <div className="max-w-md w-full">
-        {/* Top Back Navigation */}
-        <button 
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-yellow-500 border border-yellow-500/50 px-3 py-1 rounded-lg hover:bg-yellow-500/10 mb-6 transition-colors w-fit font-bold text-xs uppercase tracking-widest"
+        <div className="space-y-8 bg-white/5 backdrop-blur-xl p-10 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden">
+        
+        {/* Back Button */}
+        <Link 
+          href="/" 
+          className="absolute top-6 left-6 p-2 text-slate-400 hover:text-yellow-500 hover:bg-white/5 rounded-full transition-all group z-50"
+          title="Back to Welcome"
         >
-          ← Back
-        </button>
-
-        <div className="space-y-8 bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
+          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+        </Link>
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500/0 via-yellow-500 to-yellow-500/0"></div>
         <div className="absolute -top-24 -left-24 w-48 h-48 bg-yellow-500/10 rounded-full blur-3xl"></div>
