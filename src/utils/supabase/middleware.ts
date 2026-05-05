@@ -35,8 +35,12 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) {
-    // Ensure "Hard Redirect" to login page if user is missing or invalid
+  // Public routes that don't require authentication
+  const publicPaths = ['/', '/login', '/signup', '/auth/callback', '/pending-approval']
+  const isPublicPath = publicPaths.includes(request.nextUrl.pathname)
+
+  if (!user && !isPublicPath) {
+    // Redirect to login only if accessing a protected route
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
