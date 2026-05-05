@@ -44,10 +44,10 @@ export default function SearchAndFilter({
     const selectClasses = "bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl text-sm font-semibold text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 hover:border-emerald-400/50 transition-all duration-300 shadow-sm appearance-none flex-1";
 
     return (
-        <div className="bg-white/60 dark:bg-zinc-900/40 backdrop-blur-2xl border border-white/80 dark:border-zinc-800/60 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-black/20 p-3 mb-8">
-            <div className="flex flex-col lg:flex-row gap-3">
+        <div className="bg-white/60 dark:bg-zinc-900/40 backdrop-blur-2xl border border-white/80 dark:border-zinc-800/60 rounded-[2rem] shadow-xl shadow-slate-200/50 dark:shadow-black/20 p-4 mb-8">
+            <div className="flex flex-col gap-4">
                 {/* Search */}
-                <div className="relative flex-[2] lg:flex-[3] group">
+                <div className="relative group w-full">
                     <Search
                         size={18}
                         className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500 group-focus-within:text-green-500 dark:group-focus-within:text-emerald-400 transition-colors z-30 pointer-events-none"
@@ -60,7 +60,7 @@ export default function SearchAndFilter({
                         onChange={(e) => onSearchChange(e.target.value)}
                         autoComplete="off"
                         style={{ WebkitTextFillColor: 'initial' }}
-                        className="search-input w-full py-3 pr-12 pl-12 border border-slate-200 dark:border-zinc-800 rounded-2xl text-base font-medium placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm relative z-20 text-slate-900 dark:text-white bg-white dark:bg-zinc-900/50"
+                        className="search-input w-full py-4 pr-12 pl-12 border border-slate-200 dark:border-zinc-800 rounded-2xl text-base font-medium placeholder:text-slate-400 dark:placeholder:text-zinc-500 focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm relative z-20 text-slate-900 dark:text-white bg-white dark:bg-zinc-900/50"
                     />
                     {searchQuery && (
                         <button
@@ -73,9 +73,9 @@ export default function SearchAndFilter({
                     )}
                 </div>
 
-                {/* Filters Row 1 */}
-                <div className="flex flex-col sm:flex-row gap-2 flex-1">
-                    <div className="relative flex-1">
+                {/* Filters Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div className="relative">
                         <select
                             value={lgaFilter}
                             onChange={(e) => onLgaChange(e.target.value)}
@@ -93,7 +93,7 @@ export default function SearchAndFilter({
                         </div>
                     </div>
 
-                    <div className="relative flex-1">
+                    <div className="relative">
                         <select
                             value={monthFilter}
                             onChange={(e) => onMonthChange(e.target.value)}
@@ -108,16 +108,12 @@ export default function SearchAndFilter({
                             <ArrowUpDown size={14} />
                         </div>
                     </div>
-                </div>
 
-                {/* Filters Row 2 - MDA and Sort */}
-                <div className="flex flex-col sm:flex-row gap-2 flex-1">
-                    <div className="relative flex-[2]">
+                    <div className="relative">
                         <select
                             value={mdaFilter}
                             onChange={(e) => onMdaChange(e.target.value)}
                             className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} w-full pr-10 text-ellipsis overflow-hidden whitespace-nowrap ${mdaFilter ? "border-emerald-500" : ""}`}
-                            style={{ maxWidth: '100%' }}
                         >
                             <option value="">All MDAs</option>
                             {uniqueMdas.map((mda) => (
@@ -131,15 +127,15 @@ export default function SearchAndFilter({
                         </div>
                     </div>
 
-                    <div className="relative flex-1">
+                    <div className="relative">
                         <select
                             value={sortOption}
                             onChange={(e) => onSortChange(e.target.value)}
                             className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} w-full pr-10 text-ellipsis overflow-hidden whitespace-nowrap`}
                         >
-                            <option value="name-asc">A-Z</option>
-                            <option value="name-desc">Z-A</option>
-                            <option value="level-senior">GL</option>
+                            <option value="name-asc">Sort: A-Z</option>
+                            <option value="name-desc">Sort: Z-A</option>
+                            <option value="level-senior">Sort: GL</option>
                         </select>
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">
                             <ArrowUpDown size={14} />
