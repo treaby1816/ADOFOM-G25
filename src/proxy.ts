@@ -125,17 +125,7 @@ export async function proxy(request: NextRequest) {
             return NextResponse.redirect(new URL('/', request.url))
         }
 
-        // D. Approval Enforcement
-        if (!isApproved) {
-            if (!isPendingPage && !isSetupPage && !isForcePasswordPage && !isSettingsRoute) {
-                return NextResponse.redirect(new URL('/pending-approval', request.url))
-            }
-        } else {
-            // E. Approved user on pending page → redirect away
-            if (isPendingPage) {
-                return NextResponse.redirect(new URL('/', request.url))
-            }
-        }
+        // Removed Approval Enforcement here so that new officers can access the dashboard directly.
 
         return response
     } catch (err) {
