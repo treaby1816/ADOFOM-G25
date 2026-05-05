@@ -202,27 +202,45 @@ html.dark .animate-shimmer {
   background-size: 200% 100%;
 }
 
-/* Bulletproof Input Styling to override Tailwind v4 Reset */
-#officer-search {
+/* Removed problematic form styling overrides */
+
+select option {
   color: #0f172a !important;
-  /* text-slate-900 */
-  caret-color: #22c55e !important;
-  /* text-green-500 */
+  background-color: white !important;
 }
 
-#officer-search::placeholder {
-  color: #94a3b8 !important;
-  /* text-slate-400 */
-}
-
-html.dark #officer-search {
+/* --- Dark mode overrides --- */
+html.dark input[type="text"],
+html.dark input[type="search"],
+html.dark input[type="email"],
+html.dark input[type="password"],
+html.dark input[type="number"],
+html.dark input[type="tel"],
+html.dark input[type="url"],
+html.dark textarea {
   color: #f8fafc !important;
-  /* text-slate-50 */
   caret-color: #34d399 !important;
-  /* text-emerald-400 */
+  background-color: rgba(24, 24, 27, 0.5) !important;
+  -webkit-text-fill-color: #f8fafc !important;
 }
 
-html.dark #officer-search::placeholder {
+html.dark input[type="text"]::placeholder,
+html.dark input[type="search"]::placeholder,
+html.dark input[type="email"]::placeholder,
+html.dark input[type="password"]::placeholder,
+html.dark textarea::placeholder {
   color: #71717a !important;
-  /* text-zinc-500 */
+  -webkit-text-fill-color: #71717a !important;
+  opacity: 1 !important;
+}
+
+html.dark select {
+  color: #f8fafc !important;
+  background-color: rgba(24, 24, 27, 0.5) !important;
+  -webkit-text-fill-color: #f8fafc !important;
+}
+
+html.dark select option {
+  color: #f8fafc !important;
+  background-color: #18181b !important;
 }

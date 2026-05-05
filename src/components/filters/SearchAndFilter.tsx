@@ -59,7 +59,8 @@ export default function SearchAndFilter({
                         value={searchQuery}
                         onChange={(e) => onSearchChange(e.target.value)}
                         autoComplete="off"
-                        className="search-input w-full md:w-full md:flex-1 py-3 pr-12 pl-12 bg-white dark:bg-zinc-900/50 border border-slate-200 dark:border-zinc-800 rounded-2xl text-sm font-medium focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm flex-1"
+                        style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a', backgroundColor: 'white' }}
+                        className="search-input w-full py-3 pr-12 pl-12 border border-slate-200 dark:border-zinc-800 rounded-2xl text-base sm:text-sm font-medium placeholder:text-slate-400 dark:placeholder:text-zinc-500 caret-emerald-500 focus:ring-4 focus:ring-green-500/10 dark:focus:ring-emerald-500/10 focus:border-green-400 dark:focus:border-emerald-500 hover:border-green-300 dark:hover:border-emerald-500/60 transition-all duration-300 shadow-sm relative z-20"
                     />
                     {searchQuery && (
                         <button
@@ -83,7 +84,8 @@ export default function SearchAndFilter({
                         <select
                             value={lgaFilter}
                             onChange={(e) => onLgaChange(e.target.value)}
-                            className={`px-4 py-3 cursor-pointer z-10 ${selectClasses} min-w-[150px] w-full pr-10 ${lgaFilter ? "border-emerald-500 bg-emerald-50/30 dark:bg-emerald-900/10" : ""}`}
+                            style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a', backgroundColor: 'white' }}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} min-w-[150px] w-full pr-10 ${lgaFilter ? "border-emerald-500" : ""}`}
                         >
                             <option value="">All LGAs</option>
                             {displayLgas.map((lga: string) => (
@@ -92,7 +94,7 @@ export default function SearchAndFilter({
                                 </option>
                             ))}
                         </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2">
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">
                             <ArrowUpDown size={14} />
                         </div>
                     </div>
@@ -101,14 +103,15 @@ export default function SearchAndFilter({
                         <select
                             value={monthFilter}
                             onChange={(e) => onMonthChange(e.target.value)}
-                            className={`px-4 py-3 cursor-pointer z-10 ${selectClasses} min-w-[170px] w-full pr-10`}
+                            style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a', backgroundColor: 'white' }}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} min-w-[170px] w-full pr-10`}
                         >
                             <option value="">All Birth Months</option>
                             {months.map((m) => (
                                 <option key={m} value={m}>{m}</option>
                             ))}
                         </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2">
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">
                             <ArrowUpDown size={14} />
                         </div>
                     </div>
@@ -120,7 +123,8 @@ export default function SearchAndFilter({
                         <select
                             value={mdaFilter}
                             onChange={(e) => onMdaChange(e.target.value)}
-                            className={`px-4 py-3 cursor-pointer z-10 ${selectClasses} min-w-[200px] w-full pr-10`}
+                            style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a', backgroundColor: 'white' }}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} min-w-[200px] w-full pr-10`}
                         >
                             <option value="">All MDAs</option>
                             {uniqueMdas.map((mda) => (
@@ -129,7 +133,7 @@ export default function SearchAndFilter({
                                 </option>
                             ))}
                         </select>
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2">
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">
                             <ArrowUpDown size={14} />
                         </div>
                     </div>
@@ -138,7 +142,8 @@ export default function SearchAndFilter({
                         <select
                             value={sortOption}
                             onChange={(e) => onSortChange(e.target.value)}
-                            className={`px-4 py-3 cursor-pointer z-10 ${selectClasses} w-full pl-10`}
+                            style={{ color: '#0f172a', WebkitTextFillColor: '#0f172a', backgroundColor: 'white' }}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} w-full pl-10`}
                         >
                             <option value="name-asc">Name (A-Z)</option>
                             <option value="name-desc">Name (Z-A)</option>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
 import ProfileCard from "@/components/ui/ProfileCard";
 import ProfileModal from "@/components/ui/ProfileModal";
 import SearchAndFilter from "@/components/filters/SearchAndFilter";
@@ -196,12 +197,14 @@ export default function DashboardPage() {
       {/* Top Navigation */}
       <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-green-950/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] shadow-lg transition-all duration-300">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full p-0.5 overflow-hidden shadow-md ring-2 ring-emerald-500/20" style={{ backgroundColor: "white" }}>
+          <Link href="/" className="w-10 h-10 rounded-full p-0.5 overflow-hidden shadow-md ring-2 ring-emerald-500/20 block" style={{ backgroundColor: "white" }}>
             <img src="/logo2.jpg" alt="Ondo State Logo" className="w-full h-full object-cover rounded-full bg-white hover:scale-110 transition-transform" />
-          </div>
-          <h2 className="text-lg font-bold text-white tracking-tight hidden sm:block">
-            ADOFOM Portal
-          </h2>
+          </Link>
+          <Link href="/">
+            <h2 className="text-lg font-bold text-white tracking-tight hidden sm:block hover:text-emerald-300 transition-colors cursor-pointer">
+              ADOFOM Portal
+            </h2>
+          </Link>
         </div>
         
         <div className="flex items-center gap-3">
