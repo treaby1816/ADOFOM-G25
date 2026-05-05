@@ -99,11 +99,7 @@ export default function SignupPage() {
         // - Creates a new profile for unknown emails
         // We just need to decide where to redirect.
 
-        const normalizedEmail = email.trim().toLowerCase()
-        const whitelistEntry = WHITELIST_OFFICERS[normalizedEmail]
-        const isLegacyOfficer = !!whitelistEntry
-
-        if (isLegacyOfficer) {
+        if (isExistingAndComplete) {
           setMessage({ type: 'success', text: 'Welcome back! Redirecting to Dashboard...' });
           setTimeout(() => router.push('/'), 1500);
         } else {

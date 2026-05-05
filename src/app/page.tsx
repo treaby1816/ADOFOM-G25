@@ -7,6 +7,7 @@ import ProfileCard from "@/components/ui/ProfileCard";
 import ProfileModal from "@/components/ui/ProfileModal";
 import SearchAndFilter from "@/components/filters/SearchAndFilter";
 import ImageSlider from "@/components/ui/ImageSlider";
+import WelcomeScreen from "@/components/ui/WelcomeScreen";
 import ExportButton from "@/components/ui/ExportButton";
 import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 import ScrollButtons from "@/components/ui/ScrollButtons";
@@ -45,6 +46,8 @@ export default function DashboardPage() {
   const [officers, setOfficers] = useState<Officer[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedOfficer, setSelectedOfficer] = useState<Officer | null>(null);
@@ -178,7 +181,9 @@ export default function DashboardPage() {
   // Initial Auth & Global Data Check
   useEffect(() => {
     const checkAuthAndGlobal = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      setIsAuthLoading(true);
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      setUser(authUser);
       
       // Fetch global data — include all fields needed by NavigationDrawer to find user profile
       const { data: globalData } = await supabase
@@ -193,9 +198,9 @@ export default function DashboardPage() {
         const bdayMatches = (globalData as Officer[]).filter((o) => isBirthdayToday(o.birth_month_day));
         setBirthdayOfficers(bdayMatches);
 
-        if (user) {
-          const currentUserObj = (globalData as Officer[]).find(o => o.id === user.id);
-          const userEmail = user.email?.trim().toLowerCase() || '';
+        if (authUser) {
+          const currentUserObj = (globalData as Officer[]).find(o => o.id === authUser.id);
+          const userEmail = authUser.email?.trim().toLowerCase() || '';
           const whitelistEntry = WHITELIST_OFFICERS[userEmail];
           
           if (currentUserObj?.is_admin === true || whitelistEntry?.is_admin === true) {
@@ -203,11 +208,24 @@ export default function DashboardPage() {
           }
         }
       }
+      setIsAuthLoading(false);
     };
     checkAuthAndGlobal();
   }, [supabase]);
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-hero-gradient flex items-center justify-center">
+        <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <WelcomeScreen />;
+  }
 
   return (
     <main className="min-h-screen pb-20">
