@@ -51,6 +51,7 @@ export async function proxy(request: NextRequest) {
 
         // 2. Define Route Constants
         const isPublicRoute =
+            pathname === '/' ||
             pathname.startsWith('/login') ||
             pathname.startsWith('/signup') ||
             pathname.startsWith('/auth')
@@ -74,8 +75,8 @@ export async function proxy(request: NextRequest) {
             return NextResponse.redirect(new URL('/login', request.url))
         }
 
-        // 5. Authenticated users — redirect away from login/signup
-        if (isPublicRoute) {
+        // 5. Authenticated users — redirect away from login/signup (but NOT from root /)
+        if (isPublicRoute && pathname !== '/') {
             return NextResponse.redirect(new URL('/', request.url))
         }
 
