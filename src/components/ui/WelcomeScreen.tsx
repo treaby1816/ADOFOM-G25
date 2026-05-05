@@ -114,7 +114,11 @@ export default function WelcomeScreen() {
           <div className="space-y-6 min-h-[220px] flex flex-col justify-center">
             <h1 
               key={`tag-${currentSlide}`}
-              className="text-2xl md:text-3xl lg:text-5xl font-extrabold text-white leading-[1.1] animate-slide-up tracking-tight"
+              className={`font-extrabold text-white leading-[1.1] animate-slide-up tracking-tight ${
+                currentSlide === 0 
+                  ? "text-xl md:text-2xl lg:text-4xl" 
+                  : "text-2xl md:text-3xl lg:text-5xl"
+              }`}
               style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-600 drop-shadow-sm">
