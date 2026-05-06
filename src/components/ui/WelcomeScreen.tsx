@@ -37,7 +37,7 @@ export default function WelcomeScreen() {
     <div className="min-h-screen flex flex-col md:flex-row bg-[#020617] overflow-hidden">
       {/* Left: Carousel Half */}
       <section 
-        className="relative w-full md:w-1/2 h-[45vh] md:h-screen overflow-hidden"
+        className="relative w-full md:w-1/2 h-[38vh] md:h-screen overflow-hidden"
         aria-label="Professional showcase carousel"
       >
         {slides.map((slide, index) => (
@@ -60,7 +60,7 @@ export default function WelcomeScreen() {
         ))}
         
         {/* Carousel Indicators */}
-        <div className="absolute bottom-10 left-10 z-20 flex gap-2.5">
+        <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 z-20 flex gap-2.5">
           {slides.map((_, i) => (
             <button
               key={i}
@@ -75,7 +75,7 @@ export default function WelcomeScreen() {
       </section>
 
       {/* Right: Content Half */}
-      <main className="w-full md:w-1/2 h-[55vh] md:h-screen flex flex-col justify-center items-center px-6 md:px-16 lg:px-24 bg-hero-gradient relative overflow-hidden">
+      <main className="w-full md:w-1/2 h-[62vh] md:h-screen flex flex-col justify-center items-center px-6 pt-6 pb-4 md:px-16 lg:px-24 md:pt-0 md:pb-0 bg-hero-gradient relative overflow-hidden">
         {/* Background ambient light effects */}
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-yellow-500/10 rounded-full blur-[120px] pointer-events-none" />
@@ -86,7 +86,7 @@ export default function WelcomeScreen() {
             {/* Logo 1: ADOFOM */}
             <div className="relative group">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-yellow-400 via-yellow-600 to-emerald-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 animate-pulse" />
-              <div className="relative w-16 h-16 md:w-28 md:h-28 rounded-full shadow-xl overflow-hidden border border-white/20 animate-float bg-white/5 backdrop-blur-sm">
+              <div className="relative w-14 h-14 md:w-28 md:h-28 rounded-full shadow-xl overflow-hidden border border-white/20 animate-float bg-white/5 backdrop-blur-sm">
                 <Image 
                   src="/logo2.jpg" 
                   alt="ADOFOM Official Logo" 
@@ -99,7 +99,7 @@ export default function WelcomeScreen() {
             {/* Logo 2: Ondo State Seal */}
             <div className="relative group">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500 via-green-600 to-yellow-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 animate-pulse delay-700" />
-              <div className="relative w-16 h-16 md:w-28 md:h-28 rounded-full shadow-xl overflow-hidden border border-white/20 animate-float bg-white/5 backdrop-blur-sm" style={{ animationDelay: "1s" }}>
+              <div className="relative w-14 h-14 md:w-28 md:h-28 rounded-full shadow-xl overflow-hidden border border-white/20 animate-float bg-white/5 backdrop-blur-sm" style={{ animationDelay: "1s" }}>
                 <Image 
                   src="/ondo-seal.png" 
                   alt="Ondo State Seal" 
@@ -111,7 +111,7 @@ export default function WelcomeScreen() {
           </div>
 
           {/* Dynamic Text Section */}
-          <div className="space-y-3 md:space-y-6 min-h-[140px] md:min-h-[220px] flex flex-col justify-center">
+          <div className="space-y-2 md:space-y-6 min-h-[100px] md:min-h-[220px] flex flex-col justify-center">
             <h1 
               key={`tag-${currentSlide}`}
               className={`font-extrabold text-white leading-[1.1] animate-slide-up tracking-tight ${
@@ -134,7 +134,7 @@ export default function WelcomeScreen() {
           </div>
 
           {/* CTA Buttons */}
-          <nav className="flex flex-col sm:flex-row gap-3 md:gap-5 pt-2 md:pt-6 justify-center md:justify-start w-full">
+          <nav className="flex flex-col sm:flex-row gap-3 md:gap-5 pt-1 md:pt-6 justify-center md:justify-start w-full">
             <Link 
               href="/signup" 
               className="flex-1 group flex items-center justify-center gap-2 md:gap-3 px-6 py-3 md:px-10 md:py-5 btn-gold rounded-[1.2rem] md:rounded-[1.5rem] shadow-2xl hover:shadow-yellow-500/40 transition-all text-base md:text-xl"
@@ -147,15 +147,14 @@ export default function WelcomeScreen() {
             <Link 
               href="/login" 
               className="flex-1 group flex items-center justify-center gap-2 md:gap-3 px-6 py-3 md:px-10 md:py-5 bg-white/5 backdrop-blur-xl border border-white/10 text-white rounded-[1.2rem] md:rounded-[1.5rem] hover:bg-white/10 transition-all text-base md:text-xl shadow-2xl"
-
             >
               <LogIn className="w-5 h-5 md:w-6 md:h-6 text-emerald-400 group-hover:scale-110 transition-transform" />
               <span>Login</span>
             </Link>
           </nav>
 
-          {/* Footer Info */}
-          <footer className="pt-10 flex flex-col gap-2 opacity-60">
+          {/* Footer Info - hidden on mobile to save space */}
+          <footer className="hidden md:flex pt-10 flex-col gap-2 opacity-60">
             <p className="text-slate-400 text-[10px] tracking-[0.3em] uppercase font-black">
               Ondo State Administrative Officers Cadre
             </p>
