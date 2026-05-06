@@ -11,7 +11,7 @@ import {
 } from 'lucide-react'
 
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
-import { formatBirthday } from '@/lib/dataConsolidation'
+import { formatBirthday, normalizeMDA, normalizeLGA } from '@/lib/dataConsolidation'
 
 export default function SetupProfilePage() {
   const [formData, setFormData] = useState({
@@ -147,6 +147,8 @@ export default function SetupProfilePage() {
         id: user.id,
         ...formData,
         full_name: formattedName,
+        current_mda: normalizeMDA(formData.current_mda),
+        lga: normalizeLGA(formData.lga),
         birth_month_day: formatBirthday(formData.birth_month_day),
         email_address: user.email,
         is_approved: finalApprovedStatus,

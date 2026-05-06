@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { createClient } from "@/utils/supabase/client";
-import { formatToDateInput, parseFromDateInput } from "@/lib/dataConsolidation";
+import { formatToDateInput, parseFromDateInput, normalizeMDA, normalizeLGA } from "@/lib/dataConsolidation";
 import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
 
 interface EditProfileFormModalProps {
@@ -189,9 +189,9 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 full_name: formattedName,
                 phone_number: data.phone_number.trim(),
                 secondary_phone_number: data.secondary_phone_number?.trim() || "",
-                current_mda: data.current_mda.trim(),
+                current_mda: normalizeMDA(data.current_mda),
                 grade_level: data.grade_level.trim(),
-                lga: data.lga.trim(),
+                lga: normalizeLGA(data.lga),
                 birth_month_day: data.birth_month_day ? parseFromDateInput(data.birth_month_day) : (officer.birth_month_day || ""), // Preserve existing birthday if untouched
                 hobbies: data.hobbies.trim(),
                 about_me: data.about_me.trim(),
