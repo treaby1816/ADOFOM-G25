@@ -158,6 +158,20 @@ export default function ApprovalsPage() {
 
     if (!updateError && updatedRows && updatedRows.length > 0) {
       toast.success(currentStatus ? 'Access Revoked!' : 'Officer Approved!')
+      
+      // If we just approved them, send a system notification to everyone!
+      if (!currentStatus) {
+         try {
+            await supabase.from('notifications').insert({
+              title: '🎉 New Officer Approved',
+              message: `Please welcome the newest officer (${email}) to the Ondo State Admin Directory!`,
+              type: 'system',
+              is_read: false
+            })
+         } catch (e) {
+            console.warn("Failed to broadcast welcome notification", e)
+         }
+      }
     } else {
       // Revert on failure
       setOfficers(prev => prev.map(o => o.id === id ? { ...o, is_approved: currentStatus } : o))
