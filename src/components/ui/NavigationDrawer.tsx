@@ -12,6 +12,7 @@ import { useTheme } from "next-themes";
 import { createClient } from "@/utils/supabase/client";
 import { Officer } from "@/types/officer";
 import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
+import ProfileModal from "@/components/ui/ProfileModal";
 
 interface NavigationDrawerProps {
     /** Whether the logged-in user is an admin (can be passed from parent or auto-detected) */
@@ -33,6 +34,9 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
     const [selfProfile, setSelfProfile] = useState<Officer | null>(null);
     const [selfIsAdmin, setSelfIsAdmin] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
+
+    // Own Profile Modal State (for sub-pages where onViewOwnProfile is not provided)
+    const [showOwnProfile, setShowOwnProfile] = useState(false);
 
     // Sign Out Modal State
     const [showSignOutModal, setShowSignOutModal] = useState(false);
@@ -232,9 +236,15 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
     };
 
     const handleProfileClick = () => {
-        if (myProfile && onViewOwnProfile) {
+        if (!myProfile) return;
+        if (onViewOwnProfile) {
+            // Parent handles the modal (e.g., homepage)
             setIsOpen(false);
             onViewOwnProfile(myProfile);
+        } else {
+            // Self-contained: open our own ProfileModal (sub-pages)
+            setIsOpen(false);
+            setShowOwnProfile(true);
         }
     };
 
@@ -333,7 +343,7 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
                 {/* Profile Card */}
                 <div
                     onClick={handleProfileClick}
-                    className={`relative z-10 p-5 ${onViewOwnProfile ? 'cursor-pointer hover:bg-white/5' : ''} transition-colors`}
+                    className={`relative z-10 p-5 ${myProfile ? 'cursor-pointer hover:bg-white/5' : ''} transition-colors`}
                 >
                     <div className="flex items-center gap-4">
                         {/* Avatar */}
@@ -366,7 +376,7 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
                             )}
                         </div>
 
-                        {onViewOwnProfile && (
+                        {myProfile && (
                             <ChevronRight size={16} className="text-white/30 flex-shrink-0" />
                         )}
                     </div>
@@ -616,6 +626,17 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
         <>
             {triggerButton}
             {mounted && createPortal(drawerContent, document.body)}
+            {/* Self-contained ProfileModal for sub-pages */}
+            {showOwnProfile && myProfile && (
+                <ProfileModal
+                    officer={myProfile}
+                    onClose={() => setShowOwnProfile(false)}
+                    onOfficerUpdated={(updated) => {
+                        setSelfProfile(updated);
+                        setShowOwnProfile(true);
+                    }}
+                />
+            )}
         </>
     );
 }
