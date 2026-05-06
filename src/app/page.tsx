@@ -268,7 +268,33 @@ export default function DashboardPage() {
   const showWelcome = !isAuthLoading && !user;
   const showDashboard = !isAuthLoading && user && !isLoading;
 
-  // If we're still in a loading state (splash or accessing), render overlays only
+  // Keep the overlay for 2 extra paint frames so the dashboard can render behind it
+  const [dashboardPainted, setDashboardPainted] = useState(false);
+
+  useEffect(() => {
+    if (showDashboard && !dashboardPainted) {
+      // Wait for 2 animation frames so the browser fully paints the dashboard
+      const raf1 = requestAnimationFrame(() => {
+        const raf2 = requestAnimationFrame(() => {
+          setDashboardPainted(true);
+        });
+        // Store raf2 for cleanup
+        (window as any).__adofom_raf2 = raf2;
+      });
+      return () => {
+        cancelAnimationFrame(raf1);
+        cancelAnimationFrame((window as any).__adofom_raf2);
+      };
+    }
+    if (!showDashboard) {
+      setDashboardPainted(false);
+    }
+  }, [showDashboard, dashboardPainted]);
+
+  // Show the overlay if: loading, or dashboard exists but hasn't painted yet
+  const keepOverlayVisible = showAccessingOverlay || (showDashboard && !dashboardPainted);
+
+  // If dashboard isn't ready AND we're not showing welcome, render overlays only
   if (!showDashboard) {
     return (
       <>
@@ -280,35 +306,27 @@ export default function DashboardPage() {
         )}
 
         {/* Overlay: "Accessing Directory" — covers footer, covers everything */}
-        {showAccessingOverlay && (
+        {keepOverlayVisible && (
           <div className="fixed inset-0 z-[99998] flex flex-col items-center justify-center bg-[#020617] overflow-hidden">
             {/* Ambient glows */}
             <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-emerald-900/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
             <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-yellow-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
 
             <div className="relative z-10 flex flex-col items-center gap-6">
-              {/* Animated logo */}
               <div className="relative animate-float">
                 <div className="absolute -inset-3 bg-gradient-to-r from-emerald-500/25 to-yellow-500/25 blur-xl rounded-full opacity-60 animate-pulse" />
                 <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_30px_rgba(16,185,129,0.15)] bg-white/5 p-1">
                   <img src="/logo2.jpg" alt="ADOFOM" className="w-full h-full object-cover rounded-full bg-white" />
                 </div>
               </div>
-
-              {/* Pulsing dots loader */}
               <div className="flex items-center gap-1.5">
                 <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "0ms" }} />
                 <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "150ms" }} />
                 <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "300ms" }} />
               </div>
-
               <div className="text-center">
-                <p className="text-[10px] font-black tracking-[0.4em] text-emerald-500/70 uppercase mb-1">
-                  ADOFOM PORTAL
-                </p>
-                <p className="text-sm font-medium tracking-wider text-slate-400/80 uppercase">
-                  Accessing Directory...
-                </p>
+                <p className="text-[10px] font-black tracking-[0.4em] text-emerald-500/70 uppercase mb-1">ADOFOM PORTAL</p>
+                <p className="text-sm font-medium tracking-wider text-slate-400/80 uppercase">Accessing Directory...</p>
               </div>
             </div>
           </div>
@@ -325,8 +343,35 @@ export default function DashboardPage() {
     );
   }
 
+  // Dashboard is ready — render it with the overlay kept on top until it has painted
   return (
     <main className="min-h-screen pb-20">
+
+      {/* Overlay persists on top until dashboard has fully painted */}
+      {!dashboardPainted && (
+        <div className="fixed inset-0 z-[99998] flex flex-col items-center justify-center bg-[#020617] overflow-hidden transition-opacity duration-200">
+          <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-emerald-900/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+          <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-yellow-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+          <div className="relative z-10 flex flex-col items-center gap-6">
+            <div className="relative animate-float">
+              <div className="absolute -inset-3 bg-gradient-to-r from-emerald-500/25 to-yellow-500/25 blur-xl rounded-full opacity-60 animate-pulse" />
+              <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_30px_rgba(16,185,129,0.15)] bg-white/5 p-1">
+                <img src="/logo2.jpg" alt="ADOFOM" className="w-full h-full object-cover rounded-full bg-white" />
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "0ms" }} />
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "150ms" }} />
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "300ms" }} />
+            </div>
+            <div className="text-center">
+              <p className="text-[10px] font-black tracking-[0.4em] text-emerald-500/70 uppercase mb-1">ADOFOM PORTAL</p>
+              <p className="text-sm font-medium tracking-wider text-slate-400/80 uppercase">Accessing Directory...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Top Navigation */}
       <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-green-950/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] shadow-lg transition-all duration-300">
         <div className="flex items-center gap-3">
