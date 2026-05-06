@@ -138,7 +138,7 @@ export default function ApprovalsPage() {
     }
   }, [supabase, isAuthorized])
 
-  const toggleApproval = async (id: string, currentStatus: boolean, email: string) => {
+  const toggleApproval = async (id: string, currentStatus: boolean, email: string, fullName: string) => {
     // SAFETY CHECK: Prevent Felix from revoking his own access
     if (email === 'felixadewole16@gmail.com' && currentStatus === true) {
       toast.error("Critical Action Blocked: You cannot revoke access for the Superuser account.")
@@ -162,9 +162,10 @@ export default function ApprovalsPage() {
       // If we just approved them, send a system notification to everyone!
       if (!currentStatus) {
          try {
+            const surname = fullName ? fullName.split(',')[0].trim() : 'a new officer';
             await supabase.from('notifications').insert({
               title: '🎉 New Officer Approved',
-              message: `Please welcome the newest officer (${email}) to the Ondo State Admin Directory!`,
+              message: `Please welcome ${surname} to the Ondo State Admin Directory!`,
               type: 'system',
               is_read: false
             })
@@ -328,7 +329,7 @@ export default function ApprovalsPage() {
                       </td>
                       <td className="px-6 py-5 text-right">
                         <button
-                          onClick={() => toggleApproval(officer.id, officer.is_approved, officer.email_address)}
+                          onClick={() => toggleApproval(officer.id, officer.is_approved, officer.email_address, officer.full_name)}
                           disabled={processingId === officer.id}
                           className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 ${officer.is_approved
                             ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
