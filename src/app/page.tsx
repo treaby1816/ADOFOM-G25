@@ -48,6 +48,16 @@ export default function DashboardPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+  // Only show splash for unauthenticated users (no cookie = cold load)
+  const [splashDone, setSplashDone] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        // If auth cookie exists, user is returning → skip splash entirely
+        return document.cookie.includes('-auth-token');
+      } catch { return false; }
+    }
+    return false;
+  });
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -244,52 +254,74 @@ export default function DashboardPage() {
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-  if (isAuthLoading) {
-    return <SplashScreen message="Initializing Directory Environment..." onComplete={() => setIsAuthLoading(false)} />;
-  }
+  // --- Layered Render Architecture ---
+  // Content renders underneath; loading screens stack on top as fixed overlays.
+  // This eliminates ALL flash/flicker between state transitions.
 
-  if (!user) {
+  const hasAuthCookie = typeof window !== 'undefined' && (() => {
+    try { return document.cookie.includes('-auth-token'); } catch { return false; }
+  })();
+
+  // Determine overlay visibility
+  const showSplashOverlay = !splashDone;
+  const showAccessingOverlay = isAuthLoading || (user && isLoading);
+  const showWelcome = !isAuthLoading && !user;
+  const showDashboard = !isAuthLoading && user && !isLoading;
+
+  // If we're still in a loading state (splash or accessing), render overlays only
+  if (!showDashboard) {
     return (
-      <div className="animate-fade-in">
-        <WelcomeScreen />
-      </div>
-    );
-  }
+      <>
+        {/* Base layer: Welcome Screen (renders behind overlays for unauthenticated) */}
+        {showWelcome && (
+          <div className="animate-fade-in">
+            <WelcomeScreen />
+          </div>
+        )}
 
-  // Show a polished transition while officer data loads after authentication
-  if (isLoading) {
-    return (
-      <div className="fixed inset-0 z-[99998] flex flex-col items-center justify-center bg-[#020617] animate-fade-in">
-        {/* Ambient glows */}
-        <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-emerald-900/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
-        <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-yellow-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+        {/* Overlay: "Accessing Directory" — covers footer, covers everything */}
+        {showAccessingOverlay && (
+          <div className="fixed inset-0 z-[99998] flex flex-col items-center justify-center bg-[#020617] overflow-hidden">
+            {/* Ambient glows */}
+            <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-emerald-900/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+            <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-yellow-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
 
-        <div className="relative z-10 flex flex-col items-center gap-6">
-          {/* Animated logo */}
-          <div className="relative animate-float">
-            <div className="absolute -inset-3 bg-gradient-to-r from-emerald-500/25 to-yellow-500/25 blur-xl rounded-full opacity-60 animate-pulse" />
-            <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_30px_rgba(16,185,129,0.15)] bg-white/5 p-1">
-              <img src="/logo2.jpg" alt="ADOFOM" className="w-full h-full object-cover rounded-full bg-white" />
+            <div className="relative z-10 flex flex-col items-center gap-6">
+              {/* Animated logo */}
+              <div className="relative animate-float">
+                <div className="absolute -inset-3 bg-gradient-to-r from-emerald-500/25 to-yellow-500/25 blur-xl rounded-full opacity-60 animate-pulse" />
+                <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_30px_rgba(16,185,129,0.15)] bg-white/5 p-1">
+                  <img src="/logo2.jpg" alt="ADOFOM" className="w-full h-full object-cover rounded-full bg-white" />
+                </div>
+              </div>
+
+              {/* Pulsing dots loader */}
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "0ms" }} />
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "150ms" }} />
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "300ms" }} />
+              </div>
+
+              <div className="text-center">
+                <p className="text-[10px] font-black tracking-[0.4em] text-emerald-500/70 uppercase mb-1">
+                  ADOFOM PORTAL
+                </p>
+                <p className="text-sm font-medium tracking-wider text-slate-400/80 uppercase">
+                  Accessing Directory...
+                </p>
+              </div>
             </div>
           </div>
+        )}
 
-          {/* Pulsing dots loader */}
-          <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "0ms" }} />
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "150ms" }} />
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "300ms" }} />
-          </div>
-
-          <div className="text-center">
-            <p className="text-[10px] font-black tracking-[0.4em] text-emerald-500/70 uppercase mb-1">
-              ADOFOM PORTAL
-            </p>
-            <p className="text-sm font-medium tracking-wider text-slate-400/80 uppercase">
-              Accessing Directory...
-            </p>
-          </div>
-        </div>
-      </div>
+        {/* Overlay: Splash Screen — highest z-index, only for unauthenticated cold loads */}
+        {showSplashOverlay && (
+          <SplashScreen
+            message="Initializing Directory Environment..."
+            onComplete={() => setSplashDone(true)}
+          />
+        )}
+      </>
     );
   }
 
