@@ -207,9 +207,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 linkedin_url: data.linkedin_url?.trim() || "",
             };
 
-            if (isAdmin) {
-                updateData.exco_portfolio = data.exco_portfolio?.trim() || null;
-            }
+
 
             // Use the officer's actual row ID from the prop — this is the known primary key
             // We try officer.id first, then auth.uid, then email as fallbacks
@@ -386,14 +384,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                         </div>
                     </div>
 
-                    {isAdmin && (
-                        <div>
-                            <label className={labelClass}>
-                                <Award size={12} className="text-emerald-500" /> Exco Portfolio
-                            </label>
-                            <input type="text" {...register("exco_portfolio")} className={inputClass} placeholder="e.g. President, Secretary, PRO, Treasurer" />
-                        </div>
-                    )}
+
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>

@@ -5,8 +5,8 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-    Moon, Sun, Settings, ShieldCheck, LogOut, User,
-    X, ChevronRight, Briefcase, Award, Newspaper
+    LayoutDashboard, Users, UserPlus, FileText, Download, UserCheck, Search, Info, RefreshCw, 
+    X, Menu, Cake, Crown, Briefcase, Moon, Sun, Settings, Award, Newspaper, ShieldCheck, LogOut, User, ChevronRight
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { createClient } from "@/utils/supabase/client";
@@ -458,6 +458,18 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
                                 <span className="ml-auto text-[9px] font-black uppercase tracking-widest text-yellow-500/60 bg-yellow-500/10 px-2 py-0.5 rounded-full">
                                     Admin
                                 </span>
+                            </Link>
+                            
+                            {/* Leadership Setup */}
+                            <Link
+                                href="/admin/leadership"
+                                onClick={() => setIsOpen(false)}
+                                className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-white/80 hover:text-white hover:bg-orange-500/10 transition-all duration-200 group"
+                            >
+                                <div className="p-2 bg-orange-500/10 group-hover:bg-orange-500/20 rounded-lg transition-colors">
+                                    <Crown size={16} className="text-orange-400" />
+                                </div>
+                                <span className="text-sm font-semibold">Manage Leadership</span>
                             </Link>
                             
                             {/* Export Directory */}
