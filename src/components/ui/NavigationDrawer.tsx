@@ -163,7 +163,7 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
         setShowSignOutModal(false);
         setIsOpen(false);
         await supabase.auth.signOut();
-        router.push("/login");
+        router.push("/");
         router.refresh();
     };
 

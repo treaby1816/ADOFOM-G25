@@ -8,13 +8,14 @@ import ProfileModal from "@/components/ui/ProfileModal";
 import SearchAndFilter from "@/components/filters/SearchAndFilter";
 import ImageSlider from "@/components/ui/ImageSlider";
 import WelcomeScreen from "@/components/ui/WelcomeScreen";
+import SplashScreen from "@/components/ui/SplashScreen";
 import ExportButton from "@/components/ui/ExportButton";
 import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
 import ScrollButtons from "@/components/ui/ScrollButtons";
 import NavigationDrawer from "@/components/ui/NavigationDrawer";
 import NotificationDrawer from "@/components/ui/NotificationDrawer";
 import { Officer } from "@/types/officer";
-import { Users, Shield, ChevronLeft, ChevronRight, AlertCircle, Search as SearchIcon } from "lucide-react";
+import { Users, Shield, ChevronLeft, ChevronRight, AlertCircle, Search as SearchIcon, Loader2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import { toast } from "sonner";
 import { normalizeLGA, normalizeMDA, formatBirthday, isBirthdayToday } from "@/lib/dataConsolidation";
@@ -244,11 +245,7 @@ export default function DashboardPage() {
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   if (isAuthLoading) {
-    return (
-      <div className="min-h-screen bg-hero-gradient flex items-center justify-center">
-        <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <SplashScreen message="Initializing Directory Environment..." />;
   }
 
   if (!user) {
@@ -297,9 +294,9 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-tight">
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-[1.1] py-2">
             Administrative <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-100 drop-shadow-sm">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-100 drop-shadow-sm inline-block pr-2 pb-2 -mr-2 -mb-2">
               Officers Directory
             </span>
           </h1>
