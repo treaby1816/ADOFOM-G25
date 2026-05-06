@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { Bell, X, Cake, BellRing, ShieldAlert, Info, Check, Trash2, Newspaper } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 interface AppNotification {
   id: string
@@ -116,13 +117,16 @@ export default function NotificationDrawer() {
   const clearAll = async () => {
     if (!confirm("Are you sure you want to clear all notifications?")) return;
 
-    const { error } = await supabase.rpc('clear_all_notifications')
+    // Direct database delete instead of relying on RPC
+    const { error } = await supabase.from('notifications').delete().not('id', 'is', null)
     
     if (!error) {
       setNotifications([]) // Optimistic UI update
       setNewsAlerts([])    // Also clear news alerts
+      toast.success("Notifications cleared!")
     } else {
       console.error("Error clearing notifications:", error.message)
+      toast.error("Permission Denied: Could not clear notifications.")
     }
   }
 
