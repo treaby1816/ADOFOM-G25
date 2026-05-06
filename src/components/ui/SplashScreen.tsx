@@ -10,6 +10,7 @@ interface SplashScreenProps {
 
 export default function SplashScreen({ message = "Authenticating Environment...", onComplete }: SplashScreenProps) {
   const [progress, setProgress] = useState(0);
+  const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
     // Simulate a smooth progression for the loading bar
@@ -22,7 +23,12 @@ export default function SplashScreen({ message = "Authenticating Environment..."
         const next = prev + step;
         if (next >= 100) {
           clearInterval(timer);
-          if (onComplete) onComplete();
+          // Start exit animation
+          setIsExiting(true);
+          // Call onComplete after the fade out animation (300ms)
+          if (onComplete) {
+            setTimeout(onComplete, 300);
+          }
           return 100;
         }
         return next;
@@ -33,7 +39,7 @@ export default function SplashScreen({ message = "Authenticating Environment..."
   }, [onComplete]);
 
   return (
-    <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#020617] overflow-hidden">
+    <div className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#020617] overflow-hidden transition-opacity duration-300 ${isExiting ? 'opacity-0' : 'opacity-100'}`}>
       {/* Ambient background glows */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-900/20 rounded-full blur-[120px] pointer-events-none animate-pulse" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-yellow-900/10 rounded-full blur-[120px] pointer-events-none animate-pulse delay-700" />

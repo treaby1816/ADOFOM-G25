@@ -47,7 +47,16 @@ export default function DashboardPage() {
   const [officers, setOfficers] = useState<Officer[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isAuthLoading, setIsAuthLoading] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        return document.cookie.includes('-auth-token');
+      } catch (e) {
+        return true;
+      }
+    }
+    return true;
+  });
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -245,7 +254,7 @@ export default function DashboardPage() {
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   if (isAuthLoading) {
-    return <SplashScreen message="Initializing Directory Environment..." />;
+    return <SplashScreen message="Initializing Directory Environment..." onComplete={() => setIsAuthLoading(false)} />;
   }
 
   if (!user) {
@@ -294,9 +303,9 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-[1.1] py-2">
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-[1.1] py-2 overflow-visible">
             Administrative <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-100 drop-shadow-sm inline-block pr-2 pb-2 -mr-2 -mb-2">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-100 drop-shadow-sm inline-block px-2 pb-2 -mx-2 -mb-2 overflow-visible">
               Officers Directory
             </span>
           </h1>

@@ -7,6 +7,7 @@ import SplashScreen from "@/components/ui/SplashScreen";
 
 export default function AuthGuardLayout({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClient();
@@ -19,6 +20,7 @@ export default function AuthGuardLayout({ children }: { children: React.ReactNod
     const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
     if (isPublic) {
       setLoading(false);
+      setShowSplash(false); // No splash for public routes for maximum speed
       return;
     }
 
@@ -80,8 +82,14 @@ export default function AuthGuardLayout({ children }: { children: React.ReactNod
   }, [pathname, router, supabase]);
 
   // Render a professional full-screen loader
-  if (loading) {
-    return <SplashScreen message="Verifying Security Status..." />;
+  // We stay on splash until BOTH the auth check is done AND the splash animation finishes
+  if (loading || showSplash) {
+    return (
+      <SplashScreen 
+        message="Verifying Security Status..." 
+        onComplete={() => setShowSplash(false)} 
+      />
+    );
   }
 
   return <>{children}</>;

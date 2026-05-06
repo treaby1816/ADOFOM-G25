@@ -114,7 +114,7 @@ export default function WelcomeScreen() {
           <div className="space-y-2 md:space-y-6 min-h-[100px] md:min-h-[220px] flex flex-col justify-center">
             <h1 
               key={`tag-${currentSlide}`}
-              className={`font-extrabold text-white leading-[1.1] animate-slide-up tracking-tight ${
+              className={`font-extrabold text-white leading-[1.1] animate-slide-up tracking-tight px-4 py-2 -mx-4 overflow-visible ${
                 currentSlide === 0 
                   ? "text-lg md:text-2xl lg:text-4xl" 
                   : "text-xl md:text-3xl lg:text-5xl"
