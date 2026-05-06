@@ -47,16 +47,7 @@ export default function DashboardPage() {
   const [officers, setOfficers] = useState<Officer[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthLoading, setIsAuthLoading] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        return document.cookie.includes('-auth-token');
-      } catch (e) {
-        return true;
-      }
-    }
-    return true;
-  });
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -258,7 +249,48 @@ export default function DashboardPage() {
   }
 
   if (!user) {
-    return <WelcomeScreen />;
+    return (
+      <div className="animate-fade-in">
+        <WelcomeScreen />
+      </div>
+    );
+  }
+
+  // Show a polished transition while officer data loads after authentication
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 z-[99998] flex flex-col items-center justify-center bg-[#020617] animate-fade-in">
+        {/* Ambient glows */}
+        <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-emerald-900/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+        <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-yellow-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+
+        <div className="relative z-10 flex flex-col items-center gap-6">
+          {/* Animated logo */}
+          <div className="relative animate-float">
+            <div className="absolute -inset-3 bg-gradient-to-r from-emerald-500/25 to-yellow-500/25 blur-xl rounded-full opacity-60 animate-pulse" />
+            <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_30px_rgba(16,185,129,0.15)] bg-white/5 p-1">
+              <img src="/logo2.jpg" alt="ADOFOM" className="w-full h-full object-cover rounded-full bg-white" />
+            </div>
+          </div>
+
+          {/* Pulsing dots loader */}
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "0ms" }} />
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "150ms" }} />
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "300ms" }} />
+          </div>
+
+          <div className="text-center">
+            <p className="text-[10px] font-black tracking-[0.4em] text-emerald-500/70 uppercase mb-1">
+              ADOFOM PORTAL
+            </p>
+            <p className="text-sm font-medium tracking-wider text-slate-400/80 uppercase">
+              Accessing Directory...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
