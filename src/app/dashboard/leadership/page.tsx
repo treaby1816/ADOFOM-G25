@@ -92,13 +92,13 @@ export default function LeadershipPage() {
                 <button
                   key={officer.id}
                   onClick={() => setSelectedOfficer(officer)}
-                  className="block h-full text-left group relative bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl rounded-[2rem] border border-white/80 dark:border-zinc-800/80 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-yellow-500/20 dark:hover:shadow-yellow-900/20 hover:border-yellow-300/60 dark:hover:border-yellow-500/60 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col cursor-pointer"
+                  className="w-full h-full group relative bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl rounded-[2rem] border border-white/80 dark:border-zinc-800/80 shadow-xl shadow-slate-200/50 dark:shadow-none hover:shadow-2xl hover:shadow-yellow-500/20 dark:hover:shadow-yellow-900/20 hover:border-yellow-300/60 dark:hover:border-yellow-500/60 transition-all duration-300 hover:-translate-y-2 overflow-hidden flex flex-col items-center cursor-pointer"
                 >
                   {/* Top accent bar */}
                   <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-yellow-500 via-amber-400 to-orange-500 opacity-80 group-hover:opacity-100 transition-opacity duration-300" />
 
                   {/* Photo */}
-                  <div className="flex justify-center pt-8 pb-4 relative">
+                  <div className="w-full flex items-center justify-center pt-8 pb-4 relative">
                     <div className="absolute inset-0 bg-gradient-to-b from-yellow-50/50 dark:from-yellow-900/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="relative w-32 h-32 rounded-full overflow-hidden ring-[6px] ring-white dark:ring-zinc-800 shadow-xl group-hover:ring-yellow-100 dark:group-hover:ring-yellow-900/30 group-hover:scale-105 transition-all duration-300 z-10 bg-slate-100 dark:bg-zinc-800 flex items-center justify-center">
                       {showInitials ? (
@@ -116,7 +116,7 @@ export default function LeadershipPage() {
                   </div>
 
                   {/* Info */}
-                  <div className="px-6 pb-8 flex-1 text-center relative z-10">
+                  <div className="w-full px-6 pb-8 flex-1 text-center relative z-10">
                     <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100 leading-tight mb-2 group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors duration-300">
                       {officer.full_name.includes(',')
                         ? officer.full_name.split(',')[0].toUpperCase() + ',' + officer.full_name.split(',').slice(1).join(',')
