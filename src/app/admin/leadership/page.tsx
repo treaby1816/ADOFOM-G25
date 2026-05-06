@@ -9,6 +9,7 @@ import {
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
+import OfficerCombobox from '@/components/ui/OfficerCombobox'
 
 interface Portfolio {
   id: string
@@ -49,6 +50,14 @@ export default function LeadershipSetupPage() {
         return
       }
 
+      // Anti-hang timeout
+      const timeoutId = setTimeout(() => {
+          if (authChecking) {
+              setAuthChecking(false);
+              router.replace('/');
+          }
+      }, 5000);
+
       try {
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) {
@@ -79,6 +88,7 @@ export default function LeadershipSetupPage() {
         console.error('Admin guard error:', err)
         router.replace('/')
       } finally {
+        clearTimeout(timeoutId);
         setAuthChecking(false)
       }
     }
@@ -329,18 +339,11 @@ export default function LeadershipSetupPage() {
                                         <p className="text-yellow-500 font-bold uppercase tracking-wider text-sm">{portfolio.title}</p>
                                     </div>
                                     <div className="w-full md:w-2/3">
-                                        <select
+                                        <OfficerCombobox 
+                                            officers={officers}
                                             value={currentValue}
-                                            onChange={(e) => handleAssignmentChange(portfolio.title, e.target.value)}
-                                            className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
-                                        >
-                                            <option value="" className="bg-slate-900 text-slate-500">-- Select Officer --</option>
-                                            {officers.map(officer => (
-                                                <option key={officer.id} value={officer.id} className="bg-slate-900">
-                                                    {officer.full_name}
-                                                </option>
-                                            ))}
-                                        </select>
+                                            onChange={(val) => handleAssignmentChange(portfolio.title, val)}
+                                        />
                                     </div>
                                 </div>
                                 )

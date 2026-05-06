@@ -81,7 +81,7 @@ export default function LeadershipPage() {
               <Search className="w-8 h-8 text-slate-400" />
             </div>
             <p className="text-lg font-bold text-slate-600 dark:text-zinc-400">No leadership records found.</p>
-            <p className="text-sm text-slate-400 dark:text-zinc-500">Admins can assign Exco Portfolios via the Edit Profile modal.</p>
+            <p className="text-sm text-slate-400 dark:text-zinc-500">Admins can assign Exco Portfolios via the Leadership Management Portal.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
