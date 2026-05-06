@@ -14,16 +14,50 @@ export default function LeadershipPage() {
 
   useEffect(() => {
     async function fetchLeaders() {
-      const { data, error } = await supabase
-        .from('administrative_officers')
-        .select('*')
-        .not('exco_portfolio', 'is', null)
-        .order('created_at', { ascending: true })
+      try {
+        // 1. Fetch officers
+        const { data: officersData, error: officersError } = await supabase
+          .from('administrative_officers')
+          .select('*')
+          .not('exco_portfolio', 'is', null)
 
-      if (!error && data) {
-        setLeaders(data as Officer[])
+        if (officersError) throw officersError
+
+        // 2. Fetch portfolios for ordering
+        const { data: portfoliosData, error: portfoliosError } = await supabase
+          .from('leadership_portfolios')
+          .select('title, sort_order')
+        
+        if (portfoliosError) {
+          console.warn('Could not fetch portfolio ordering:', portfoliosError)
+        }
+
+        const officers = (officersData || []) as Officer[]
+        const portfolios = portfoliosData || []
+
+        // Create an ordering map based on the db sort_order
+        const orderMap: Record<string, number> = {}
+        portfolios.forEach(p => {
+          orderMap[p.title] = p.sort_order
+        })
+
+        // Sort officers by portfolio sort_order, fallback to created_at
+        officers.sort((a, b) => {
+          const orderA = a.exco_portfolio && orderMap[a.exco_portfolio] !== undefined ? orderMap[a.exco_portfolio] : 9999
+          const orderB = b.exco_portfolio && orderMap[b.exco_portfolio] !== undefined ? orderMap[b.exco_portfolio] : 9999
+          
+          if (orderA !== orderB) {
+            return orderA - orderB
+          }
+          return new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime()
+        })
+
+        setLeaders(officers)
+      } catch (err) {
+        console.error('Error fetching leaders:', err)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     fetchLeaders()
