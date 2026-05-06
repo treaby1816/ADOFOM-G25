@@ -37,7 +37,7 @@ export default function WelcomeScreen() {
     <div className="min-h-screen flex flex-col md:flex-row bg-[#020617] overflow-hidden">
       {/* Left: Carousel Half */}
       <section 
-        className="relative w-full md:w-1/2 h-[38vh] md:h-screen overflow-hidden"
+        className="relative w-full md:w-1/2 h-[45vh] md:h-screen overflow-hidden"
         aria-label="Professional showcase carousel"
       >
         {slides.map((slide, index) => (
@@ -75,7 +75,7 @@ export default function WelcomeScreen() {
       </section>
 
       {/* Right: Content Half */}
-      <main className="w-full md:w-1/2 h-[62vh] md:h-screen flex flex-col justify-center items-center px-6 pt-6 pb-4 md:px-16 lg:px-24 md:pt-0 md:pb-0 bg-hero-gradient relative overflow-hidden">
+      <main className="w-full md:w-1/2 h-[55vh] md:h-screen flex flex-col justify-start md:justify-center items-center px-6 pt-5 pb-4 md:px-16 lg:px-24 md:pt-0 md:pb-0 bg-hero-gradient relative overflow-hidden">
         {/* Background ambient light effects */}
         <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-yellow-500/10 rounded-full blur-[120px] pointer-events-none" />
