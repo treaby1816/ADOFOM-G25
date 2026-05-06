@@ -51,11 +51,12 @@ export default function SignupPage() {
         return;
       }
 
-      // SMART CHECK: Is this an existing officer with a complete profile?
-      // Use either the DB data or the local whitelist data to bypass setup
-      const isExistingAndComplete = 
+      // SMART CHECK: Is this an existing officer with a complete profile AND approved?
+      // Only truly approved officers bypass setup
+      const isApprovedOfficer = 
+        whitelistEntry?.is_approved === true &&
         (dbData?.full_name && dbData?.full_name !== 'New User' && dbData?.current_mda) ||
-        (whitelistEntry?.full_name && whitelistEntry?.current_mda);
+        (whitelistEntry?.is_approved === true && whitelistEntry?.full_name && whitelistEntry?.current_mda);
 
       // Step 2: Create Auth User
       const { data, error } = await supabase.auth.signUp({
@@ -63,8 +64,8 @@ export default function SignupPage() {
         password,
         options: {
           data: {
-            needs_setup: !isExistingAndComplete,
-            is_approved: isExistingAndComplete // THE MASTER BYPASS BADGE
+            needs_setup: !isApprovedOfficer,
+            is_approved: !!isApprovedOfficer
           }
         }
       })
@@ -99,11 +100,11 @@ export default function SignupPage() {
         // - Creates a new profile for unknown emails
         // We just need to decide where to redirect.
 
-        if (isExistingAndComplete) {
+        if (isApprovedOfficer) {
           setMessage({ type: 'success', text: 'Welcome back! Redirecting to Dashboard...' });
           setTimeout(() => router.push('/'), 1500);
         } else {
-          setMessage({ type: 'success', text: 'Account created! Redirecting to profile setup...' });
+          setMessage({ type: 'success', text: 'Account created! Setting up your profile...' });
           setTimeout(() => router.push('/dashboard/setup-profile'), 1500);
         }
       }

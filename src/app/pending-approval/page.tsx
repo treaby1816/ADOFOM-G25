@@ -3,7 +3,6 @@
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 import { Clock, Mail, Phone, LogOut, ShieldCheck } from 'lucide-react'
 
 export default function PendingApproval() {
@@ -15,41 +14,19 @@ export default function PendingApproval() {
     router.push('/login')
   }
 
-  // SELF-HEALING: Auto-approve legacy officers stuck on this page
+  // Check if the admin has approved this officer
   useEffect(() => {
     const checkApproval = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // ULTIMATE BYPASS: Check the local master list
-        const email = user.email?.toLowerCase() || ""
-        if (WHITELIST_OFFICERS[email]) {
-          console.log('Master Key match: Redirecting legacy officer instantly')
-          router.push('/')
-          return
-        }
-
-        // Fallback: Check DB if not in local master list
+        // Check DB for approval status — only admin can set this
         const { data: officer } = await supabase
           .from('administrative_officers')
-          .select('*')
+          .select('is_approved')
           .eq('id', user.id)
           .maybeSingle()
 
-        if (officer && !officer.is_approved) {
-          console.log('Officer found, checking legacy status:', officer.full_name);
-          const isLegacyAndComplete = officer.full_name && officer.full_name !== 'New User' && officer.current_mda;
-          if (isLegacyAndComplete) {
-            console.log('Self-healing: Auto-approving legacy officer');
-            const { error: updateErr } = await supabase
-              .from('administrative_officers')
-              .update({ is_approved: true })
-              .eq('id', user.id);
-            
-            if (!updateErr) {
-              router.push('/')
-            }
-          }
-        } else if (officer?.is_approved) {
+        if (officer?.is_approved) {
           router.push('/')
         }
       }
