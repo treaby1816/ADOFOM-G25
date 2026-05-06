@@ -278,6 +278,36 @@ html.dark select {
   -webkit-text-fill-color: #f8fafc !important;
 }
 
+/* --- WebKit Autofill Overrides (Prevents Chrome/Edge from turning inputs white) --- */
+
+/* Default (Light Mode Dashboard) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: #0f172a !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* Auth Pages & Dark Modals */
+.bg-hero-gradient input:-webkit-autofill,
+.bg-hero-gradient input:-webkit-autofill:hover,
+.bg-hero-gradient input:-webkit-autofill:focus,
+.bg-hero-gradient input:-webkit-autofill:active,
+.bg-hero-gradient textarea:-webkit-autofill,
+html.dark input:-webkit-autofill,
+html.dark input:-webkit-autofill:hover,
+html.dark input:-webkit-autofill:focus,
+html.dark textarea:-webkit-autofill {
+  -webkit-text-fill-color: #f8fafc !important;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+
 html.dark select option {
   color: #f8fafc !important;
   background-color: #18181b !important;

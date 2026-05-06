@@ -150,17 +150,18 @@ export default function ApprovalsPage() {
     // OPTIMISTIC UI: Update state immediately
     setOfficers(prev => prev.map(o => o.id === id ? { ...o, is_approved: !currentStatus } : o))
 
-    const { error: updateError } = await supabase
+    const { data: updatedRows, error: updateError } = await supabase
       .from('administrative_officers')
       .update({ is_approved: !currentStatus })
       .eq('id', id)
+      .select()
 
-    if (!updateError) {
+    if (!updateError && updatedRows && updatedRows.length > 0) {
       toast.success(currentStatus ? 'Access Revoked!' : 'Officer Approved!')
     } else {
       // Revert on failure
       setOfficers(prev => prev.map(o => o.id === id ? { ...o, is_approved: currentStatus } : o))
-      toast.error("Update failed: " + updateError.message)
+      toast.error(updateError?.message || "Permission Denied: You don't have database rights to modify this officer.")
     }
     setProcessingId(null)
   }
