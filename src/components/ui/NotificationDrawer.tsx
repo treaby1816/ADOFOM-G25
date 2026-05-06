@@ -45,7 +45,13 @@ export default function NotificationDrawer() {
       .order('created_at', { ascending: false })
       .limit(20)
 
-    if (!error && data) setNotifications(data)
+    if (!error && data) {
+      const mappedData = data.map((n: any) => ({
+        ...n,
+        link: n.type === 'admin' ? '/admin/approvals' : n.link
+      }))
+      setNotifications(mappedData)
+    }
   }
 
   // 2. Fetch recent news as alerts (last 24 hours)
