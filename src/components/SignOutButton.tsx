@@ -8,10 +8,16 @@ export default function SignOutButton() {
   const router = useRouter()
   const supabase = createClient()
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/')
-    router.refresh()
+  const handleSignOut = () => {
+    // Clear auth cookies immediately
+    document.cookie.split(";").forEach((c) => {
+      const name = c.trim().split("=")[0]
+      if (name.includes("auth-token") || name.includes("sb-")) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
+      }
+    })
+    window.location.href = "/"
+    supabase.auth.signOut().catch(() => {})
   }
 
   return (

@@ -11,9 +11,15 @@ export default function PendingApproval() {
   const [checking, setChecking] = useState(false)
   const [approved, setApproved] = useState(false)
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push('/')
+  const handleLogout = () => {
+    document.cookie.split(";").forEach((c) => {
+      const name = c.trim().split("=")[0]
+      if (name.includes("auth-token") || name.includes("sb-")) {
+        document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
+      }
+    })
+    window.location.href = "/"
+    supabase.auth.signOut().catch(() => {})
   }
 
   const checkApprovalStatus = async () => {

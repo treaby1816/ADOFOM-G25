@@ -159,12 +159,23 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
         setShowSignOutModal(true);
     };
 
-    const confirmSignOut = async () => {
+    const confirmSignOut = () => {
         setShowSignOutModal(false);
         setIsOpen(false);
-        await supabase.auth.signOut();
-        router.push("/");
-        router.refresh();
+
+        // Clear auth cookies immediately for instant local effect
+        document.cookie.split(";").forEach((c) => {
+            const name = c.trim().split("=")[0];
+            if (name.includes("auth-token") || name.includes("sb-")) {
+                document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+            }
+        });
+
+        // Navigate instantly — don't wait for Supabase network call
+        window.location.href = "/";
+
+        // Fire-and-forget: clean up the server session in the background
+        supabase.auth.signOut().catch(() => {});
     };
 
     const executeExport = async () => {
