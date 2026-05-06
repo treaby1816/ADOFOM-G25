@@ -210,32 +210,55 @@ select option {
 }
 
 /* --- Light mode input visibility fix (Tailwind v4 reset override) --- */
-input[type="text"],
-input[type="search"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="tel"],
-input[type="url"],
-textarea {
+/* Scoped to dashboard only — auth pages have dark backgrounds and need white text */
+main input[type="text"],
+main input[type="search"],
+main input[type="email"],
+main input[type="password"],
+main input[type="number"],
+main input[type="tel"],
+main input[type="url"],
+main textarea {
   color: #0f172a !important;
   caret-color: #0f172a !important;
   -webkit-text-fill-color: #0f172a !important;
 }
 
-input[type="text"]::placeholder,
-input[type="search"]::placeholder,
-input[type="email"]::placeholder,
-input[type="password"]::placeholder,
-textarea::placeholder {
+main input[type="text"]::placeholder,
+main input[type="search"]::placeholder,
+main input[type="email"]::placeholder,
+main input[type="password"]::placeholder,
+main textarea::placeholder {
   color: #94a3b8 !important;
   -webkit-text-fill-color: #94a3b8 !important;
   opacity: 1 !important;
 }
 
-select {
+main select {
   color: #0f172a !important;
   -webkit-text-fill-color: #0f172a !important;
+}
+
+/* --- Auth pages (login, signup, setup-profile) — force white text on dark bg --- */
+.bg-hero-gradient input[type="text"],
+.bg-hero-gradient input[type="search"],
+.bg-hero-gradient input[type="email"],
+.bg-hero-gradient input[type="password"],
+.bg-hero-gradient input[type="number"],
+.bg-hero-gradient input[type="tel"],
+.bg-hero-gradient input[type="url"],
+.bg-hero-gradient textarea,
+.bg-hero-gradient select {
+  color: #f1f5f9 !important;
+  caret-color: #f1f5f9 !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+}
+
+.bg-hero-gradient input::placeholder,
+.bg-hero-gradient textarea::placeholder {
+  color: #94a3b8 !important;
+  -webkit-text-fill-color: #94a3b8 !important;
+  opacity: 1 !important;
 }
 
 /* --- Dark mode overrides --- */
