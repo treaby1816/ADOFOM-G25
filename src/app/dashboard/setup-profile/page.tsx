@@ -165,6 +165,20 @@ export default function SetupProfilePage() {
         data: { needs_setup: false }
       })
 
+      // Send notification to admin about new officer signup (non-blocking)
+      if (!finalApprovedStatus) {
+        try {
+          await supabase.from('notifications').insert({
+            title: '🆕 New Officer Registration',
+            message: `${formattedName || 'A new officer'} (${user.email}) has registered and is awaiting your approval.`,
+            type: 'admin',
+            is_read: false,
+          })
+        } catch (notifErr) {
+          console.warn('Failed to send admin notification:', notifErr)
+        }
+      }
+
       setSuccess(true)
       setTimeout(() => {
         if (finalApprovedStatus) {

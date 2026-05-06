@@ -210,33 +210,19 @@ select option {
 }
 
 /* --- Light mode input visibility fix (Tailwind v4 reset override) --- */
-/* Scoped to dashboard only — auth pages have dark backgrounds and need white text */
-main input[type="text"],
-main input[type="search"],
-main input[type="email"],
-main input[type="password"],
-main input[type="number"],
-main input[type="tel"],
-main input[type="url"],
-main textarea {
+/* Only target the dashboard search/filter bar inputs, not modals */
+header input[type="text"],
+header input[type="search"] {
   color: #0f172a !important;
   caret-color: #0f172a !important;
   -webkit-text-fill-color: #0f172a !important;
 }
 
-main input[type="text"]::placeholder,
-main input[type="search"]::placeholder,
-main input[type="email"]::placeholder,
-main input[type="password"]::placeholder,
-main textarea::placeholder {
+header input[type="text"]::placeholder,
+header input[type="search"]::placeholder {
   color: #94a3b8 !important;
   -webkit-text-fill-color: #94a3b8 !important;
   opacity: 1 !important;
-}
-
-main select {
-  color: #0f172a !important;
-  -webkit-text-fill-color: #0f172a !important;
 }
 
 /* --- Auth pages (login, signup, setup-profile) — force white text on dark bg --- */

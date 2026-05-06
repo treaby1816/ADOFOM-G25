@@ -2,24 +2,25 @@
 
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { Clock, Mail, Phone, LogOut, ShieldCheck } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Clock, Mail, Phone, LogOut, ShieldCheck, CheckCircle2, Loader2 } from 'lucide-react'
 
 export default function PendingApproval() {
   const supabase = createClient()
   const router = useRouter()
+  const [checking, setChecking] = useState(false)
+  const [approved, setApproved] = useState(false)
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
     router.push('/login')
   }
 
-  // Check if the admin has approved this officer
-  useEffect(() => {
-    const checkApproval = async () => {
+  const checkApprovalStatus = async () => {
+    setChecking(true)
+    try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        // Check DB for approval status — only admin can set this
         const { data: officer } = await supabase
           .from('administrative_officers')
           .select('is_approved')
@@ -27,12 +28,39 @@ export default function PendingApproval() {
           .maybeSingle()
 
         if (officer?.is_approved) {
-          router.push('/')
+          setApproved(true)
+          setTimeout(() => router.push('/'), 1500)
+          return
         }
       }
+    } catch (err) {
+      console.error('Check status error:', err)
+    } finally {
+      setChecking(false)
     }
-    checkApproval()
-  }, [supabase, router])
+  }
+
+  // Check on mount
+  useEffect(() => {
+    checkApprovalStatus()
+  }, [])
+
+  if (approved) {
+    return (
+      <div className="min-h-screen bg-hero-gradient flex items-center justify-center p-6 text-white">
+        <div className="max-w-md w-full backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl text-center animate-modal-in">
+          <div className="mb-6 inline-flex p-4 bg-emerald-500/20 rounded-full border border-emerald-500/30">
+            <CheckCircle2 className="text-emerald-400" size={48} />
+          </div>
+          <h1 className="text-3xl font-black mb-3 tracking-tight">Account Approved!</h1>
+          <p className="text-white/60 mb-4 leading-relaxed">
+            Your account has been verified. Redirecting to the dashboard...
+          </p>
+          <Loader2 className="mx-auto animate-spin text-emerald-400" size={24} />
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-hero-gradient flex items-center justify-center p-6 text-white">
@@ -78,10 +106,18 @@ export default function PendingApproval() {
         {/* Actions */}
         <div className="space-y-3">
           <button 
-            onClick={() => window.location.reload()}
-            className="w-full py-4 bg-white text-slate-900 rounded-xl font-bold hover:bg-emerald-50 transition-all shadow-lg"
+            onClick={checkApprovalStatus}
+            disabled={checking}
+            className="w-full py-4 bg-white text-slate-900 rounded-xl font-bold hover:bg-emerald-50 transition-all shadow-lg disabled:opacity-70 flex items-center justify-center gap-2"
           >
-            Check Status
+            {checking ? (
+              <>
+                <Loader2 size={18} className="animate-spin" />
+                Checking...
+              </>
+            ) : (
+              'Check Status'
+            )}
           </button>
           
           <button 
