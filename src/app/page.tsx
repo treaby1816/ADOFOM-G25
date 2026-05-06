@@ -43,22 +43,28 @@ export default function DashboardPage() {
   const [searchInput, setSearchInput] = useState(queryParam);
   const debouncedSearch = useDebounce(searchInput, 500);
 
+  // Detect auth cookie once at mount — returning users skip overlays entirely
+  const hasAuthCookieAtMount = useMemo(() => {
+    if (typeof window !== 'undefined') {
+      try { return document.cookie.includes('-auth-token'); } catch { return false; }
+    }
+    return false;
+  }, []);
+
   // Data state
   const [officers, setOfficers] = useState<Officer[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  // If auth cookie exists, skip the full-screen auth loading overlay
+  // Auth check still runs in background, but UI shows skeleton cards instead
+  const [isAuthLoading, setIsAuthLoading] = useState(!hasAuthCookieAtMount);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
   // Only show splash for unauthenticated users (no cookie = cold load)
-  const [splashDone, setSplashDone] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        // If auth cookie exists, user is returning → skip splash entirely
-        return document.cookie.includes('-auth-token');
-      } catch { return false; }
-    }
-    return false;
-  });
+  const [splashDone, setSplashDone] = useState(hasAuthCookieAtMount);
   const [user, setUser] = useState<any>(null);
+  // If we have an auth cookie, optimistically assume user is authenticated
+  // so the dashboard renders immediately with skeleton cards
+  const [optimisticUser, setOptimisticUser] = useState(hasAuthCookieAtMount);
   const [error, setError] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedOfficer, setSelectedOfficer] = useState<Officer | null>(null);
@@ -182,6 +188,7 @@ export default function DashboardPage() {
       toast.error("Failed to sync directory.");
     } finally {
       setIsLoading(false);
+      if (!initialLoadDone) setInitialLoadDone(true);
     }
   }, [supabase, queryParam, lgaParam, mdaParam, monthParam, sortParam, pageParam, allOfficers]);
 
@@ -189,65 +196,71 @@ export default function DashboardPage() {
     fetchOfficers();
   }, [fetchOfficers]);
 
-  // Initial Auth & Global Data Check
+  // Initial Auth & Global Data Check — ALL queries run in PARALLEL for speed
   useEffect(() => {
     const checkAuthAndGlobal = async () => {
-      setIsAuthLoading(true);
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      setUser(authUser);
-      
-      if (authUser) {
-        // Fetch only current user's profile and admin status
-        const { data: profile } = await supabase
-          .from("administrative_officers")
-          .select("id, is_admin, is_approved")
-          .eq("id", authUser.id)
-          .maybeSingle();
+      try {
+        // Step 1: Get auth user (required before profile query)
+        const { data: { user: authUser } } = await supabase.auth.getUser();
+        setUser(authUser);
+        setOptimisticUser(!!authUser);
 
+        if (!authUser) {
+          // Not authenticated — show welcome screen immediately
+          setIsAuthLoading(false);
+          return;
+        }
+
+        // Step 2: Run ALL remaining queries in PARALLEL (not sequentially)
+        const today = new Date();
+        const month = today.toLocaleString('default', { month: 'short' });
+        const day = today.getDate().toString().padStart(2, '0');
+        const bdayQuery = `${month} ${day}`;
+
+        const [profileResult, countResult, bdayResult, globalResult] = await Promise.all([
+          // 1. User profile & admin check
+          supabase
+            .from("administrative_officers")
+            .select("id, is_admin, is_approved")
+            .eq("id", authUser.id)
+            .maybeSingle(),
+          // 2. Total officer count (lightweight HEAD query)
+          supabase
+            .from("administrative_officers")
+            .select("*", { count: 'exact', head: true }),
+          // 3. Today's birthday officers
+          supabase
+            .from("administrative_officers")
+            .select("*")
+            .ilike("birth_month_day", `%${bdayQuery}%`),
+          // 4. All officers for filter dropdowns
+          supabase
+            .from("administrative_officers")
+            .select("*")
+            .limit(2000),
+        ]);
+
+        // Process results
         const userEmail = authUser.email?.trim().toLowerCase() || '';
         const whitelistEntry = WHITELIST_OFFICERS[userEmail];
-        
-        if (profile?.is_admin === true || whitelistEntry?.is_admin === true) {
+        if (profileResult.data?.is_admin === true || whitelistEntry?.is_admin === true) {
           setIsAdmin(true);
         }
+
+        setTotalCount(countResult.count || 0);
+
+        if (bdayResult.data) {
+          setBirthdayOfficers(bdayResult.data as Officer[]);
+        }
+
+        if (globalResult.data) {
+          setAllOfficers(globalResult.data as Officer[]);
+        }
+      } catch (err) {
+        console.error('Auth/global check error:', err);
+      } finally {
+        setIsAuthLoading(false);
       }
-
-      // Fetch summary data for stats (Total count)
-      const { count } = await supabase
-        .from("administrative_officers")
-        .select("*", { count: 'exact', head: true });
-      
-      setTotalCount(count || 0);
-
-      // Fetch birthdays only for today (Targeted query)
-      const today = new Date();
-      const month = today.toLocaleString('default', { month: 'short' });
-      const day = today.getDate().toString().padStart(2, '0');
-      const bdayQuery = `${month} ${day}`;
-
-      const { data: bdayData } = await supabase
-        .from("administrative_officers")
-        .select("*")
-        .ilike("birth_month_day", `%${bdayQuery}%`);
-
-      if (bdayData) {
-        setBirthdayOfficers(bdayData as Officer[]);
-      }
-
-      // For the search filter dropdowns, we still need unique MDAs. 
-      // Instead of 1000 records, we can fetch unique values if possible, 
-      // but for now, let's keep a smaller, optimized fetch for global context if needed.
-      // Actually, let's just fetch all officers once but in a more controlled way.
-      const { data: globalData } = await supabase
-        .from("administrative_officers")
-        .select("*")
-        .limit(2000);
-
-      if (globalData) {
-        setAllOfficers(globalData as Officer[]);
-      }
-
-      setIsAuthLoading(false);
     };
     checkAuthAndGlobal();
   }, [supabase]);
@@ -255,44 +268,20 @@ export default function DashboardPage() {
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   // --- Layered Render Architecture ---
-  // Content renders underneath; loading screens stack on top as fixed overlays.
-  // This eliminates ALL flash/flicker between state transitions.
-
-  const hasAuthCookie = typeof window !== 'undefined' && (() => {
-    try { return document.cookie.includes('-auth-token'); } catch { return false; }
-  })();
+  // For returning users (auth cookie): skip overlay, show dashboard with inline skeletons.
+  // For cold loads (no cookie): show "Accessing Directory" until first data arrives.
 
   // Determine overlay visibility
   const showSplashOverlay = !splashDone;
-  const showAccessingOverlay = isAuthLoading || (user && isLoading);
-  const showWelcome = !isAuthLoading && !user;
-  const showDashboard = !isAuthLoading && user && !isLoading;
+  // Only show the full-screen "Accessing Directory" overlay for TRUE cold starts
+  // (no auth cookie = first visit or logged out). Returning users get instant dashboard.
+  const showAccessingOverlay = !hasAuthCookieAtMount && !initialLoadDone && (isAuthLoading || (user && isLoading));
+  const showWelcome = !isAuthLoading && !user && !optimisticUser;
+  // Dashboard shows immediately for returning users (optimisticUser=true)
+  // or once auth confirms a real user
+  const showDashboard = (optimisticUser || (!isAuthLoading && user));
 
-  // Keep the overlay for 2 extra paint frames so the dashboard can render behind it
-  const [dashboardPainted, setDashboardPainted] = useState(false);
-
-  useEffect(() => {
-    if (showDashboard && !dashboardPainted) {
-      // Wait for 2 animation frames so the browser fully paints the dashboard
-      const raf1 = requestAnimationFrame(() => {
-        const raf2 = requestAnimationFrame(() => {
-          setDashboardPainted(true);
-        });
-        // Store raf2 for cleanup
-        (window as any).__adofom_raf2 = raf2;
-      });
-      return () => {
-        cancelAnimationFrame(raf1);
-        cancelAnimationFrame((window as any).__adofom_raf2);
-      };
-    }
-    if (!showDashboard) {
-      setDashboardPainted(false);
-    }
-  }, [showDashboard, dashboardPainted]);
-
-  // Show the overlay if: loading, or dashboard exists but hasn't painted yet
-  const keepOverlayVisible = showAccessingOverlay || (showDashboard && !dashboardPainted);
+  const keepOverlayVisible = showAccessingOverlay;
 
   // If dashboard isn't ready AND we're not showing welcome, render overlays only
   if (!showDashboard) {
@@ -343,34 +332,9 @@ export default function DashboardPage() {
     );
   }
 
-  // Dashboard is ready — render it with the overlay kept on top until it has painted
+  // Dashboard is ready — render immediately
   return (
     <main className="min-h-screen pb-20">
-
-      {/* Overlay persists on top until dashboard has fully painted */}
-      {!dashboardPainted && (
-        <div className="fixed inset-0 z-[99998] flex flex-col items-center justify-center bg-[#020617] overflow-hidden transition-opacity duration-200">
-          <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-emerald-900/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
-          <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-yellow-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
-          <div className="relative z-10 flex flex-col items-center gap-6">
-            <div className="relative animate-float">
-              <div className="absolute -inset-3 bg-gradient-to-r from-emerald-500/25 to-yellow-500/25 blur-xl rounded-full opacity-60 animate-pulse" />
-              <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_30px_rgba(16,185,129,0.15)] bg-white/5 p-1">
-                <img src="/logo2.jpg" alt="ADOFOM" className="w-full h-full object-cover rounded-full bg-white" />
-              </div>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "0ms" }} />
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "150ms" }} />
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "300ms" }} />
-            </div>
-            <div className="text-center">
-              <p className="text-[10px] font-black tracking-[0.4em] text-emerald-500/70 uppercase mb-1">ADOFOM PORTAL</p>
-              <p className="text-sm font-medium tracking-wider text-slate-400/80 uppercase">Accessing Directory...</p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Top Navigation */}
       <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-green-950/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] shadow-lg transition-all duration-300">

@@ -13,7 +13,11 @@ interface DashboardLayoutProps {
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
-  const [isChecking, setIsChecking] = useState(true)
+  // If auth cookie exists, skip loading screen — render immediately
+  const hasAuthCookie = typeof window !== 'undefined' && (() => {
+    try { return document.cookie.includes('-auth-token'); } catch { return false; }
+  })();
+  const [isChecking, setIsChecking] = useState(!hasAuthCookie)
   const supabase = createClient()
   const router = useRouter()
 
