@@ -14,6 +14,22 @@ export default function AuthGuardLayout({ children }: { children: React.ReactNod
   useEffect(() => {
     let isMounted = true;
 
+    // Skip security check entirely for public routes — no session needed
+    const publicRoutes = ['/', '/login', '/signup', '/auth'];
+    const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
+    if (isPublic) {
+      setLoading(false);
+      return;
+    }
+
+    // Safety timeout: never hang for more than 4 seconds
+    const safetyTimer = setTimeout(() => {
+      if (isMounted) {
+        console.warn("AuthGuard: Safety timeout reached, unblocking UI.");
+        setLoading(false);
+      }
+    }, 4000);
+
     const checkSecurityFlags = async () => {
       try {
         // 1. Check Session
@@ -25,14 +41,14 @@ export default function AuthGuardLayout({ children }: { children: React.ReactNod
           return;
         }
 
-        // 2. Fetch the 'needs_password_change' flag
+        // 2. Fetch the 'needs_password_change' flag (maybeSingle to avoid throwing on 0 rows)
         const { data: officer, error } = await supabase
           .from('administrative_officers')
           .select('needs_password_change')
           .eq('id', session.user.id)
-          .single();
+          .maybeSingle();
 
-        if (error) {
+        if (error || !officer) {
           // If profile not found, they might be a ghost user or just registered
           // We let them through unless the middleware says otherwise
           if (isMounted) setLoading(false);
@@ -57,7 +73,10 @@ export default function AuthGuardLayout({ children }: { children: React.ReactNod
     };
 
     checkSecurityFlags();
-    return () => { isMounted = false; };
+    return () => { 
+      isMounted = false; 
+      clearTimeout(safetyTimer);
+    };
   }, [pathname, router, supabase]);
 
   // Render a professional full-screen loader
