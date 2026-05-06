@@ -6,6 +6,7 @@ import { Bell, X, Cake, BellRing, ShieldAlert, Info, Check, Trash2, Newspaper } 
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import ConfirmModal from './ConfirmModal'
 
 interface AppNotification {
   id: string
@@ -113,10 +114,12 @@ export default function NotificationDrawer() {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
   }
 
-  // 4. Clear All Function
-  const clearAll = async () => {
-    if (!confirm("Are you sure you want to clear all notifications?")) return;
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false)
+  const [isClearing, setIsClearing] = useState(false)
 
+  // 4. Clear All Function
+  const executeClearAll = async () => {
+    setIsClearing(true)
     // Direct database delete instead of relying on RPC
     const { error } = await supabase.from('notifications').delete().not('id', 'is', null)
     
@@ -128,6 +131,12 @@ export default function NotificationDrawer() {
       console.error("Error clearing notifications:", error.message)
       toast.error("Permission Denied: Could not clear notifications.")
     }
+    setIsClearing(false)
+    setIsConfirmOpen(false)
+  }
+
+  const clearAll = () => {
+    setIsConfirmOpen(true)
   }
 
   // Handle clicking a notification with a link
@@ -253,6 +262,18 @@ export default function NotificationDrawer() {
               </button>
             </div>
           </div>
+          
+          <ConfirmModal
+            isOpen={isConfirmOpen}
+            title="Clear All Notifications"
+            message="Are you sure you want to clear all notifications? This action cannot be undone."
+            confirmText="Clear Notifications"
+            cancelText="Cancel"
+            isDestructive={true}
+            isLoading={isClearing}
+            onConfirm={executeClearAll}
+            onCancel={() => setIsConfirmOpen(false)}
+          />
         </>,
         document.body
       )}

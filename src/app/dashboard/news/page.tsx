@@ -7,6 +7,7 @@ import {
   Newspaper, Loader2, Pin, Calendar, Plus, X, Send,
   Megaphone, CalendarDays, Info, Sparkles, Trash2, ChevronDown
 } from 'lucide-react'
+import ConfirmModal from '@/components/ui/ConfirmModal'
 
 interface NewsArticle {
   id: string
@@ -210,25 +211,52 @@ export default function NewsPage() {
     setPublishing(false)
   }
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this article?')) return
+  const [confirmConfig, setConfirmConfig] = useState<{
+    isOpen: boolean,
+    title: string,
+    message: string,
+    action: (() => Promise<void>) | null
+  }>({ isOpen: false, title: '', message: '', action: null })
+  const [isConfirming, setIsConfirming] = useState(false)
+
+  const executeDelete = async (id: string) => {
+    setIsConfirming(true)
     const { error } = await supabase.from('adofom_news').delete().eq('id', id)
     if (!error) {
       setArticles(prev => prev.filter(a => a.id !== id))
     }
+    setIsConfirming(false)
+    setConfirmConfig(prev => ({ ...prev, isOpen: false }))
   }
 
-  const handleClearHistory = async () => {
-    if (!confirm('Are you sure you want to clear ALL news history? This cannot be undone.')) return
-    
-    // Delete all records where id is not null (which deletes all rows)
+  const handleDelete = (id: string) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Delete Article',
+      message: 'Are you sure you want to delete this article?',
+      action: () => executeDelete(id)
+    })
+  }
+
+  const executeClearHistory = async () => {
+    setIsConfirming(true)
     const { error } = await supabase.from('adofom_news').delete().not('id', 'is', null)
-    
     if (!error) {
       setArticles([])
     } else {
       alert('Failed to clear history: ' + error.message)
     }
+    setIsConfirming(false)
+    setConfirmConfig(prev => ({ ...prev, isOpen: false }))
+  }
+
+  const handleClearHistory = () => {
+    setConfirmConfig({
+      isOpen: true,
+      title: 'Clear All History',
+      message: 'Are you sure you want to clear ALL news history? This cannot be undone.',
+      action: executeClearHistory
+    })
   }
 
   const filtered = filterCategory === 'all'
@@ -515,6 +543,18 @@ export default function NewsPage() {
           </div>
         )}
       </div>
+
+      <ConfirmModal
+        isOpen={confirmConfig.isOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+        isDestructive={true}
+        isLoading={isConfirming}
+        onConfirm={() => confirmConfig.action && confirmConfig.action()}
+        onCancel={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   )
 }
