@@ -11,7 +11,8 @@ import {
 } from 'lucide-react'
 
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
-import { normalizeMDA, normalizeLGA, parseBirthdayToMonthDay } from '@/lib/dataConsolidation'
+import { normalizeMDA, normalizeLGA } from '@/lib/dataConsolidation'
+import BirthdaySelect, { parseBirthdayValue, formatBirthdayValue, isValidBirthday } from '@/components/ui/BirthdaySelect'
 
 export default function SetupProfilePage() {
   const [formData, setFormData] = useState({
@@ -26,8 +27,8 @@ export default function SetupProfilePage() {
     photo_url: ''
   })
 
-  const [birthMonth, setBirthMonth] = useState('')
-  const [birthDay, setBirthDay] = useState('')
+  const [birthday, setBirthday] = useState('')
+  const [birthdayError, setBirthdayError] = useState<string | null>(null)
 
   const [isLoading, setIsLoading] = useState(true) // Start true for initial check
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -82,10 +83,9 @@ export default function SetupProfilePage() {
           })
           
           if (existingProfile.birth_month_day) {
-            const bdayObj = parseBirthdayToMonthDay(existingProfile.birth_month_day);
-            if (bdayObj) {
-              setBirthMonth(String(bdayObj.month).padStart(2, '0'))
-              setBirthDay(String(bdayObj.day).padStart(2, '0'))
+            const bdayObj = parseBirthdayValue(existingProfile.birth_month_day);
+            if (bdayObj.month && bdayObj.day) {
+              setBirthday(formatBirthdayValue(bdayObj.month, bdayObj.day))
             }
           }
         } else {
@@ -101,10 +101,9 @@ export default function SetupProfilePage() {
           }))
           
           if (whitelistEntry?.birth_month_day) {
-            const bdayObj = parseBirthdayToMonthDay(whitelistEntry.birth_month_day);
-            if (bdayObj) {
-              setBirthMonth(String(bdayObj.month).padStart(2, '0'))
-              setBirthDay(String(bdayObj.day).padStart(2, '0'))
+            const bdayObj = parseBirthdayValue(whitelistEntry.birth_month_day);
+            if (bdayObj.month && bdayObj.day) {
+              setBirthday(formatBirthdayValue(bdayObj.month, bdayObj.day))
             }
           }
         }
@@ -159,13 +158,21 @@ export default function SetupProfilePage() {
           }
       }
 
+      // Validate birthday
+      if (birthday && !isValidBirthday(birthday)) {
+        setBirthdayError('Please select a valid month and day.')
+        setIsSubmitting(false)
+        return
+      }
+      setBirthdayError(null)
+
       const profileData = {
         id: user.id,
         ...formData,
         full_name: formattedName,
         current_mda: normalizeMDA(formData.current_mda),
         lga: normalizeLGA(formData.lga),
-        birth_month_day: birthMonth && birthDay ? `${birthMonth}-${birthDay}` : '',
+        birth_month_day: birthday || '',
         email_address: user.email,
         is_approved: finalApprovedStatus,
         is_admin: finalAdminStatus,
@@ -354,32 +361,12 @@ export default function SetupProfilePage() {
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                       <Calendar size={14} /> Birthday
                     </label>
-                    <div className="flex gap-3">
-                      <select
-                        name="birth_month"
-                        required
-                        value={birthMonth}
-                        onChange={(e) => setBirthMonth(e.target.value)}
-                        className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
-                      >
-                        <option value="" className="bg-slate-900">Month</option>
-                        {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((m, i) => (
-                            <option key={m} value={String(i + 1).padStart(2, '0')} className="bg-slate-900">{m}</option>
-                        ))}
-                      </select>
-                      <select
-                        name="birth_day"
-                        required
-                        value={birthDay}
-                        onChange={(e) => setBirthDay(e.target.value)}
-                        className="flex-1 px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
-                      >
-                        <option value="" className="bg-slate-900">Day</option>
-                        {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => (
-                            <option key={d} value={d} className="bg-slate-900">{d}</option>
-                        ))}
-                      </select>
-                    </div>
+                    <BirthdaySelect
+                      value={birthday}
+                      onChange={setBirthday}
+                      error={birthdayError || undefined}
+                      variant="dark"
+                    />
                   </div>
                 </div>
 

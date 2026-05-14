@@ -9,8 +9,9 @@ import {
 } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { createClient } from "@/utils/supabase/client";
-import { parseBirthdayToMonthDay, normalizeMDA, normalizeLGA } from "@/lib/dataConsolidation";
+import { normalizeMDA, normalizeLGA } from "@/lib/dataConsolidation";
 import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
+import BirthdaySelect, { parseBirthdayValue, formatBirthdayValue, isValidBirthday } from "@/components/ui/BirthdaySelect";
 
 interface EditProfileFormModalProps {
     officer: Officer;
@@ -64,10 +65,14 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
     const [success, setSuccess] = useState(false);
     const [isAdmin, setIsAdmin] = useState(false);
     
-    // Birthday split state
-    const bdayObj = parseBirthdayToMonthDay(officer.birth_month_day);
-    const [birthMonth, setBirthMonth] = useState(bdayObj ? String(bdayObj.month).padStart(2, '0') : "");
-    const [birthDay, setBirthDay] = useState(bdayObj ? String(bdayObj.day).padStart(2, '0') : "");
+    // Birthday state — single string in "Month/Day" format (e.g. "May/27")
+    const parsedBday = parseBirthdayValue(officer.birth_month_day || "");
+    const [birthday, setBirthday] = useState(
+        parsedBday.month && parsedBday.day
+            ? formatBirthdayValue(parsedBday.month, parsedBday.day)
+            : ""
+    );
+    const [birthdayError, setBirthdayError] = useState<string | null>(null);
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -189,6 +194,14 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 }
             }
 
+            // Validate birthday before saving
+            if (birthday && !isValidBirthday(birthday)) {
+                setBirthdayError("Please select a valid month and day.");
+                setSaving(false);
+                return;
+            }
+            setBirthdayError(null);
+
             const updateData: Record<string, string | null | undefined> = {
                 full_name: formattedName,
                 phone_number: data.phone_number.trim(),
@@ -196,7 +209,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 current_mda: normalizeMDA(data.current_mda),
                 grade_level: data.grade_level.trim(),
                 lga: normalizeLGA(data.lga),
-                birth_month_day: birthMonth && birthDay ? `${birthMonth}-${birthDay}` : (officer.birth_month_day || ""),
+                birth_month_day: birthday || (officer.birth_month_day || ""),
                 hobbies: data.hobbies.trim(),
                 about_me: data.about_me.trim(),
                 photo_url,
@@ -397,28 +410,12 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                             <label className={labelClass}>
                                 <Cake size={12} className="text-emerald-500" /> Birthday
                             </label>
-                            <div className="flex gap-2">
-                                <select 
-                                    className={`${inputClass} flex-1 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2310b981%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-no-repeat bg-[position:right_12px_center] pr-8`}
-                                    value={birthMonth}
-                                    onChange={(e) => setBirthMonth(e.target.value)}
-                                >
-                                    <option value="">Month</option>
-                                    {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'].map((m, i) => (
-                                        <option key={m} value={String(i + 1).padStart(2, '0')}>{m}</option>
-                                    ))}
-                                </select>
-                                <select 
-                                    className={`${inputClass} flex-1 appearance-none bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2310b981%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-[length:10px_10px] bg-no-repeat bg-[position:right_12px_center] pr-8`}
-                                    value={birthDay}
-                                    onChange={(e) => setBirthDay(e.target.value)}
-                                >
-                                    <option value="">Day</option>
-                                    {Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, '0')).map(d => (
-                                        <option key={d} value={d}>{d}</option>
-                                    ))}
-                                </select>
-                            </div>
+                            <BirthdaySelect
+                                value={birthday}
+                                onChange={setBirthday}
+                                error={birthdayError || undefined}
+                                variant="light"
+                            />
                         </div>
                     </div>
 

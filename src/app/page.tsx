@@ -213,9 +213,30 @@ export default function DashboardPage() {
 
         // Step 2: Run ALL remaining queries in PARALLEL (not sequentially)
         const today = new Date();
-        const month = today.toLocaleString('default', { month: 'short' });
-        const day = today.getDate().toString().padStart(2, '0');
-        const bdayQuery = `${month} ${day}`;
+        const monthIndex = today.getMonth(); // 0-indexed
+        const dayOfMonth = today.getDate();
+        const MONTH_NAMES = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December",
+        ];
+        const fullMonthName = MONTH_NAMES[monthIndex];
+        const shortMonthName = fullMonthName.substring(0, 3);
+        const paddedMonth = String(monthIndex + 1).padStart(2, '0');
+        const paddedDay = String(dayOfMonth).padStart(2, '0');
+
+        // Build OR filter to match ALL possible birthday formats stored in DB:
+        // New canonical format: "May/14"         (Full month name / day)
+        // Old numeric formats:  "5/14", "05-14"  (M/D or MM-DD)
+        // Display format:       "May/14"         (Short month / padded day)
+        const bdayOrFilter = [
+          `birth_month_day.eq.${fullMonthName}/${dayOfMonth}`,
+          `birth_month_day.eq.${fullMonthName}/${paddedDay}`,
+          `birth_month_day.eq.${shortMonthName}/${paddedDay}`,
+          `birth_month_day.eq.${paddedMonth}-${paddedDay}`,
+          `birth_month_day.eq.${monthIndex + 1}-${dayOfMonth}`,
+          `birth_month_day.eq.${monthIndex + 1}/${dayOfMonth}`,
+          `birth_month_day.eq.${paddedMonth}/${paddedDay}`,
+        ].join(',');
 
         const [profileResult, countResult, bdayResult, globalResult] = await Promise.all([
           // 1. User profile & admin check
@@ -228,11 +249,11 @@ export default function DashboardPage() {
           supabase
             .from("administrative_officers")
             .select("*", { count: 'exact', head: true }),
-          // 3. Today's birthday officers
+          // 3. Today's birthday officers — search ALL known formats
           supabase
             .from("administrative_officers")
             .select("*")
-            .ilike("birth_month_day", `%${bdayQuery}%`),
+            .or(bdayOrFilter),
           // 4. All officers for filter dropdowns
           supabase
             .from("administrative_officers")
