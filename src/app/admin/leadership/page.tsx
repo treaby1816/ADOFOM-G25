@@ -395,7 +395,7 @@ export default function LeadershipSetupPage() {
                     </p>
                 </div>
 
-                <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl">
+                <div className="relative z-20 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl">
                     <div className="p-6 border-b border-white/10 bg-white/[0.02] rounded-t-3xl">
                         <h2 className="text-lg font-black text-white uppercase tracking-wider">Executive Portfolios</h2>
                     </div>
@@ -404,12 +404,12 @@ export default function LeadershipSetupPage() {
                         {portfolios.length === 0 ? (
                             <p className="text-slate-400 text-sm text-center py-8">No portfolios found. Make sure the database script has been executed.</p>
                         ) : (
-                            portfolios.map(portfolio => {
+                            portfolios.map((portfolio, index) => {
                                 const currentValue = assignments[portfolio.title] || "";
                                 const isEditing = editingId === portfolio.id;
                                 
                                 return (
-                                <div key={portfolio.id} className="flex flex-col md:flex-row md:items-center gap-4 bg-black/20 p-4 rounded-2xl border border-white/5">
+                                <div key={portfolio.id} className="relative flex flex-col md:flex-row md:items-center gap-4 bg-black/20 p-4 rounded-2xl border border-white/5" style={{ zIndex: portfolios.length - index }}>
                                     {isEditing ? (
                                         <div className="flex-1 flex flex-col md:flex-row gap-3">
                                             <input 
@@ -469,7 +469,7 @@ export default function LeadershipSetupPage() {
                 </div>
 
                 {/* Add New Portfolio Box */}
-                <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
+                <div className="relative z-10 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
                     <div className="p-6 border-b border-white/10 bg-white/[0.02]">
                         <h2 className="text-sm font-black text-white uppercase tracking-wider">Add Custom Portfolio</h2>
                     </div>
