@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import {
-  ShieldAlert, Loader2, ChevronLeft, Save, Plus, AlertTriangle, Users, CheckCircle2
+  ShieldAlert, Loader2, ChevronLeft, Save, Plus, AlertTriangle, Users, CheckCircle2, Pencil, Trash2, X
 } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -30,8 +30,15 @@ export default function LeadershipSetupPage() {
   const [originalAssignments, setOriginalAssignments] = useState<Record<string, string>>({})
   
   const [newPortfolioTitle, setNewPortfolioTitle] = useState('')
+  const [newPortfolioRank, setNewPortfolioRank] = useState(10)
   const [isAddingPortfolio, setIsAddingPortfolio] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+
+  // Edit/Delete state
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editTitle, setEditTitle] = useState('')
+  const [editRank, setEditRank] = useState(10)
+  const [isProcessingAction, setIsProcessingAction] = useState(false)
 
   const [loading, setLoading] = useState(true)
   const [isAuthorized, setIsAuthorized] = useState(false)
@@ -225,7 +232,8 @@ export default function LeadershipSetupPage() {
   // 5. Add New Portfolio
   const handleAddPortfolio = async () => {
     const title = newPortfolioTitle.trim()
-    if (!title) return
+    const rank = Number(newPortfolioRank)
+    if (!title || isNaN(rank)) return
 
     setIsAddingPortfolio(true)
     try {
@@ -233,7 +241,7 @@ export default function LeadershipSetupPage() {
             .from('leadership_portfolios')
             .insert({
                 title: title,
-                sort_order: portfolios.length + 1
+                sort_order: rank
             })
         
         if (error) {
@@ -245,6 +253,7 @@ export default function LeadershipSetupPage() {
         } else {
             toast.success(`Added ${title} portfolio.`)
             setNewPortfolioTitle('')
+            setNewPortfolioRank(rank + 10) // Suggest next rank
             await fetchData()
         }
     } catch (err) {
@@ -253,6 +262,71 @@ export default function LeadershipSetupPage() {
     } finally {
         setIsAddingPortfolio(false)
     }
+  }
+
+  // 6. Delete Portfolio
+  const handleDeletePortfolio = async (id: string, title: string) => {
+      if (!confirm(`Are you sure you want to delete the portfolio "${title}"? This will remove the badge from any officer currently holding it.`)) return;
+      
+      setIsProcessingAction(true)
+      try {
+          // 1. Remove from officers
+          await supabase
+            .from('administrative_officers')
+            .update({ exco_portfolio: null })
+            .eq('exco_portfolio', title)
+
+          // 2. Delete portfolio
+          const { error } = await supabase
+            .from('leadership_portfolios')
+            .delete()
+            .eq('id', id)
+
+          if (error) throw error
+
+          toast.success(`Deleted ${title}`)
+          await fetchData()
+      } catch (err) {
+          console.error(err)
+          toast.error("Failed to delete portfolio")
+      } finally {
+          setIsProcessingAction(false)
+      }
+  }
+
+  // 7. Update Portfolio
+  const handleUpdatePortfolio = async (id: string, oldTitle: string) => {
+      const newTitle = editTitle.trim()
+      const newRank = Number(editRank)
+      if (!newTitle || isNaN(newRank)) return
+
+      setIsProcessingAction(true)
+      try {
+          // 1. Update the portfolio
+          const { error: pError } = await supabase
+            .from('leadership_portfolios')
+            .update({ title: newTitle, sort_order: newRank })
+            .eq('id', id)
+            
+          if (pError) throw pError
+
+          // 2. If title changed, update any officer holding the old title
+          if (newTitle !== oldTitle) {
+              await supabase
+                .from('administrative_officers')
+                .update({ exco_portfolio: newTitle })
+                .eq('exco_portfolio', oldTitle)
+          }
+
+          toast.success("Portfolio updated")
+          setEditingId(null)
+          await fetchData()
+      } catch (err) {
+          console.error(err)
+          toast.error("Failed to update portfolio")
+      } finally {
+          setIsProcessingAction(false)
+      }
   }
 
 
@@ -321,8 +395,8 @@ export default function LeadershipSetupPage() {
                     </p>
                 </div>
 
-                <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-2xl">
-                    <div className="p-6 border-b border-white/10 bg-white/[0.02]">
+                <div className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl">
+                    <div className="p-6 border-b border-white/10 bg-white/[0.02] rounded-t-3xl">
                         <h2 className="text-lg font-black text-white uppercase tracking-wider">Executive Portfolios</h2>
                     </div>
                     
@@ -332,19 +406,61 @@ export default function LeadershipSetupPage() {
                         ) : (
                             portfolios.map(portfolio => {
                                 const currentValue = assignments[portfolio.title] || "";
+                                const isEditing = editingId === portfolio.id;
                                 
                                 return (
                                 <div key={portfolio.id} className="flex flex-col md:flex-row md:items-center gap-4 bg-black/20 p-4 rounded-2xl border border-white/5">
-                                    <div className="w-full md:w-1/3">
-                                        <p className="text-yellow-500 font-bold uppercase tracking-wider text-sm">{portfolio.title}</p>
-                                    </div>
-                                    <div className="w-full md:w-2/3">
-                                        <OfficerCombobox 
-                                            officers={officers}
-                                            value={currentValue}
-                                            onChange={(val) => handleAssignmentChange(portfolio.title, val)}
-                                        />
-                                    </div>
+                                    {isEditing ? (
+                                        <div className="flex-1 flex flex-col md:flex-row gap-3">
+                                            <input 
+                                                type="number"
+                                                value={editRank}
+                                                onChange={(e) => setEditRank(Number(e.target.value))}
+                                                className="w-20 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:ring-1 focus:ring-yellow-500"
+                                                title="Rank (lower is higher)"
+                                            />
+                                            <input 
+                                                type="text"
+                                                value={editTitle}
+                                                onChange={(e) => setEditTitle(e.target.value)}
+                                                className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm text-white focus:ring-1 focus:ring-yellow-500"
+                                            />
+                                            <div className="flex gap-2">
+                                                <button onClick={() => handleUpdatePortfolio(portfolio.id, portfolio.title)} disabled={isProcessingAction} className="p-2 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/40 rounded-lg transition-colors">
+                                                    <CheckCircle2 size={16} />
+                                                </button>
+                                                <button onClick={() => setEditingId(null)} disabled={isProcessingAction} className="p-2 bg-slate-500/20 text-slate-400 hover:bg-slate-500/40 rounded-lg transition-colors">
+                                                    <X size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <div className="w-full md:w-1/3 flex items-center justify-between">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-xs font-mono bg-white/10 text-slate-400 px-2 py-1 rounded">#{portfolio.sort_order}</span>
+                                                    <p className="text-yellow-500 font-bold uppercase tracking-wider text-sm">{portfolio.title}</p>
+                                                </div>
+                                                <div className="flex gap-2 md:hidden">
+                                                    <button onClick={() => { setEditingId(portfolio.id); setEditTitle(portfolio.title); setEditRank(portfolio.sort_order); }} className="text-slate-400 hover:text-yellow-400 transition-colors p-1"><Pencil size={14} /></button>
+                                                    <button onClick={() => handleDeletePortfolio(portfolio.id, portfolio.title)} className="text-slate-400 hover:text-red-400 transition-colors p-1"><Trash2 size={14} /></button>
+                                                </div>
+                                            </div>
+                                            <div className="w-full md:flex-1 flex gap-4 items-center">
+                                                <div className="flex-1">
+                                                    <OfficerCombobox 
+                                                        officers={officers}
+                                                        value={currentValue}
+                                                        onChange={(val) => handleAssignmentChange(portfolio.title, val)}
+                                                    />
+                                                </div>
+                                                <div className="hidden md:flex gap-2 shrink-0">
+                                                    <button onClick={() => { setEditingId(portfolio.id); setEditTitle(portfolio.title); setEditRank(portfolio.sort_order); }} className="text-slate-500 hover:text-yellow-400 transition-colors p-2 bg-white/5 hover:bg-white/10 rounded-lg"><Pencil size={16} /></button>
+                                                    <button onClick={() => handleDeletePortfolio(portfolio.id, portfolio.title)} className="text-slate-500 hover:text-red-400 transition-colors p-2 bg-white/5 hover:bg-white/10 rounded-lg"><Trash2 size={16} /></button>
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                                 )
                             })
@@ -357,7 +473,18 @@ export default function LeadershipSetupPage() {
                     <div className="p-6 border-b border-white/10 bg-white/[0.02]">
                         <h2 className="text-sm font-black text-white uppercase tracking-wider">Add Custom Portfolio</h2>
                     </div>
-                    <div className="p-6 flex gap-4">
+                    <div className="p-6 flex flex-col sm:flex-row gap-4">
+                        <div className="flex gap-2 shrink-0">
+                            <span className="flex items-center text-xs text-slate-400 font-bold uppercase tracking-wider">Rank:</span>
+                            <input
+                                type="number"
+                                placeholder="10"
+                                value={newPortfolioRank}
+                                onChange={(e) => setNewPortfolioRank(Number(e.target.value))}
+                                className="w-20 px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500 text-center font-mono"
+                                title="Rank number (lower ranks appear first)"
+                            />
+                        </div>
                         <input
                             type="text"
                             placeholder="e.g. Welfare Director"
@@ -369,7 +496,7 @@ export default function LeadershipSetupPage() {
                         <button
                             onClick={handleAddPortfolio}
                             disabled={!newPortfolioTitle.trim() || isAddingPortfolio}
-                            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl transition-colors disabled:opacity-50 font-bold text-sm"
+                            className="flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-xl transition-colors disabled:opacity-50 font-bold text-sm shrink-0"
                         >
                             {isAddingPortfolio ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
                             Add Role
