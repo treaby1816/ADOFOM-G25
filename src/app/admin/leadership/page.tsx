@@ -119,7 +119,16 @@ export default function LeadershipSetupPage() {
           toast.error("Database table missing. Please run the SQL setup script.");
       }
 
-      const validPortfolios = pData || [];
+      let validPortfolios = pData || [];
+      
+      // Explicitly sort "Vice President II" right after "Vice President"
+      const vp = validPortfolios.find(p => p.title.toLowerCase() === 'vice president');
+      const vp2 = validPortfolios.find(p => p.title.toLowerCase() === 'vice president ii');
+      if (vp && vp2) {
+        vp2.sort_order = vp.sort_order + 0.5;
+        validPortfolios.sort((a, b) => a.sort_order - b.sort_order);
+      }
+
       setPortfolios(validPortfolios)
 
       // Fetch officers

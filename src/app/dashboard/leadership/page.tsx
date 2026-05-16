@@ -42,6 +42,13 @@ export default function LeadershipPage() {
           orderMap[p.title] = p.sort_order
         })
 
+        // Explicitly sort "Vice President II" right after "Vice President"
+        const vpKey = Object.keys(orderMap).find(k => k.toLowerCase() === 'vice president')
+        const vp2Key = Object.keys(orderMap).find(k => k.toLowerCase() === 'vice president ii')
+        if (vpKey && vp2Key) {
+          orderMap[vp2Key] = orderMap[vpKey] + 0.5
+        }
+
         // Sort officers by portfolio sort_order, fallback to created_at
         officers.sort((a, b) => {
           const orderA = a.exco_portfolio && orderMap[a.exco_portfolio] !== undefined ? orderMap[a.exco_portfolio] : 9999
