@@ -25,6 +25,38 @@ import { useDebounce } from "@/hooks/useDebounce";
 
 const ITEMS_PER_PAGE = 20;
 
+const getDismissedBirthdays = (): string[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = localStorage.getItem("adofom_dismissed_birthdays");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      const todayStr = new Date().toDateString();
+      if (parsed.date === todayStr) {
+        return parsed.ids || [];
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return [];
+};
+
+const dismissBirthdays = (ids: string[]) => {
+  if (typeof window === 'undefined') return;
+  try {
+    const todayStr = new Date().toDateString();
+    const current = getDismissedBirthdays();
+    const updatedIds = Array.from(new Set([...current, ...ids]));
+    localStorage.setItem("adofom_dismissed_birthdays", JSON.stringify({
+      date: todayStr,
+      ids: updatedIds
+    }));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export default function DashboardPage() {
   const supabase = useMemo(() => createClient(), []);
   const searchParams = useSearchParams();
@@ -271,7 +303,9 @@ export default function DashboardPage() {
         setTotalCount(countResult.count || 0);
 
         if (bdayResult.data) {
-          setBirthdayOfficers(bdayResult.data as Officer[]);
+          const dismissedIds = getDismissedBirthdays();
+          const activeBdays = (bdayResult.data as Officer[]).filter(o => !dismissedIds.includes(o.id));
+          setBirthdayOfficers(activeBdays);
         }
 
         if (globalResult.data) {
@@ -596,8 +630,17 @@ export default function DashboardPage() {
       {birthdayOfficers.length > 0 && (
         <BirthdayBanner
           officers={birthdayOfficers}
-          onClose={() => setBirthdayOfficers([])}
-          onViewProfile={setSelectedOfficer}
+          onClose={() => {
+            const ids = birthdayOfficers.map(o => o.id);
+            dismissBirthdays(ids);
+            setBirthdayOfficers([]);
+          }}
+          onViewProfile={(officer) => {
+            const ids = birthdayOfficers.map(o => o.id);
+            dismissBirthdays(ids);
+            setSelectedOfficer(officer);
+            setBirthdayOfficers([]);
+          }}
         />
       )}
 

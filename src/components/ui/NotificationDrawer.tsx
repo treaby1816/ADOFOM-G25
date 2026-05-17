@@ -27,6 +27,38 @@ interface NewsArticle {
   created_at: string
 }
 
+const getDismissedBirthdays = (): string[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = localStorage.getItem("adofom_dismissed_birthdays");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      const todayStr = new Date().toDateString();
+      if (parsed.date === todayStr) {
+        return parsed.ids || [];
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return [];
+};
+
+const dismissBirthdays = (ids: string[]) => {
+  if (typeof window === 'undefined') return;
+  try {
+    const todayStr = new Date().toDateString();
+    const current = getDismissedBirthdays();
+    const updatedIds = Array.from(new Set([...current, ...ids]));
+    localStorage.setItem("adofom_dismissed_birthdays", JSON.stringify({
+      date: todayStr,
+      ids: updatedIds
+    }));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export default function NotificationDrawer() {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -112,7 +144,10 @@ export default function NotificationDrawer() {
       .or(bdayOrFilter)
 
     if (!error && data) {
-      const alerts: AppNotification[] = data.map((officer: any) => ({
+      const dismissedIds = getDismissedBirthdays();
+      const activeBdays = data.filter((officer: any) => !dismissedIds.includes(officer.id));
+
+      const alerts: AppNotification[] = activeBdays.map((officer: any) => ({
         id: `bday-${officer.id}`,
         title: `🎂 Birthday Alert!`,
         message: `It's ${officer.full_name}'s birthday today! Send them some wishes.`,
@@ -156,7 +191,9 @@ export default function NotificationDrawer() {
       return
     }
     if (id.startsWith('bday-')) {
-      // Birthday alerts — just hide from UI
+      // Birthday alerts — just hide from UI and save in dismissed
+      const officerId = id.replace('bday-', '');
+      dismissBirthdays([officerId]);
       setBirthdayAlerts(prev => prev.filter(n => n.id !== id))
       return
     }
@@ -174,6 +211,8 @@ export default function NotificationDrawer() {
     const { error } = await supabase.from('notifications').delete().not('id', 'is', null)
     
     if (!error) {
+      const bdayIds = birthdayAlerts.map(n => n.id.replace('bday-', ''));
+      dismissBirthdays(bdayIds);
       setNotifications([]) // Optimistic UI update
       setNewsAlerts([])    // Also clear news alerts
       setBirthdayAlerts([]) // Also clear birthday alerts
@@ -193,6 +232,11 @@ export default function NotificationDrawer() {
   // Handle clicking a notification with a link
   const handleNotificationClick = (notification: AppNotification) => {
     if (notification.link) {
+      if (notification.id.startsWith('bday-')) {
+        const officerId = notification.id.replace('bday-', '');
+        dismissBirthdays([officerId]);
+        setBirthdayAlerts(prev => prev.filter(n => n.id !== notification.id))
+      }
       setIsOpen(false)
       router.push(notification.link)
     }
