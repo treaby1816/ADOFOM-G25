@@ -119,7 +119,7 @@ export default function NotificationDrawer() {
         type: 'birthday' as const,
         is_read: false,
         created_at: new Date().toISOString(),
-        link: `/?q=${encodeURIComponent(officer.full_name)}`,
+        link: `/?profileId=${officer.id}`,
       }))
       setBirthdayAlerts(alerts)
     }
@@ -260,11 +260,13 @@ export default function NotificationDrawer() {
                   <div 
                     key={n.id} 
                     className={`p-4 rounded-2xl border transition-all ${
+                      n.link ? 'cursor-pointer' : ''
+                    } ${
                       n.type === 'news' 
-                        ? 'bg-blue-500/10 border-blue-500/20 shadow-lg hover:bg-blue-500/15 cursor-pointer' 
+                        ? 'bg-blue-500/10 border-blue-500/20 shadow-lg hover:bg-blue-500/15' 
                         : n.is_read 
                           ? 'bg-white/5 border-white/5 opacity-60' 
-                          : 'bg-white/10 border-white/20 shadow-lg'
+                          : 'bg-white/10 border-white/20 shadow-lg hover:bg-white/15'
                     }`}
                     onClick={() => n.link && handleNotificationClick(n)}
                   >

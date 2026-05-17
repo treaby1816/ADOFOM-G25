@@ -288,6 +288,21 @@ export default function DashboardPage() {
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
+  // Automatically open profile if profileId query param is present
+  const profileIdParam = searchParams.get("profileId") || "";
+  useEffect(() => {
+    if (profileIdParam && allOfficers.length > 0) {
+      const officer = allOfficers.find(o => o.id === profileIdParam);
+      if (officer) {
+        setSelectedOfficer(officer);
+        // Clear parameter from URL so it doesn't pop up again if we close it or navigate
+        const params = new URLSearchParams(searchParams.toString());
+        params.delete("profileId");
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      }
+    }
+  }, [profileIdParam, allOfficers, router, pathname, searchParams]);
+
   // --- Layered Render Architecture ---
   // For returning users (auth cookie): skip overlay, show dashboard with inline skeletons.
   // For cold loads (no cookie): show "Accessing Directory" until first data arrives.
