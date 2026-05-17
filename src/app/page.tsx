@@ -582,6 +582,7 @@ export default function DashboardPage() {
         <BirthdayBanner
           officers={birthdayOfficers}
           onClose={() => setBirthdayOfficers([])}
+          onViewProfile={setSelectedOfficer}
         />
       )}
 

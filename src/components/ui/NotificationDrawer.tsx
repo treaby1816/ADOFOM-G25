@@ -32,6 +32,7 @@ export default function NotificationDrawer() {
   const [mounted, setMounted] = useState(false)
   const [notifications, setNotifications] = useState<AppNotification[]>([])
   const [newsAlerts, setNewsAlerts] = useState<AppNotification[]>([])
+  const [birthdayAlerts, setBirthdayAlerts] = useState<AppNotification[]>([])
   const supabase = createClient()
   const router = useRouter()
 
@@ -81,9 +82,53 @@ export default function NotificationDrawer() {
     }
   }
 
+  // 3. Fetch today's birthday officers
+  const fetchBirthdayAlerts = async () => {
+    const today = new Date();
+    const monthIndex = today.getMonth(); // 0-indexed
+    const dayOfMonth = today.getDate();
+    const MONTH_NAMES = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December",
+    ];
+    const fullMonthName = MONTH_NAMES[monthIndex];
+    const shortMonthName = fullMonthName.substring(0, 3);
+    const paddedMonth = String(monthIndex + 1).padStart(2, '0');
+    const paddedDay = String(dayOfMonth).padStart(2, '0');
+
+    const bdayOrFilter = [
+      `birth_month_day.eq.${fullMonthName}/${dayOfMonth}`,
+      `birth_month_day.eq.${fullMonthName}/${paddedDay}`,
+      `birth_month_day.eq.${shortMonthName}/${paddedDay}`,
+      `birth_month_day.eq.${paddedMonth}-${paddedDay}`,
+      `birth_month_day.eq.${monthIndex + 1}-${dayOfMonth}`,
+      `birth_month_day.eq.${monthIndex + 1}/${dayOfMonth}`,
+      `birth_month_day.eq.${paddedMonth}/${paddedDay}`,
+    ].join(',');
+
+    const { data, error } = await supabase
+      .from('administrative_officers')
+      .select('id, full_name')
+      .or(bdayOrFilter)
+
+    if (!error && data) {
+      const alerts: AppNotification[] = data.map((officer: any) => ({
+        id: `bday-${officer.id}`,
+        title: `🎂 Birthday Alert!`,
+        message: `It's ${officer.full_name}'s birthday today! Send them some wishes.`,
+        type: 'birthday' as const,
+        is_read: false,
+        created_at: new Date().toISOString(),
+        link: `/?q=${encodeURIComponent(officer.full_name)}`,
+      }))
+      setBirthdayAlerts(alerts)
+    }
+  }
+
   useEffect(() => {
     fetchNotifications()
     fetchNewsAlerts()
+    fetchBirthdayAlerts()
     
     // Real-time subscription for new notifications
     const notifChannel = supabase
@@ -103,11 +148,16 @@ export default function NotificationDrawer() {
     }
   }, [])
 
-  // 3. Logic to mark as read
+  // 4. Logic to mark as read
   const markAsRead = async (id: string) => {
     if (id.startsWith('news-')) {
       // News alerts — just hide from UI
       setNewsAlerts(prev => prev.filter(n => n.id !== id))
+      return
+    }
+    if (id.startsWith('bday-')) {
+      // Birthday alerts — just hide from UI
+      setBirthdayAlerts(prev => prev.filter(n => n.id !== id))
       return
     }
     await supabase.from('notifications').update({ is_read: true }).eq('id', id)
@@ -126,6 +176,7 @@ export default function NotificationDrawer() {
     if (!error) {
       setNotifications([]) // Optimistic UI update
       setNewsAlerts([])    // Also clear news alerts
+      setBirthdayAlerts([]) // Also clear birthday alerts
       toast.success("Notifications cleared!")
     } else {
       console.error("Error clearing notifications:", error.message)
@@ -147,9 +198,9 @@ export default function NotificationDrawer() {
     }
   }
 
-  // Merge all notifications, news first
-  const allNotifications = [...newsAlerts, ...notifications]
-  const unreadCount = newsAlerts.length + notifications.filter(n => !n.is_read).length
+  // Merge all notifications, birthdays first, then news, then system
+  const allNotifications = [...birthdayAlerts, ...newsAlerts, ...notifications]
+  const unreadCount = birthdayAlerts.length + newsAlerts.length + notifications.filter(n => !n.is_read).length
 
   return (
     <>

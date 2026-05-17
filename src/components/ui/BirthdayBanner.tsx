@@ -8,9 +8,10 @@ import { Officer } from "@/types/officer";
 interface BirthdayBannerProps {
     officers: Officer[];
     onClose: () => void;
+    onViewProfile?: (officer: Officer) => void;
 }
 
-export default function BirthdayBanner({ officers, onClose }: BirthdayBannerProps) {
+export default function BirthdayBanner({ officers, onClose, onViewProfile }: BirthdayBannerProps) {
     const [showConfetti, setShowConfetti] = useState(true);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -91,7 +92,16 @@ export default function BirthdayBanner({ officers, onClose }: BirthdayBannerProp
 
                         <div className="space-y-4 mb-6 text-left">
                             {officers.map((officer) => (
-                                <div key={officer.id} className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                                <div 
+                                    key={officer.id} 
+                                    className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 border border-slate-100 cursor-pointer hover:bg-green-50 hover:border-green-200 transition-colors"
+                                    onClick={() => {
+                                        if (onViewProfile) {
+                                            onViewProfile(officer);
+                                            onClose();
+                                        }
+                                    }}
+                                >
                                     <div className="w-12 h-12 rounded-full overflow-hidden bg-slate-200 border-2 border-white shadow-sm flex-shrink-0">
                                         {officer.photo_url ? (
                                             <img
@@ -105,7 +115,7 @@ export default function BirthdayBanner({ officers, onClose }: BirthdayBannerProp
                                             </div>
                                         )}
                                     </div>
-                                    <div>
+                                    <div className="flex-1">
                                         <p className="text-lg font-extrabold text-green-700 leading-tight">
                                             {officer.full_name}
                                         </p>
@@ -118,10 +128,15 @@ export default function BirthdayBanner({ officers, onClose }: BirthdayBannerProp
                         </div>
 
                         <button
-                            onClick={onClose}
+                            onClick={() => {
+                                if (officers.length === 1 && onViewProfile) {
+                                    onViewProfile(officers[0]);
+                                }
+                                onClose();
+                            }}
                             className="w-full px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:from-green-700 hover:to-emerald-600 transition-all duration-300 cursor-pointer"
                         >
-                            🎊 Celebrate!
+                            🎊 {officers.length === 1 ? `Celebrate ${officers[0].full_name.split(' ')[0]}!` : "Celebrate!"}
                         </button>
                     </div>
                 </div>
