@@ -5,6 +5,7 @@ import "./globals.css";
 import "@/utils/console-suppress";
 import AuthGuardLayout from "@/components/auth/AuthGuardLayout";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://adofom.vercel.app"),
@@ -77,6 +78,7 @@ export default function RootLayout({
           </AuthGuardLayout>
         </ThemeProvider>
         <Toaster richColors position="top-center" theme="dark" />
+        <Analytics />
 
         {/* Service Worker Registration */}
         <script
