@@ -43,7 +43,9 @@ export default async function DashboardPage(props: {
     const pageParam = typeof searchParams.page === 'string' ? parseInt(searchParams.page, 10) : 1;
 
     // 3. Parallel Global Data Fetching
-    const today = new Date();
+    // Fix Timezone: Vercel runs in UTC, but the portal is for Nigeria (Africa/Lagos)
+    const lagosTimeStr = new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" });
+    const today = new Date(lagosTimeStr);
     const monthIndex = today.getMonth();
     const dayOfMonth = today.getDate();
     const MONTH_NAMES = [
