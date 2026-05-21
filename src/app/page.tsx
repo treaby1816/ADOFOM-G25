@@ -157,7 +157,6 @@ export default async function DashboardPage(props: {
               isAdmin={isAdmin}
               officers={allOfficers}
               filteredOfficers={processedData}
-              onViewOwnProfile={() => {}} // Navigation drawer will handle internal navigation if needed
             />
           </div>
         </header>
