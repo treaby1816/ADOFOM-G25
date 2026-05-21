@@ -4,11 +4,12 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 
 const IMAGES = [
-    "https://images.unsplash.com/photo-1577962917302-cd87494e3139?q=80&w=2000&auto=format&fit=crop", // Professional meeting
-    "https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=2000&auto=format&fit=crop", // Business signing
-    "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop", // Modern office
-    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000&auto=format&fit=crop", // Corporate building
+    // Verified high-quality professional/corporate images
     "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2000&auto=format&fit=crop", // Team collaboration
+    "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=2000&auto=format&fit=crop", // Professional woman in tech/office
+    "https://images.unsplash.com/photo-1556761175-5973dc0f32d7?q=80&w=2000&auto=format&fit=crop", // Business team in meeting
+    "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop", // Modern office
+    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2000&auto=format&fit=crop", // Team working on table
 ];
 
 export default function ImageSlider() {
@@ -33,7 +34,7 @@ export default function ImageSlider() {
                         src={src}
                         alt="Background"
                         fill
-                        className="object-cover object-center mix-blend-luminosity"
+                        className="object-cover object-[center_30%] mix-blend-luminosity"
                         priority={index === 0}
                     />
                 </div>
