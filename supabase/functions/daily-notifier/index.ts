@@ -1,7 +1,13 @@
 // @ts-nocheck
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-Deno.serve(async (req) => {
+interface Alert {
+  title: string;
+  message: string;
+  type: string;
+}
+
+Deno.serve(async (_req) => {
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL') ?? '',
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -14,7 +20,7 @@ Deno.serve(async (req) => {
   ]
   const todayMMDD = `${MONTH_NAMES[now.getMonth()]}/${now.getDate()}`
   
-  const alerts: any[] = []
+  const alerts: Alert[] = []
 
   // --- TRIGGER 1: Birthdays ---
   const { data: bdays } = await supabase

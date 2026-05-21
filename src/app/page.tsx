@@ -1,412 +1,140 @@
-"use client";
-
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import Link from "next/link";
-import ProfileCard from "@/components/ui/ProfileCard";
-import ProfileModal from "@/components/ui/ProfileModal";
-import SearchAndFilter from "@/components/filters/SearchAndFilter";
-import ImageSlider from "@/components/ui/ImageSlider";
+import { createClient } from "@/utils/supabase/server";
+import DashboardClient from "@/components/dashboard/DashboardClient";
+import HeroSection from "@/components/dashboard/HeroSection";
 import WelcomeScreen from "@/components/ui/WelcomeScreen";
-import SplashScreen from "@/components/ui/SplashScreen";
-import ExportButton from "@/components/ui/ExportButton";
-import ProfileSkeleton from "@/components/ui/ProfileSkeleton";
-import ScrollButtons from "@/components/ui/ScrollButtons";
 import NavigationDrawer from "@/components/ui/NavigationDrawer";
-import NotificationDrawer from "@/components/ui/NotificationDrawer";
-import { Officer } from "@/types/officer";
-import { Users, Shield, ChevronLeft, ChevronRight, AlertCircle, Search as SearchIcon, Loader2 } from "lucide-react";
-import { createClient } from "@/utils/supabase/client";
-import { toast } from "sonner";
-import { normalizeLGA, normalizeMDA, formatBirthday, isBirthdayToday } from "@/lib/dataConsolidation";
+import Link from "next/link";
+import { normalizeLGA, normalizeMDA, formatBirthday } from "@/lib/dataConsolidation";
 import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
-import BirthdayBanner from "@/components/ui/BirthdayBanner";
-import { useDebounce } from "@/hooks/useDebounce";
+import { Officer } from "@/types/officer";
+import { cookies } from "next/headers";
 
 const ITEMS_PER_PAGE = 20;
 
-const getDismissedBirthdays = (): string[] => {
-  if (typeof window === 'undefined') return [];
-  try {
-    const stored = localStorage.getItem("adofom_dismissed_birthdays");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      const todayStr = new Date().toDateString();
-      if (parsed.date === todayStr) {
-        return parsed.ids || [];
-      }
-    }
-  } catch (e) {
-    console.error(e);
-  }
-  return [];
-};
+export default async function DashboardPage(props: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await props.searchParams;
+  const supabase = await createClient();
 
-const dismissBirthdays = (ids: string[]) => {
-  if (typeof window === 'undefined') return;
-  try {
-    const todayStr = new Date().toDateString();
-    const current = getDismissedBirthdays();
-    const updatedIds = Array.from(new Set([...current, ...ids]));
-    localStorage.setItem("adofom_dismissed_birthdays", JSON.stringify({
-      date: todayStr,
-      ids: updatedIds
-    }));
-  } catch (e) {
-    console.error(e);
-  }
-};
+  // 1. Auth check
+  const { data: { user } } = await supabase.auth.getUser();
 
-export default function DashboardPage() {
-  const supabase = useMemo(() => createClient(), []);
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
+  // Determine if it's a completely unauthenticated cold load
+  const cookieStore = await cookies();
+  const hasAuthCookie = cookieStore.getAll().some(c => c.name.includes('-auth-token'));
 
-  // State from URL
-  const queryParam = searchParams.get("q") || "";
-  const lgaParam = searchParams.get("lga") || "";
-  const mdaParam = searchParams.get("mda") || "";
-  const monthParam = searchParams.get("month") || "";
-  const sortParam = searchParams.get("sort") || "name-asc";
-  const pageParam = parseInt(searchParams.get("page") || "1");
-
-  // Local state for immediate UI feedback (search input)
-  const [searchInput, setSearchInput] = useState(queryParam);
-  const debouncedSearch = useDebounce(searchInput, 500);
-
-  // Detect auth cookie once at mount — returning users skip overlays entirely
-  const hasAuthCookieAtMount = useMemo(() => {
-    if (typeof window !== 'undefined') {
-      try { return document.cookie.includes('-auth-token'); } catch { return false; }
-    }
-    return false;
-  }, []);
-
-  // Data state
-  const [officers, setOfficers] = useState<Officer[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  // If auth cookie exists, skip the full-screen auth loading overlay
-  // Auth check still runs in background, but UI shows skeleton cards instead
-  const [isAuthLoading, setIsAuthLoading] = useState(!hasAuthCookieAtMount);
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
-  // Only show splash for unauthenticated users (no cookie = cold load)
-  const [splashDone, setSplashDone] = useState(hasAuthCookieAtMount);
-  const [user, setUser] = useState<any>(null);
-  // If we have an auth cookie, optimistically assume user is authenticated
-  // so the dashboard renders immediately with skeleton cards
-  const [optimisticUser, setOptimisticUser] = useState(hasAuthCookieAtMount);
-  const [error, setError] = useState<string | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [selectedOfficer, setSelectedOfficer] = useState<Officer | null>(null);
-  const [birthdayOfficers, setBirthdayOfficers] = useState<Officer[]>([]);
-  
-  // For filters - we still need some "all" data or official lists
-  const [allOfficers, setAllOfficers] = useState<Officer[]>([]); 
-
-  // Sync search input with URL if URL changes externally
-  useEffect(() => {
-    setSearchInput(queryParam);
-  }, [queryParam]);
-
-  // Update URL when filters change
-  const updateFilters = useCallback((updates: Record<string, string | number | null>) => {
-    const params = new URLSearchParams(searchParams.toString());
-    
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value === null || value === "") {
-        params.delete(key);
-      } else {
-        params.set(key, value.toString());
-      }
-    });
-
-    // Reset to page 1 if any filter other than page changes
-    if (!updates.page) {
-      params.set("page", "1");
-    }
-
-    router.push(`${pathname}?${params.toString()}`, { scroll: false });
-
-    // Scroll to results area when page changes
-    if (updates.page) {
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }, 100);
-    }
-  }, [searchParams, pathname, router]);
-
-  // Handle debounced search
-  useEffect(() => {
-    if (debouncedSearch !== queryParam) {
-      updateFilters({ q: debouncedSearch });
-    }
-  }, [debouncedSearch, queryParam, updateFilters]);
-
-  // Fetch Officers with Pagination and Filtering
-  const fetchOfficers = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      let query = supabase
-        .from("administrative_officers")
-        .select("*", { count: "exact" });
-
-      // Apply server-side filters
-      // Note: This is a basic match. For dirty data, we might need more complex logic.
-      if (queryParam) {
-        query = query.ilike("full_name", `%${queryParam}%`);
-      }
-      if (lgaParam) {
-        // Similar strategy for LGAs if needed, but LGAs are fairly consistent. We can do an ilike.
-        query = query.ilike("lga", `%${lgaParam}%`);
-      }
-      
-      if (mdaParam) {
-        // mdaParam is now the NORMALIZED string. We must find all matching raw strings in the DB.
-        if (allOfficers.length > 0) {
-           const matchingRawMdas = [...new Set(
-              allOfficers
-                .filter(o => normalizeMDA(o.current_mda) === mdaParam && o.current_mda)
-                .map(o => o.current_mda)
-           )];
-           
-           if (matchingRawMdas.length > 0) {
-              query = query.in("current_mda", matchingRawMdas);
-           } else {
-              query = query.ilike("current_mda", `%${mdaParam}%`);
-           }
-        } else {
-           query = query.ilike("current_mda", `%${mdaParam}%`);
-        }
-      }
-
-      // Sort
-      if (sortParam === "name-asc") query = query.order("full_name", { ascending: true });
-      if (sortParam === "name-desc") query = query.order("full_name", { ascending: false });
-      if (sortParam === "level-senior") query = query.order("grade_level", { ascending: false });
-
-      // Pagination
-      const from = (pageParam - 1) * ITEMS_PER_PAGE;
-      const to = from + ITEMS_PER_PAGE - 1;
-      query = query.range(from, to);
-
-      const { data, count, error: fetchError } = await query;
-
-      if (fetchError) throw fetchError;
-
-      if (data) {
-        const processedData = (data as Officer[]).map(officer => ({
-          ...officer,
-          lga: normalizeLGA(officer.lga),
-          current_mda: normalizeMDA(officer.current_mda),
-          birth_month_day: formatBirthday(officer.birth_month_day)
-        }));
-
-        // Client-side month filtering (Supabase doesn't support complex date string logic easily without RPC)
-        let finalData = processedData;
-        if (monthParam) {
-          finalData = processedData.filter(o => o.birth_month_day.startsWith(monthParam.substring(0, 3)));
-        }
-
-        setOfficers(finalData);
-        setTotalCount(count || 0);
-      }
-    } catch (err: any) {
-      console.error("Fetch error:", err);
-      setError(err.message);
-      toast.error("Failed to sync directory.");
-    } finally {
-      setIsLoading(false);
-      if (!initialLoadDone) setInitialLoadDone(true);
-    }
-  }, [supabase, queryParam, lgaParam, mdaParam, monthParam, sortParam, pageParam, allOfficers]);
-
-  useEffect(() => {
-    fetchOfficers();
-  }, [fetchOfficers]);
-
-  // Initial Auth & Global Data Check — ALL queries run in PARALLEL for speed
-  useEffect(() => {
-    const checkAuthAndGlobal = async () => {
-      try {
-        // Step 1: Get auth user (required before profile query)
-        const { data: { user: authUser } } = await supabase.auth.getUser();
-        setUser(authUser);
-        setOptimisticUser(!!authUser);
-
-        if (!authUser) {
-          // Not authenticated — show welcome screen immediately
-          setIsAuthLoading(false);
-          return;
-        }
-
-        // Step 2: Run ALL remaining queries in PARALLEL (not sequentially)
-        const today = new Date();
-        const monthIndex = today.getMonth(); // 0-indexed
-        const dayOfMonth = today.getDate();
-        const MONTH_NAMES = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December",
-        ];
-        const fullMonthName = MONTH_NAMES[monthIndex];
-        const shortMonthName = fullMonthName.substring(0, 3);
-        const paddedMonth = String(monthIndex + 1).padStart(2, '0');
-        const paddedDay = String(dayOfMonth).padStart(2, '0');
-
-        // Build OR filter to match ALL possible birthday formats stored in DB:
-        // New canonical format: "May/14"         (Full month name / day)
-        // Old numeric formats:  "5/14", "05-14"  (M/D or MM-DD)
-        // Display format:       "May/14"         (Short month / padded day)
-        const bdayOrFilter = [
-          `birth_month_day.eq.${fullMonthName}/${dayOfMonth}`,
-          `birth_month_day.eq.${fullMonthName}/${paddedDay}`,
-          `birth_month_day.eq.${shortMonthName}/${paddedDay}`,
-          `birth_month_day.eq.${paddedMonth}-${paddedDay}`,
-          `birth_month_day.eq.${monthIndex + 1}-${dayOfMonth}`,
-          `birth_month_day.eq.${monthIndex + 1}/${dayOfMonth}`,
-          `birth_month_day.eq.${paddedMonth}/${paddedDay}`,
-        ].join(',');
-
-        const [profileResult, countResult, bdayResult, globalResult] = await Promise.all([
-          // 1. User profile & admin check
-          supabase
-            .from("administrative_officers")
-            .select("id, is_admin, is_approved")
-            .eq("id", authUser.id)
-            .maybeSingle(),
-          // 2. Total officer count (lightweight HEAD query)
-          supabase
-            .from("administrative_officers")
-            .select("*", { count: 'exact', head: true }),
-          // 3. Today's birthday officers — search ALL known formats
-          supabase
-            .from("administrative_officers")
-            .select("*")
-            .or(bdayOrFilter),
-          // 4. All officers for filter dropdowns
-          supabase
-            .from("administrative_officers")
-            .select("*")
-            .limit(2000),
-        ]);
-
-        // Process results
-        const userEmail = authUser.email?.trim().toLowerCase() || '';
-        const whitelistEntry = WHITELIST_OFFICERS[userEmail];
-        if (profileResult.data?.is_admin === true || whitelistEntry?.is_admin === true) {
-          setIsAdmin(true);
-        }
-
-        setTotalCount(countResult.count || 0);
-
-        if (bdayResult.data) {
-          const dismissedIds = getDismissedBirthdays();
-          const activeBdays = (bdayResult.data as Officer[]).filter(o => !dismissedIds.includes(o.id));
-          setBirthdayOfficers(activeBdays);
-        }
-
-        if (globalResult.data) {
-          setAllOfficers(globalResult.data as Officer[]);
-        }
-      } catch (err) {
-        console.error('Auth/global check error:', err);
-      } finally {
-        setIsAuthLoading(false);
-      }
-    };
-    checkAuthAndGlobal();
-  }, [supabase]);
-
-  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
-
-  // Automatically open profile if profileId query param is present
-  const profileIdParam = searchParams.get("profileId") || "";
-  useEffect(() => {
-    if (profileIdParam && allOfficers.length > 0) {
-      const officer = allOfficers.find(o => o.id === profileIdParam);
-      if (officer) {
-        setSelectedOfficer(officer);
-        // Clear parameter from URL so it doesn't pop up again if we close it or navigate
-        const params = new URLSearchParams(searchParams.toString());
-        params.delete("profileId");
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-      }
-    }
-  }, [profileIdParam, allOfficers, router, pathname, searchParams]);
-
-  // --- Layered Render Architecture ---
-  // For returning users (auth cookie): skip overlay, show dashboard with inline skeletons.
-  // For cold loads (no cookie): show "Accessing Directory" until first data arrives.
-
-  // Determine overlay visibility
-  const showSplashOverlay = !splashDone;
-  // Only show the full-screen "Accessing Directory" overlay for TRUE cold starts
-  // (no auth cookie = first visit or logged out). Returning users get instant dashboard.
-  const showAccessingOverlay = !hasAuthCookieAtMount && !initialLoadDone && (isAuthLoading || (user && isLoading));
-  const showWelcome = !isAuthLoading && !user && !optimisticUser;
-  // Dashboard shows immediately for returning users (optimisticUser=true)
-  // or once auth confirms a real user
-  const showDashboard = (optimisticUser || (!isAuthLoading && user));
-
-  const keepOverlayVisible = showAccessingOverlay;
-
-  // If dashboard isn't ready AND we're not showing welcome, render overlays only
-  if (!showDashboard) {
+  if (!user && !hasAuthCookie) {
     return (
-      <>
-        {/* Base layer: Welcome Screen (renders behind overlays for unauthenticated) */}
-        {showWelcome && (
-          <div className="animate-fade-in">
-            <WelcomeScreen />
-          </div>
-        )}
-
-        {/* Overlay: "Accessing Directory" — covers footer, covers everything */}
-        {keepOverlayVisible && (
-          <div className="fixed inset-0 z-[99998] flex flex-col items-center justify-center bg-[#020617] overflow-hidden">
-            {/* Ambient glows */}
-            <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-emerald-900/20 rounded-full blur-[100px] pointer-events-none animate-pulse" />
-            <div className="absolute bottom-1/3 right-1/3 w-80 h-80 bg-yellow-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
-
-            <div className="relative z-10 flex flex-col items-center gap-6">
-              <div className="relative animate-float">
-                <div className="absolute -inset-3 bg-gradient-to-r from-emerald-500/25 to-yellow-500/25 blur-xl rounded-full opacity-60 animate-pulse" />
-                <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_30px_rgba(16,185,129,0.15)] bg-white/5 p-1">
-                  <img src="/logo2.jpg" alt="ADOFOM" className="w-full h-full object-cover rounded-full bg-white" />
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "0ms" }} />
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "150ms" }} />
-                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce" style={{ animationDelay: "300ms" }} />
-              </div>
-              <div className="text-center">
-                <p className="text-[10px] font-black tracking-[0.4em] text-emerald-500/70 uppercase mb-1">ADOFOM PORTAL</p>
-                <p className="text-sm font-medium tracking-wider text-slate-400/80 uppercase">Accessing Directory...</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Overlay: Splash Screen — highest z-index, only for unauthenticated cold loads */}
-        {showSplashOverlay && (
-          <SplashScreen
-            message="Initializing Directory Environment..."
-            onComplete={() => setSplashDone(true)}
-          />
-        )}
-      </>
+      <div className="animate-fade-in">
+        <WelcomeScreen />
+      </div>
     );
   }
 
-  // Dashboard is ready — render immediately
+  // 2. Extract Query Params
+  const queryParam = typeof searchParams.q === 'string' ? searchParams.q : "";
+  const lgaParam = typeof searchParams.lga === 'string' ? searchParams.lga : "";
+  const mdaParam = typeof searchParams.mda === 'string' ? searchParams.mda : "";
+  const monthParam = typeof searchParams.month === 'string' ? searchParams.month : "";
+  const sortParam = typeof searchParams.sort === 'string' ? searchParams.sort : "name-asc";
+  const pageParam = typeof searchParams.page === 'string' ? parseInt(searchParams.page, 10) : 1;
+
+  // 3. Parallel Global Data Fetching
+  const today = new Date();
+  const monthIndex = today.getMonth();
+  const dayOfMonth = today.getDate();
+  const MONTH_NAMES = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December",
+  ];
+  const fullMonthName = MONTH_NAMES[monthIndex];
+  const shortMonthName = fullMonthName.substring(0, 3);
+  const paddedMonth = String(monthIndex + 1).padStart(2, '0');
+  const paddedDay = String(dayOfMonth).padStart(2, '0');
+
+  const bdayOrFilter = [
+    `birth_month_day.eq.${fullMonthName}/${dayOfMonth}`,
+    `birth_month_day.eq.${fullMonthName}/${paddedDay}`,
+    `birth_month_day.eq.${shortMonthName}/${paddedDay}`,
+    `birth_month_day.eq.${paddedMonth}-${paddedDay}`,
+    `birth_month_day.eq.${monthIndex + 1}-${dayOfMonth}`,
+    `birth_month_day.eq.${monthIndex + 1}/${dayOfMonth}`,
+    `birth_month_day.eq.${paddedMonth}/${paddedDay}`,
+  ].join(',');
+
+  const [profileResult, globalResult, bdayResult] = await Promise.all([
+    user ? supabase.from("administrative_officers").select("id, is_admin, is_approved").eq("id", user.id).maybeSingle() : Promise.resolve({ data: null }),
+    supabase.from("administrative_officers").select("*").limit(2000), // Note: edge-caching would be better here for prod
+    supabase.from("administrative_officers").select("*").or(bdayOrFilter)
+  ]);
+
+  const allOfficers = (globalResult.data || []) as Officer[];
+  const initialBirthdayOfficers = (bdayResult.data || []) as Officer[];
+
+  // Admin Check
+  let isAdmin = false;
+  if (user) {
+    const userEmail = user.email?.trim().toLowerCase() || '';
+    const whitelistEntry = WHITELIST_OFFICERS[userEmail];
+    if (profileResult.data?.is_admin === true || whitelistEntry?.is_admin === true) {
+      isAdmin = true;
+    }
+  }
+
+  // 4. Server-side Query for Main Grid Data
+  let query = supabase.from("administrative_officers").select("*", { count: "exact" });
+
+  if (queryParam) {
+    query = query.ilike("full_name", `%${queryParam}%`);
+  }
+  if (lgaParam) {
+    query = query.ilike("lga", `%${lgaParam}%`);
+  }
+  if (mdaParam) {
+    if (allOfficers.length > 0) {
+        const matchingRawMdas = [...new Set(
+          allOfficers
+            .filter(o => normalizeMDA(o.current_mda) === mdaParam && o.current_mda)
+            .map(o => o.current_mda)
+        )];
+        
+        if (matchingRawMdas.length > 0) {
+          query = query.in("current_mda", matchingRawMdas);
+        } else {
+          query = query.ilike("current_mda", `%${mdaParam}%`);
+        }
+    } else {
+        query = query.ilike("current_mda", `%${mdaParam}%`);
+    }
+  }
+
+  if (sortParam === "name-asc") query = query.order("full_name", { ascending: true });
+  if (sortParam === "name-desc") query = query.order("full_name", { ascending: false });
+  if (sortParam === "level-senior") query = query.order("grade_level", { ascending: false });
+
+  const from = (pageParam - 1) * ITEMS_PER_PAGE;
+  const to = from + ITEMS_PER_PAGE - 1;
+  query = query.range(from, to);
+
+  const { data, count } = await query;
+  
+  let processedData = (data as Officer[] || []).map(officer => ({
+    ...officer,
+    lga: normalizeLGA(officer.lga),
+    current_mda: normalizeMDA(officer.current_mda),
+    birth_month_day: formatBirthday(officer.birth_month_day)
+  }));
+
+  if (monthParam) {
+    processedData = processedData.filter(o => o.birth_month_day.startsWith(monthParam.substring(0, 3)));
+  }
+
+  const uniqueMdasCount = new Set(allOfficers.map(o => normalizeMDA(o.current_mda)).filter(mda => mda && mda !== "Unknown MDA")).size;
+  const totalOfficersCount = allOfficers.length;
+
   return (
     <main className="min-h-screen pb-20">
-
-      {/* Top Navigation */}
       <header className="flex items-center justify-between px-4 sm:px-6 py-4 bg-green-950/20 backdrop-blur-md border-b border-white/10 sticky top-0 z-[100] shadow-lg transition-all duration-300">
         <div className="flex items-center gap-3">
           <Link href="/" className="w-10 h-10 rounded-full p-0.5 overflow-hidden shadow-md ring-2 ring-emerald-500/20 block" style={{ backgroundColor: "white" }}>
@@ -423,241 +151,27 @@ export default function DashboardPage() {
           <NavigationDrawer
             isAdmin={isAdmin}
             officers={allOfficers}
-            filteredOfficers={officers}
-            onViewOwnProfile={setSelectedOfficer}
+            filteredOfficers={processedData}
+            onViewOwnProfile={() => {}} // Navigation drawer will handle internal navigation if needed
           />
         </div>
       </header>
 
-      {/* Hero Section */}
-      <header className="relative overflow-hidden text-white shadow-2xl min-h-[400px] flex flex-col justify-center">
-        <ImageSlider />
-        <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
-          <NotificationDrawer />
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 text-center w-full z-10">
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <div className="w-20 h-20 rounded-full flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ backgroundColor: "white" }}>
-              <img src="/Ondo-Logo.png" alt="Ondo State" className="w-full h-full object-cover rounded-full bg-white" />
-            </div>
-            <div className="w-20 h-20 rounded-full flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ backgroundColor: "white", animationDelay: "500ms" }}>
-              <img src="/logo2.jpg" alt="Secondary Logo" className="w-full h-full object-cover rounded-full bg-white" />
-            </div>
-          </div>
-
-          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-[1.1] py-2 overflow-visible">
-            Administrative <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-100 drop-shadow-sm inline-block px-2 pb-2 -mx-2 -mb-2 overflow-visible">
-              Officers Directory
-            </span>
-          </h1>
-          
-          <p className="text-green-50/90 text-lg md:text-xl max-w-2xl mx-auto italic font-serif font-light tracking-wide mb-12 leading-relaxed drop-shadow-sm">
-            "Excellence in service, integrity in administration. Connect with the cadre driving Ondo State forward."
-          </p>
-
-          {/* Stats Bar */}
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-12 bg-black/20 backdrop-blur-2xl px-10 py-6 rounded-[2.5rem] border border-white/10 w-fit mx-auto shadow-2xl">
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-black text-emerald-300">{allOfficers.length || "---"}</span>
-              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">Officers</span>
-            </div>
-            <div className="w-px h-10 bg-white/10 hidden sm:block" />
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-black text-emerald-300">
-                {new Set(allOfficers.map(o => normalizeMDA(o.current_mda)).filter(mda => mda && mda !== "Unknown MDA")).size || "---"}
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">Ministries</span>
-            </div>
-            <div className="w-px h-10 bg-white/10 hidden sm:block" />
-            <div className="flex flex-col items-center">
-              <span className="text-3xl font-black text-emerald-300">18</span>
-              <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-white/50">LGAs</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Decorative Wave */}
-        <div className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none">
-          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto text-slate-50 dark:text-zinc-950 fill-current">
-            <path d="M0 120V60C240 30 480 30 720 60C960 90 1200 90 1440 60V120H0Z" opacity="0.5" />
-            <path d="M0 120V80C240 50 480 50 720 80C960 110 1200 110 1440 80V120H0Z" />
-          </svg>
-        </div>
-      </header>
-
-      {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 -mt-8 relative z-20">
-        
-        {/* Search & Filters */}
-        <SearchAndFilter
-          searchQuery={searchInput}
-          onSearchChange={setSearchInput}
-          lgaFilter={lgaParam}
-          onLgaChange={(val) => updateFilters({ lga: val })}
-          monthFilter={monthParam}
-          onMonthChange={(val) => updateFilters({ month: val })}
-          mdaFilter={mdaParam}
-          onMdaChange={(val) => updateFilters({ mda: val })}
-          sortOption={sortParam}
-          onSortChange={(val) => updateFilters({ sort: val })}
-          officers={allOfficers}
-        />
-
-        {/* Results Header */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl">
-              <Users size={20} className="text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-slate-800 dark:text-zinc-100">Personnel Registry</h3>
-              <p className="text-sm text-slate-500 dark:text-zinc-400 font-medium">
-                Displaying <span className="text-emerald-600 font-bold">{totalCount}</span> registered officers
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <ExportButton officers={allOfficers} />
-          </div>
-        </div>
-
-        {/* Loading Overlay or Grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <ProfileSkeleton key={i} />
-            ))}
-          </div>
-        ) : error ? (
-          <div className="text-center py-24 bg-white dark:bg-zinc-900 rounded-[3rem] border border-slate-200 dark:border-zinc-800 shadow-xl">
-             <div className="w-20 h-20 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <AlertCircle size={40} className="text-red-500" />
-            </div>
-            <h3 className="text-2xl font-black text-slate-800 dark:text-zinc-100 mb-3">Sync Error</h3>
-            <p className="text-slate-500 dark:text-zinc-400 max-w-md mx-auto mb-10 font-medium">
-              We couldn't load the directory data. Please check your connection and try again.
-            </p>
-            <button 
-              onClick={() => fetchOfficers()}
-              className="px-10 py-4 bg-slate-900 dark:bg-zinc-100 text-white dark:text-zinc-900 font-bold rounded-2xl hover:scale-105 transition-all active:scale-95"
-            >
-              Retry Sync
-            </button>
-          </div>
-        ) : officers.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {officers.map((officer, index) => (
-              <div
-                key={officer.id}
-                className="card-enter"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <ProfileCard
-                  officer={officer}
-                  onViewProfile={setSelectedOfficer}
-                />
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-32 bg-white dark:bg-zinc-900 rounded-[3rem] border border-slate-200 dark:border-zinc-800 shadow-xl">
-            <div className="w-20 h-20 bg-slate-50 dark:bg-zinc-800/50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <SearchIcon size={40} className="text-slate-300 dark:text-zinc-600" />
-            </div>
-            <h3 className="text-2xl font-black text-slate-800 dark:text-zinc-100 mb-2">No Matches Found</h3>
-            <p className="text-slate-500 dark:text-zinc-400 font-medium mb-8">
-              Adjust your filters or try a different search term.
-            </p>
-            <button 
-              onClick={() => updateFilters({ q: "", lga: "", mda: "", month: "" })}
-              className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline"
-            >
-              Clear all filters
-            </button>
-          </div>
-        )}
-
-        {/* Pagination */}
-        {!isLoading && totalPages > 1 && (
-          <div className="flex flex-wrap justify-center items-center gap-3 mt-16 px-2">
-            <button
-              onClick={() => updateFilters({ page: pageParam - 1 })}
-              disabled={pageParam === 1}
-              className="p-3 rounded-2xl bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 shadow-sm hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 disabled:opacity-30 transition-all cursor-pointer flex-shrink-0"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            
-            <div className="flex flex-wrap justify-center gap-2">
-              {[...Array(totalPages)].map((_, i) => {
-                const p = i + 1;
-                // Show a limited range of pages if totalPages is large
-                if (totalPages > 5 && Math.abs(p - pageParam) > 1 && p !== 1 && p !== totalPages) {
-                  if (Math.abs(p - pageParam) === 2) return <span key={p} className="w-10 h-10 flex items-center justify-center text-slate-400 dark:text-zinc-500">...</span>;
-                  return null;
-                }
-                return (
-                  <button
-                    key={p}
-                    onClick={() => updateFilters({ page: p })}
-                    className={`w-10 h-10 rounded-xl text-sm font-bold transition-all flex-shrink-0 ${
-                      pageParam === p 
-                        ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/30 scale-110" 
-                        : "bg-white dark:bg-zinc-900 text-slate-500 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 border border-slate-200 dark:border-zinc-800"
-                    }`}
-                  >
-                    {p}
-                  </button>
-                );
-              })}
-            </div>
-
-            <button
-              onClick={() => updateFilters({ page: pageParam + 1 })}
-              disabled={pageParam === totalPages}
-              className="p-3 rounded-2xl bg-white dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 border border-slate-200 dark:border-zinc-800 shadow-sm hover:bg-emerald-50 dark:hover:bg-emerald-900/20 hover:text-emerald-600 disabled:opacity-30 transition-all cursor-pointer flex-shrink-0"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </div>
-        )}
-      </div>
-
-      {/* Overlays */}
-      {birthdayOfficers.length > 0 && (
-        <BirthdayBanner
-          officers={birthdayOfficers}
-          onClose={() => {
-            const ids = birthdayOfficers.map(o => o.id);
-            dismissBirthdays(ids);
-            setBirthdayOfficers([]);
-          }}
-          onViewProfile={(officer) => {
-            const ids = birthdayOfficers.map(o => o.id);
-            dismissBirthdays(ids);
-            setSelectedOfficer(officer);
-            setBirthdayOfficers([]);
-          }}
-        />
-      )}
-
-      {selectedOfficer && (
-        <ProfileModal
-          officer={selectedOfficer}
-          onClose={() => setSelectedOfficer(null)}
-          onOfficerUpdated={(updated) => {
-            setOfficers((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
-            setSelectedOfficer(updated);
-            // Also update global list for drawers/stats
-            setAllOfficers(prev => prev.map(o => o.id === updated.id ? updated : o));
-          }}
-        />
-      )}
-
-      <ScrollButtons />
+      <HeroSection totalOfficers={totalOfficersCount} totalMdas={uniqueMdasCount} />
+      
+      <DashboardClient 
+        initialOfficers={processedData}
+        initialTotalCount={count || 0}
+        allOfficers={allOfficers}
+        initialBirthdayOfficers={initialBirthdayOfficers}
+        isAdmin={isAdmin}
+        queryParam={queryParam}
+        lgaParam={lgaParam}
+        mdaParam={mdaParam}
+        monthParam={monthParam}
+        sortParam={sortParam}
+        pageParam={pageParam}
+      />
     </main>
   );
 }

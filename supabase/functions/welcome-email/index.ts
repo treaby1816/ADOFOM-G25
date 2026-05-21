@@ -51,7 +51,7 @@ serve(async (req) => {
         `;
 
     // 3. Send the Email via Resend
-    const res = await fetch('https://api.resend.com/emails', {
+    await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
