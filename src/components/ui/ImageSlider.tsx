@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 
 const DESKTOP_IMAGES = [
-    "/HERO1.jpg",
+    "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=2000&auto=format&fit=crop",
     "/HERO2.jpg",
     "/HERO3.jpg",
     "/HERO4.jpg",
