@@ -8,7 +8,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ totalOfficers, totalMdas }: HeroSectionProps) {
   return (
-    <header className="relative overflow-hidden text-white shadow-2xl min-h-[400px] flex flex-col justify-center">
+    <header className="relative overflow-hidden text-white shadow-2xl min-h-[400px] md:min-h-[500px] xl:min-h-[600px] flex flex-col justify-center">
       <ImageSlider />
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6 z-50">
         <NotificationDrawer />
