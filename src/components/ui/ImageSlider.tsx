@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 const DESKTOP_IMAGES = [
     "/HERO1.jpg",
     "/HERO2.jpg",
-    "/HERO%203.jpg",
+    "/HERO3.jpg",
     "/HERO4.jpg",
     "/slide2.jpg", // Keeping slide2 as requested (removed 1 and 3)
 ];
@@ -42,7 +42,7 @@ export default function ImageSlider() {
         <div className="absolute inset-0 z-0 bg-[#064e3b]"> {/* green-950 base */}
             
             {/* Desktop Carousel (Hidden on Mobile) */}
-            <div className="hidden md:block absolute inset-0">
+            <div className="hidden md:block absolute inset-0 overflow-hidden">
                 {DESKTOP_IMAGES.map((src, index) => (
                     <div
                         key={`desktop-${src}`}
@@ -53,7 +53,7 @@ export default function ImageSlider() {
                         <img
                             src={src}
                             alt="Background"
-                            className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
+                            className="absolute inset-0 w-full h-full object-cover object-[center_30%] scale-[1.15]"
                             loading={index === 0 ? "eager" : "lazy"}
                         />
                     </div>
