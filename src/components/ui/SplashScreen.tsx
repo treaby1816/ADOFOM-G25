@@ -14,7 +14,7 @@ export default function SplashScreen({ message = "Authenticating Environment..."
 
   useEffect(() => {
     // Simulate a smooth progression for the loading bar
-    const duration = 1200; // 1.2s total simulated time minimum
+    const duration = 600; // 0.6s total simulated time minimum (fast track)
     const interval = 20; // update every 20ms
     const step = 100 / (duration / interval);
 
@@ -48,11 +48,11 @@ export default function SplashScreen({ message = "Authenticating Environment..."
         {/* Animated Logo Container */}
         <div className="relative mb-8 animate-float">
           <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500/30 to-yellow-500/30 blur-xl rounded-full opacity-50 animate-pulse" />
-          <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_40px_rgba(16,185,129,0.2)] bg-white/5 p-1">
+          <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-white/10 shadow-[0_0_40px_rgba(16,185,129,0.2)] bg-white flex items-center justify-center p-2">
             <img
-              src="/logo2.jpg"
+              src="/Ondo-Logo.png"
               alt="ADOFOM Portal"
-              className="w-full h-full object-cover rounded-full bg-white"
+              className="w-full h-full object-contain"
             />
           </div>
         </div>
