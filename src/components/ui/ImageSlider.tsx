@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+
 
 const DESKTOP_IMAGES = [
     "/HERO1.jpg",
     "/HERO2.jpg",
-    "/HERO 3.jpg",
+    "/HERO%203.jpg",
     "/HERO4.jpg",
     "/slide2.jpg", // Keeping slide2 as requested (removed 1 and 3)
 ];
@@ -50,12 +50,11 @@ export default function ImageSlider() {
                             index === desktopIndex ? "opacity-60" : "opacity-0"
                         }`}
                     >
-                        <Image
+                        <img
                             src={src}
                             alt="Background"
-                            fill
-                            className="object-cover object-[center_30%]"
-                            priority={index === 0}
+                            className="absolute inset-0 w-full h-full object-cover object-[center_30%]"
+                            loading={index === 0 ? "eager" : "lazy"}
                         />
                     </div>
                 ))}
@@ -70,12 +69,11 @@ export default function ImageSlider() {
                             index === mobileIndex ? "opacity-60" : "opacity-0"
                         }`}
                     >
-                        <Image
+                        <img
                             src={src}
                             alt="Background"
-                            fill
-                            className="object-cover object-top"
-                            priority={index === 0}
+                            className="absolute inset-0 w-full h-full object-cover object-top"
+                            loading={index === 0 ? "eager" : "lazy"}
                         />
                     </div>
                 ))}

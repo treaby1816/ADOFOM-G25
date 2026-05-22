@@ -47,13 +47,13 @@ export default function BirthdayBanner({ officers, onClose, onViewProfile }: Bir
                     numberOfPieces={300}
                     recycle={false}
                     colors={["#15803d", "#16a34a", "#22c55e", "#4ade80", "#86efac", "#fbbf24", "#f59e0b", "#ef4444", "#3b82f6"]}
-                    style={{ position: "fixed", top: 0, left: 0, zIndex: 100 }}
+                    style={{ position: "fixed", top: 0, left: 0, zIndex: 9996, pointerEvents: "none" }}
                 />
             )}
 
             {/* Modal Overlay */}
             <div
-                className="fixed inset-0 z-[90] flex items-center justify-center p-4"
+                className="fixed inset-0 z-[9995] flex items-center justify-center p-4"
                 onClick={onClose}
             >
                 <div className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in" />
