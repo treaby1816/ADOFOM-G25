@@ -4,11 +4,9 @@ import { useState, useEffect } from "react";
 
 
 const DESKTOP_IMAGES = [
-    "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=2000&auto=format&fit=crop",
-    "/HERO2.jpg",
-    "/HERO3.jpg",
-    "/HERO4.jpg",
-    "/slide2.jpg", // Keeping slide2 as requested (removed 1 and 3)
+    "/HER1.jpg",
+    "/HER2.jpg",
+    "/HER3.jpg",
 ];
 
 const MOBILE_IMAGES = [
