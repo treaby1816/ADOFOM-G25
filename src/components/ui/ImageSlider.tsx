@@ -4,12 +4,9 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 
 const IMAGES = [
-    // Verified high-quality professional/corporate images
-    "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=2000&auto=format&fit=crop", // Team collaboration
-    "https://images.unsplash.com/photo-1573164713988-8665fc963095?q=80&w=2000&auto=format&fit=crop", // Professional woman in tech/office
-    "https://images.unsplash.com/photo-1556761175-5973dc0f32d7?q=80&w=2000&auto=format&fit=crop", // Business team in meeting
-    "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop", // Modern office
-    "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2000&auto=format&fit=crop", // Team working on table
+    "/slide1.jpg",
+    "/slide2.jpg",
+    "/slide3.jpg",
 ];
 
 export default function ImageSlider() {
