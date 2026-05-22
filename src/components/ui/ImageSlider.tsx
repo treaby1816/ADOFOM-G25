@@ -23,23 +23,29 @@ export default function ImageSlider() {
     }, []);
 
     return (
-        <div className="absolute inset-0 z-0 bg-green-950">
+        <div className="absolute inset-0 z-0 bg-[#064e3b]"> {/* green-950 base */}
             {IMAGES.map((src, index) => (
                 <div
                     key={src}
-                    className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === currentIndex ? "opacity-30" : "opacity-0"
-                        }`}
+                    className={`absolute inset-0 transition-opacity duration-[1500ms] ease-in-out ${
+                        index === currentIndex ? "opacity-60" : "opacity-0"
+                    }`}
                 >
                     <Image
                         src={src}
                         alt="Background"
                         fill
-                        className="object-cover object-[center_30%] mix-blend-luminosity"
+                        className="object-cover object-[center_30%]"
                         priority={index === 0}
                     />
                 </div>
             ))}
-            <div className="absolute inset-0 bg-gradient-to-t from-green-900 via-emerald-800/80 to-green-900/60" />
+            {/* 
+              This gradient ensures the white text remains 100% readable 
+              while allowing the vibrant images to show through clearly.
+            */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#064e3b] via-[#064e3b]/70 to-[#064e3b]/40 mix-blend-multiply" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#064e3b]/80 via-transparent to-transparent" />
         </div>
     );
 }
