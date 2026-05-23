@@ -54,7 +54,8 @@ export async function proxy(request: NextRequest) {
             pathname === '/' ||
             pathname.startsWith('/login') ||
             pathname.startsWith('/signup') ||
-            pathname.startsWith('/auth')
+            pathname.startsWith('/auth') ||
+            pathname.startsWith('/reset-password')
 
         const isAsset =
             pathname.includes('Ondo-Logo.png') ||

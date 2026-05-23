@@ -32,11 +32,19 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
         });
     }, []);
 
-    // Match by ID first, then fallback to email match
+    const cleanCurrentOfficerEmail = currentOfficer.email_address?.trim().toLowerCase() || "";
+    const cleanCurrentUserEmail = currentUserEmail?.trim().toLowerCase() || "";
+    
+    // Robust ownership check: match by ID OR by verified email address
     const isOwnProfile = currentUserId !== null && (
         currentOfficer.id === currentUserId ||
-        (currentUserEmail !== null && currentOfficer.email_address?.trim().toLowerCase() === currentUserEmail)
+        (cleanCurrentUserEmail !== "" && cleanCurrentOfficerEmail === cleanCurrentUserEmail)
     );
+
+    // Debugging mismatch if any
+    if (currentUserId && currentOfficer.id !== currentUserId && cleanCurrentUserEmail && cleanCurrentOfficerEmail === cleanCurrentUserEmail) {
+        console.warn(`Profile ID mismatch for ${cleanCurrentUserEmail}: Auth ID ${currentUserId} != DB ID ${currentOfficer.id}. Granted access via email match.`);
+    }
 
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
@@ -125,7 +133,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                 {isFullscreen && (
                     <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 sm:p-8 animate-fade-in bg-black/90 backdrop-blur-md" onClick={() => setIsFullscreen(false)}>
                         <button
-                            className="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white z-10 transition-colors"
+                            className="absolute top-16 sm:top-6 right-4 sm:right-6 p-3 rounded-full bg-white/20 hover:bg-white/30 text-white z-50 shadow-lg backdrop-blur-md transition-all active:scale-95"
                             onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }}
                         >
                             <X size={24} />

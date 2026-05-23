@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff, ArrowLeft } from 'lucide-react'
+import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff, ArrowLeft, KeyRound, Loader2, ArrowRight } from 'lucide-react'
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
+
+const REMEMBER_ME_KEY = 'adofom_remember_email'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -13,9 +15,22 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null)
   const [showPassword, setShowPassword] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [resetEmail, setResetEmail] = useState('')
+  const [isResetting, setIsResetting] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
+    // Restore saved email from localStorage
+    try {
+      const savedEmail = localStorage.getItem(REMEMBER_ME_KEY)
+      if (savedEmail) {
+        setEmail(savedEmail)
+        setRememberMe(true)
+      }
+    } catch {}
+
     const checkAuth = async () => {
       const supabase = createClient()
       const { data: { session } } = await supabase.auth.getSession()
@@ -70,6 +85,15 @@ export default function LoginPage() {
         return
       }
 
+      // Save or clear remembered email
+      try {
+        if (rememberMe) {
+          localStorage.setItem(REMEMBER_ME_KEY, email)
+        } else {
+          localStorage.removeItem(REMEMBER_ME_KEY)
+        }
+      } catch {}
+
       // Post-login: Check profile state for redirect
       const cleanEmail = data.user.email?.trim().toLowerCase() || ''
       const isFelix = cleanEmail === 'felixadewole16@gmail.com'
@@ -116,6 +140,35 @@ export default function LoginPage() {
     }
   }
 
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsResetting(true)
+    setMessage(null)
+
+    if (!resetEmail || !/^\S+@\S+\.\S+$/.test(resetEmail)) {
+      setMessage({ type: 'error', text: 'Please enter a valid email address.' })
+      setIsResetting(false)
+      return
+    }
+
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      })
+
+      if (error) {
+        setMessage({ type: 'error', text: error.message || 'Failed to send reset email.' })
+      } else {
+        setMessage({ type: 'success', text: 'If this email is registered, you\'ll receive a password reset link shortly. Please check your inbox and spam folder.' })
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' })
+    } finally {
+      setIsResetting(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-hero-gradient flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden">
       
@@ -151,7 +204,7 @@ export default function LoginPage() {
             ADOFOM OFFICIAL PORTAL
           </h1>
           <p className="mt-2 text-sm text-slate-400">
-            Secure Closed-Door Access
+            {showForgotPassword ? 'Reset Your Password' : 'Secure Closed-Door Access'}
           </p>
         </div>
 
@@ -171,96 +224,198 @@ export default function LoginPage() {
           </div>
         )}
 
-        {/* Form */}
-        <form onSubmit={handleLogin} className="space-y-4">
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="sr-only">Email address</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-slate-400" aria-hidden="true" />
+        {/* ===== Forgot Password View ===== */}
+        {showForgotPassword ? (
+          <>
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div>
+                <label htmlFor="reset-email" className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 block">
+                  Email Address
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-slate-400" aria-hidden="true" />
+                  </div>
+                  <input
+                    id="reset-email"
+                    name="reset-email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                    placeholder="Enter your registered email"
+                    disabled={isResetting}
+                  />
+                </div>
               </div>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
-                placeholder="Enter your official email address"
-                disabled={isLoading}
-              />
-            </div>
-          </div>
 
-          {/* Password */}
-          <div>
-            <label htmlFor="password" senior-only="true" className="sr-only">Password</label>
-            <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
-                <Lock className="h-5 w-5" aria-hidden="true" />
+              <div className="bg-white/5 rounded-lg p-3 border border-white/5">
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  <KeyRound className="w-3.5 h-3.5 inline-block mr-1.5 text-yellow-500" />
+                  We&apos;ll send a secure reset link to your email. Click the link to create a new password.
+                </p>
               </div>
-              <input
-                id="password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-10 pr-12 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
-                placeholder="Enter your password"
-                disabled={isLoading}
-                minLength={6}
-              />
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isResetting}
+                  className="group relative w-full flex justify-center py-3 px-4 btn-gold rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 focus:ring-yellow-500 disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {isResetting ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="animate-spin h-4 w-4" />
+                      Sending Reset Link...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      Send Reset Link
+                    </span>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            <div className="mt-6 text-center">
               <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-yellow-500 transition-colors cursor-pointer"
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                onClick={() => { setShowForgotPassword(false); setMessage(null) }}
+                className="text-sm text-yellow-500 hover:text-yellow-400 transition-colors font-medium flex items-center gap-1.5 mx-auto"
               >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                <ArrowLeft className="w-3.5 h-3.5" />
+                Back to Sign In
               </button>
             </div>
-          </div>
+          </>
+        ) : (
+          /* ===== Login View ===== */
+          <>
+            <form onSubmit={handleLogin} className="space-y-4">
+              {/* Email */}
+              <div>
+                <label htmlFor="email" className="sr-only">Email address</label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail className="h-5 w-5 text-slate-400" aria-hidden="true" />
+                  </div>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="block w-full pl-10 pr-3 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                    placeholder="Enter your official email address"
+                    disabled={isLoading}
+                  />
+                </div>
+              </div>
 
-          <div className="pt-2">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-3 px-4 btn-gold rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 focus:ring-yellow-500 disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Authenticating...
-                </span>
-              ) : (
-                <span className="flex items-center gap-2">
-                  Sign In
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </span>
-              )}
-            </button>
-          </div>
-        </form>
+              {/* Password */}
+              <div>
+                <label htmlFor="password" className="sr-only">Password</label>
+                <div className="relative group">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 group-focus-within:text-yellow-500 transition-colors">
+                    <Lock className="h-5 w-5" aria-hidden="true" />
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="block w-full pl-10 pr-12 py-3 border border-slate-700 rounded-xl leading-5 bg-slate-900/50 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors sm:text-sm"
+                    placeholder="Enter your password"
+                    disabled={isLoading}
+                    minLength={6}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-yellow-500 transition-colors cursor-pointer"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-slate-400">
-            New Officer?{' '}
-            <Link 
-              href="/signup" 
-              className="font-medium text-yellow-500 hover:text-yellow-400 transition-colors underline underline-offset-4"
-            >
-              Create your portal account here.
-            </Link>
-          </p>
-        </div>
+              {/* Remember Me & Forgot Password Row */}
+              <div className="flex items-center justify-between">
+                <label className="flex items-center gap-2.5 cursor-pointer group select-none">
+                  <div className="relative">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="sr-only peer"
+                    />
+                    <div className="w-5 h-5 rounded-md border-2 border-slate-600 bg-slate-900/50 peer-checked:bg-yellow-500 peer-checked:border-yellow-500 transition-all duration-200 flex items-center justify-center group-hover:border-slate-500">
+                      <svg 
+                        className={`w-3 h-3 text-slate-950 transition-opacity duration-200 ${rememberMe ? 'opacity-100' : 'opacity-0'}`}
+                        fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  </div>
+                  <span className="text-xs font-medium text-slate-400 group-hover:text-slate-300 transition-colors">
+                    Remember me
+                  </span>
+                </label>
+
+                <button
+                  type="button"
+                  onClick={() => { setShowForgotPassword(true); setMessage(null); setResetEmail(email) }}
+                  className="text-xs font-medium text-yellow-500/80 hover:text-yellow-400 transition-colors underline underline-offset-4 decoration-yellow-500/30 hover:decoration-yellow-400/50"
+                >
+                  Forgot password?
+                </button>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="group relative w-full flex justify-center py-3 px-4 btn-gold rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-950 focus:ring-yellow-500 disabled:opacity-70 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Authenticating...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      Sign In
+                      <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </span>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-slate-400">
+                New Officer?{' '}
+                <Link 
+                  href="/signup" 
+                  className="font-medium text-yellow-500 hover:text-yellow-400 transition-colors underline underline-offset-4"
+                >
+                  Create your portal account here.
+                </Link>
+              </p>
+            </div>
+          </>
+        )}
 
         {/* Mobile Hint */}
         <div className="mt-8 text-center border-t border-slate-800 pt-6">
