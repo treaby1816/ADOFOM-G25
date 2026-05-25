@@ -3,6 +3,7 @@
 import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award, Pencil, Eye, Facebook, Twitter, Instagram } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import VerifyPasswordModal from "./VerifyPasswordModal";
 import EditProfileFormModal from "./EditProfileFormModal";
 import { createClient } from "@/utils/supabase/client";
@@ -20,6 +21,11 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
     const [currentOfficer, setCurrentOfficer] = useState(officer);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
     const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Fetch logged-in user's ID and email to gate the Edit button
     useEffect(() => {
@@ -120,7 +126,9 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
         }
     };
 
-    return (
+    if (!mounted) return null;
+
+    const modalContent = (
         <>
             <div
                 className="fixed inset-0 z-[200] flex items-center justify-center p-4"
@@ -133,7 +141,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                 {isFullscreen && (
                     <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 sm:p-8 animate-fade-in bg-black/90 backdrop-blur-md" onClick={() => setIsFullscreen(false)}>
                         <button
-                            className="absolute top-16 sm:top-6 right-4 sm:right-6 p-3 rounded-full bg-white/20 hover:bg-white/30 text-white z-50 shadow-lg backdrop-blur-md transition-all active:scale-95"
+                            className="absolute top-20 sm:top-10 right-4 sm:right-6 p-3 rounded-full bg-white/20 hover:bg-white/30 text-white z-50 shadow-lg backdrop-blur-md transition-all active:scale-95"
                             onClick={(e) => { e.stopPropagation(); setIsFullscreen(false); }}
                         >
                             <X size={24} />
@@ -382,4 +390,6 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
             )}
         </>
     );
+
+    return createPortal(modalContent, document.body);
 }
