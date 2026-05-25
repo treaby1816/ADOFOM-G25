@@ -123,7 +123,7 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
     return (
         <>
             <div
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+                className="fixed inset-0 z-[200] flex items-center justify-center p-4"
                 onClick={isFullscreen ? () => setIsFullscreen(false) : onClose}
             >
                 {/* Backdrop */}
@@ -155,19 +155,19 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                     style={{ backgroundSize: '200% 200%', animation: 'gradient-bg 10s ease infinite' }}
                     onClick={(e) => e.stopPropagation()}
                 >
-                    {/* Close Button */}
+                    {/* Close Button — absolutely positioned within the modal, above the header gradient */}
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-2.5 rounded-full bg-black/20 hover:bg-red-500/80 text-white/80 hover:text-white backdrop-blur-md transition-all duration-200 z-20 cursor-pointer shadow-lg border border-white/10"
+                        className="absolute top-3 right-3 p-2.5 rounded-full bg-black/30 hover:bg-red-500/80 text-white/90 hover:text-white backdrop-blur-md transition-all duration-200 z-30 cursor-pointer shadow-lg border border-white/10"
                     >
                         <X size={18} />
                     </button>
 
-                    {/* Edit Button */}
+                    {/* Edit Button — positioned on the opposite side from close */}
                     {isOwnProfile && (
                         <button
                             onClick={handleEditClick}
-                            className="absolute top-4 right-16 flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 hover:bg-emerald-500/80 text-white/90 hover:text-white backdrop-blur-md transition-all duration-200 z-20 cursor-pointer shadow-lg border border-white/20 text-xs font-bold uppercase tracking-wider"
+                            className="absolute top-3 left-3 flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 hover:bg-emerald-500/80 text-white/90 hover:text-white backdrop-blur-md transition-all duration-200 z-20 cursor-pointer shadow-lg border border-white/20 text-xs font-bold uppercase tracking-wider"
                             title="Edit Profile"
                         >
                             <Pencil size={14} />
