@@ -471,6 +471,18 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
                                 </div>
                                 <span className="text-sm font-semibold">Manage Leadership</span>
                             </Link>
+
+                            {/* Audit Log */}
+                            <Link
+                                href="/admin/audit-log"
+                                onClick={() => setIsOpen(false)}
+                                className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-white/80 hover:text-white hover:bg-purple-500/10 transition-all duration-200 group"
+                            >
+                                <div className="p-2 bg-purple-500/10 group-hover:bg-purple-500/20 rounded-lg transition-colors">
+                                    <FileText size={16} className="text-purple-400" />
+                                </div>
+                                <span className="text-sm font-semibold">Audit Log</span>
+                            </Link>
                             
                             {/* Export Directory */}
                             <button
