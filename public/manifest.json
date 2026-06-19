@@ -32,25 +32,52 @@
   ],
   "screenshots": [
     {
-      "src": "/screenshots/screen1.png",
-      "sizes": "472x1024",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "ADOFOM Home Screen"
+      "src": "/ADR1.jpg",
+      "sizes": "563x699",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
     },
     {
-      "src": "/screenshots/screen2.png",
-      "sizes": "472x1024",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "ADOFOM Leadership Directory"
+      "src": "/ADR2.jpg",
+      "sizes": "563x718",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
     },
     {
-      "src": "/screenshots/screen3.png",
-      "sizes": "472x1024",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "ADOFOM Privacy Policy"
+      "src": "/ADR3.jpg",
+      "sizes": "736x981",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/ADR4.jpg",
+      "sizes": "564x752",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/ADR5.jpg",
+      "sizes": "564x678",
+      "type": "image/jpeg",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "/HER1.jpg",
+      "sizes": "563x315",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/HER2.jpg",
+      "sizes": "736x414",
+      "type": "image/jpeg",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/HER3.jpg",
+      "sizes": "564x376",
+      "type": "image/jpeg",
+      "form_factor": "wide"
     }
   ]
 }
