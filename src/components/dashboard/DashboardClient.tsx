@@ -25,6 +25,7 @@ interface DashboardClientProps {
   lgaParam: string;
   mdaParam: string;
   monthParam: string;
+  setParam: string;
   sortParam: string;
   pageParam: number;
 }
@@ -71,6 +72,7 @@ export default function DashboardClient({
   lgaParam,
   mdaParam,
   monthParam,
+  setParam,
   sortParam,
   pageParam
 }: DashboardClientProps) {
@@ -168,6 +170,8 @@ export default function DashboardClient({
         onMonthChange={(val) => updateFilters({ month: val })}
         mdaFilter={mdaParam}
         onMdaChange={(val) => updateFilters({ mda: val })}
+        setFilter={setParam}
+        onSetChange={(val) => updateFilters({ set: val })}
         sortOption={sortParam}
         onSortChange={(val) => updateFilters({ sort: val })}
         officers={allOfficers}
@@ -224,7 +228,7 @@ export default function DashboardClient({
             Adjust your filters or try a different search term.
           </p>
           <button 
-            onClick={() => updateFilters({ q: "", lga: "", mda: "", month: "" })}
+            onClick={() => updateFilters({ q: "", lga: "", mda: "", month: "", set: "" })}
             className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline"
           >
             Clear all filters

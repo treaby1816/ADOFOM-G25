@@ -106,9 +106,16 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
                         ? officer.full_name.split(',')[0].toUpperCase() + ',' + officer.full_name.split(',').slice(1).join(',')
                         : officer.full_name}
                 </h3>
-                <p className="text-sm font-bold text-green-700 dark:text-emerald-300 bg-green-50/80 dark:bg-emerald-950/50 inline-block px-4 py-1 rounded-full mb-1 border border-green-100/50 dark:border-emerald-800/50 shadow-sm">
-                    {officer.current_mda}
-                </p>
+                <div className="flex flex-col items-center gap-1.5">
+                    <p className="text-sm font-bold text-green-700 dark:text-emerald-300 bg-green-50/80 dark:bg-emerald-950/50 inline-block px-4 py-1 rounded-full border border-green-100/50 dark:border-emerald-800/50 shadow-sm">
+                        {officer.current_mda}
+                    </p>
+                    {officer.induction_year && (
+                        <p className="text-[10px] uppercase tracking-widest font-bold text-emerald-600 dark:text-emerald-400">
+                            {officer.induction_year} SET
+                        </p>
+                    )}
+                </div>
             </div>
 
             {/* Quick Actions */}

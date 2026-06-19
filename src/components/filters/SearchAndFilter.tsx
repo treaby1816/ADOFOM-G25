@@ -13,6 +13,8 @@ interface SearchAndFilterProps {
     onMonthChange: (value: string) => void;
     mdaFilter: string;
     onMdaChange: (value: string) => void;
+    setFilter: string;
+    onSetChange: (value: string) => void;
     sortOption: string;
     onSortChange: (value: string) => void;
     officers: Officer[];
@@ -27,6 +29,8 @@ export default function SearchAndFilter({
     onMonthChange,
     mdaFilter,
     onMdaChange,
+    setFilter,
+    onSetChange,
     sortOption,
     onSortChange,
     officers,
@@ -36,6 +40,9 @@ export default function SearchAndFilter({
     
     // Normalize MDAs to ensure duplicates are merged in the dropdown
     const uniqueMdas = [...new Set(officers.map((o) => normalizeMDA(o.current_mda)))].filter(mda => mda && mda !== "Unknown MDA").sort();
+    
+    // Extract unique Induction Years
+    const uniqueSets = [...new Set(officers.map((o) => o.induction_year))].filter(Boolean).sort((a, b) => Number(b) - Number(a)); // Sort descending (newest first)
     
     const months = [
         "January", "February", "March", "April", "May", "June",
@@ -75,7 +82,7 @@ export default function SearchAndFilter({
                 </div>
 
                 {/* Filters Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
                     <div className="relative">
                         <select
                             value={lgaFilter}
@@ -121,6 +128,22 @@ export default function SearchAndFilter({
                                 <option key={mda} value={mda} className="capitalize">
                                     {mda.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
                                 </option>
+                            ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">
+                            <ArrowUpDown size={14} />
+                        </div>
+                    </div>
+
+                    <div className="relative">
+                        <select
+                            value={setFilter}
+                            onChange={(e) => onSetChange(e.target.value)}
+                            className={`px-4 py-3 cursor-pointer z-20 relative ${selectClasses} w-full pr-10 text-ellipsis overflow-hidden whitespace-nowrap ${setFilter ? "border-emerald-500" : ""}`}
+                        >
+                            <option value="">All Sets</option>
+                            {uniqueSets.map((year) => (
+                                <option key={year} value={year}>{year} Set</option>
                             ))}
                         </select>
                         <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 border-l border-slate-200 dark:border-zinc-700 pl-2 z-30">

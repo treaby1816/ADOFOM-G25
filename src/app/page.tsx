@@ -39,6 +39,7 @@ export default async function DashboardPage(props: {
     const lgaParam = typeof searchParams.lga === 'string' ? searchParams.lga : "";
     const mdaParam = typeof searchParams.mda === 'string' ? searchParams.mda : "";
     const monthParam = typeof searchParams.month === 'string' ? searchParams.month : "";
+    const setParam = typeof searchParams.set === 'string' ? searchParams.set : "";
     const sortParam = typeof searchParams.sort === 'string' ? searchParams.sort : "name-asc";
     const pageParam = typeof searchParams.page === 'string' ? parseInt(searchParams.page, 10) : 1;
 
@@ -117,6 +118,10 @@ export default async function DashboardPage(props: {
     if (sortParam === "name-desc") query = query.order("full_name", { ascending: false });
     if (sortParam === "level-senior") query = query.order("grade_level", { ascending: false });
 
+    if (setParam) {
+      query = query.eq("induction_year", setParam);
+    }
+
     // Ensure valid pagination
     const validPageParam = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
     const from = (validPageParam - 1) * ITEMS_PER_PAGE;
@@ -175,6 +180,7 @@ export default async function DashboardPage(props: {
           lgaParam={lgaParam}
           mdaParam={mdaParam}
           monthParam={monthParam}
+          setParam={setParam}
           sortParam={sortParam}
           pageParam={validPageParam}
         />

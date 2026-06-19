@@ -12,6 +12,7 @@ import { createClient } from "@/utils/supabase/client";
 import { normalizeMDA, normalizeLGA } from "@/lib/dataConsolidation";
 import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
 import BirthdaySelect, { parseBirthdayValue, formatBirthdayValue, isValidBirthday } from "@/components/ui/BirthdaySelect";
+import { GraduationCap } from "lucide-react";
 
 interface EditProfileFormModalProps {
     officer: Officer;
@@ -34,6 +35,9 @@ interface ProfileFormValues {
     instagram_url?: string;
     linkedin_url?: string;
     exco_portfolio?: string;
+    induction_year?: string;
+    professional_certificate?: string;
+    professional_bodies?: string;
 }
 
 export default function EditProfileFormModal({ officer, onSave, onClose }: EditProfileFormModalProps) {
@@ -53,6 +57,9 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
             instagram_url: officer.instagram_url || "",
             linkedin_url: officer.linkedin_url || "",
             exco_portfolio: officer.exco_portfolio || "",
+            induction_year: officer.induction_year || "",
+            professional_certificate: officer.professional_certificate || "",
+            professional_bodies: officer.professional_bodies || "",
         }
     });
 
@@ -218,6 +225,9 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 twitter_url: data.twitter_url?.trim() || "",
                 instagram_url: data.instagram_url?.trim() || "",
                 linkedin_url: data.linkedin_url?.trim() || "",
+                induction_year: data.induction_year?.trim() || "",
+                professional_certificate: data.professional_certificate?.trim() || "",
+                professional_bodies: data.professional_bodies?.trim() || "",
             };
 
 
@@ -391,21 +401,54 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                         </div>
                         <div>
                             <label className={labelClass}>
-                                <Award size={12} className="text-emerald-500" /> Grade Level
+                                <GraduationCap size={12} className="text-emerald-500" /> Grade Level / Retired
                             </label>
-                            <input type="text" {...register("grade_level")} className={inputClass} placeholder="e.g. GL 12" />
+                            <select {...register("grade_level")} className={`${inputClass} appearance-none`}>
+                                <option value="" className="bg-slate-900">Select Level</option>
+                                {Array.from({ length: 10 }, (_, i) => String(i + 8).padStart(2, '0')).map(level => (
+                                    <option key={level} value={`GL ${level}`} className="bg-slate-900">GL {level}</option>
+                                ))}
+                                <option value="Retired" className="bg-slate-900 text-emerald-500 font-bold">Retired</option>
+                            </select>
                         </div>
                     </div>
 
-
-
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className={labelClass}>
+                                <Briefcase size={12} className="text-emerald-500" /> ADOFOM Set (Induction Year)
+                            </label>
+                            <select {...register("induction_year")} className={`${inputClass} appearance-none`}>
+                                <option value="" className="bg-slate-900">Select Year</option>
+                                {Array.from({ length: 41 }, (_, i) => String(2040 - i)).map(year => (
+                                    <option key={year} value={year} className="bg-slate-900">{year} Set</option>
+                                ))}
+                            </select>
+                        </div>
                         <div>
                             <label className={labelClass}>
                                 <MapPin size={12} className="text-emerald-500" /> LGA <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>
                             </label>
                             <input type="text" {...register("lga")} readOnly className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50`} />
                         </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label className={labelClass}>
+                                <Award size={12} className="text-emerald-500" /> Professional Certificate (Optional)
+                            </label>
+                            <input type="text" {...register("professional_certificate")} className={inputClass} placeholder="e.g. CIPM, ICAN" />
+                        </div>
+                        <div>
+                            <label className={labelClass}>
+                                <Briefcase size={12} className="text-emerald-500" /> Professional Bodies (Optional)
+                            </label>
+                            <input type="text" {...register("professional_bodies")} className={inputClass} placeholder="e.g. NIM, CIPM" />
+                        </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>
                                 <Cake size={12} className="text-emerald-500" /> Birthday
@@ -416,6 +459,9 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                                 error={birthdayError || undefined}
                                 variant="light"
                             />
+                        </div>
+                        <div>
+                            {/* Empty space or we can put something else here, or leave Birthday full width. Let's make it full width if it's alone in the grid */}
                         </div>
                     </div>
 

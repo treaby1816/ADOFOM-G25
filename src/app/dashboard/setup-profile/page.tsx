@@ -7,7 +7,8 @@ import PhotoUploader from '@/components/ui/PhotoUploader'
 import {
   User, Building2, GraduationCap, MapPin,
   Calendar, Phone, Heart, FileText,
-  ChevronRight, AlertCircle, CheckCircle2
+  ChevronRight, AlertCircle, CheckCircle2,
+  Award, Briefcase
 } from 'lucide-react'
 
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
@@ -24,7 +25,10 @@ export default function SetupProfilePage() {
     secondary_phone_number: '',
     hobbies: '',
     about_me: '',
-    photo_url: ''
+    photo_url: '',
+    induction_year: '',
+    professional_certificate: '',
+    professional_bodies: ''
   })
 
   const [birthday, setBirthday] = useState('')
@@ -79,7 +83,10 @@ export default function SetupProfilePage() {
             secondary_phone_number: existingProfile.secondary_phone_number || '',
             hobbies: existingProfile.hobbies || '',
             about_me: existingProfile.about_me || '',
-            photo_url: existingProfile.photo_url || ''
+            photo_url: existingProfile.photo_url || '',
+            induction_year: existingProfile.induction_year || '',
+            professional_certificate: existingProfile.professional_certificate || '',
+            professional_bodies: existingProfile.professional_bodies || ''
           })
           
           if (existingProfile.birth_month_day) {
@@ -327,7 +334,7 @@ export default function SetupProfilePage() {
 
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                      <GraduationCap size={14} /> Grade Level
+                      <GraduationCap size={14} /> Grade Level / Retired
                     </label>
                     <select
                       name="grade_level"
@@ -339,6 +346,25 @@ export default function SetupProfilePage() {
                       <option value="" className="bg-slate-900">Select Level</option>
                       {Array.from({ length: 10 }, (_, i) => String(i + 8).padStart(2, '0')).map(level => (
                         <option key={level} value={`GL ${level}`} className="bg-slate-900">GL {level}</option>
+                      ))}
+                      <option value="Retired" className="bg-slate-900 text-yellow-500 font-bold">Retired</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                      <Briefcase size={14} /> ADOFOM Set (Induction Year)
+                    </label>
+                    <select
+                      name="induction_year"
+                      required
+                      value={formData.induction_year}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
+                    >
+                      <option value="" className="bg-slate-900">Select Year</option>
+                      {Array.from({ length: 41 }, (_, i) => String(2040 - i)).map(year => (
+                        <option key={year} value={year} className="bg-slate-900">{year} Set</option>
                       ))}
                     </select>
                   </div>
@@ -366,6 +392,36 @@ export default function SetupProfilePage() {
                       onChange={setBirthday}
                       error={birthdayError || undefined}
                       variant="dark"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                      <Award size={14} /> Professional Certificate (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="professional_certificate"
+                      value={formData.professional_certificate}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
+                      placeholder="e.g. CIPM, ICAN"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                      <Briefcase size={14} /> Professional Bodies (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      name="professional_bodies"
+                      value={formData.professional_bodies}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
+                      placeholder="e.g. NIM, CIPM"
                     />
                   </div>
                 </div>

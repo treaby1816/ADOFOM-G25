@@ -248,8 +248,44 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                                     <Award size={16} className="text-emerald-500" />
                                     {currentOfficer.grade_level}
                                 </span>
+                                {currentOfficer.induction_year && (
+                                    <>
+                                        <div className="w-1 h-4 bg-slate-200 dark:bg-zinc-600 rounded-full hidden sm:block" />
+                                        <span className="flex items-center gap-2">
+                                            <Briefcase size={16} className="text-emerald-500" />
+                                            {currentOfficer.induction_year} SET
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
+
+                        {/* Professional Memberships (Only show if data exists) */}
+                        {(currentOfficer.professional_certificate || currentOfficer.professional_bodies) && (
+                            <div className="mb-7">
+                                <h4 className="flex items-center gap-2 text-sm font-extrabold text-slate-800 dark:text-zinc-200 uppercase tracking-widest mb-3">
+                                    <Award size={16} className="text-green-600 dark:text-emerald-500" />
+                                    Professional Memberships
+                                </h4>
+                                <div className="flex flex-col gap-3 bg-slate-50/80 dark:bg-zinc-800/50 border border-slate-100 dark:border-zinc-700/50 rounded-2xl p-5 shadow-sm">
+                                    {currentOfficer.professional_certificate && (
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-zinc-500">Certificates</span>
+                                            <span className="text-sm font-bold text-slate-700 dark:text-zinc-200">{currentOfficer.professional_certificate}</span>
+                                        </div>
+                                    )}
+                                    {currentOfficer.professional_certificate && currentOfficer.professional_bodies && (
+                                        <div className="h-[1px] w-full bg-slate-200/50 dark:bg-zinc-700/50" />
+                                    )}
+                                    {currentOfficer.professional_bodies && (
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] uppercase tracking-widest font-bold text-slate-400 dark:text-zinc-500">Professional Bodies</span>
+                                            <span className="text-sm font-bold text-slate-700 dark:text-zinc-200">{currentOfficer.professional_bodies}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
 
                         {/* About */}
                         <div className="mb-7">

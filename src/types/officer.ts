@@ -17,6 +17,9 @@ export interface Officer {
     instagram_url?: string;
     linkedin_url?: string;
     exco_portfolio?: string;
+    induction_year?: string;
+    professional_certificate?: string;
+    professional_bodies?: string;
     is_admin?: boolean;
     is_approved?: boolean;
     needs_password_change?: boolean;
