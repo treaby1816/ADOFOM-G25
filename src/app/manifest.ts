@@ -39,7 +39,6 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/screenshots/screen1.png',
         sizes: '472x1024',
         type: 'image/png',
-        // @ts-expect-error: form_factor is valid per W3C spec but not yet in Next.js types
         form_factor: 'narrow',
         label: 'ADOFOM Home Screen',
       },
@@ -47,7 +46,6 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/screenshots/screen2.png',
         sizes: '472x1024',
         type: 'image/png',
-        // @ts-expect-error: form_factor is valid per W3C spec but not yet in Next.js types
         form_factor: 'narrow',
         label: 'ADOFOM Leadership Directory',
       },
@@ -55,7 +53,6 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/screenshots/screen3.png',
         sizes: '472x1024',
         type: 'image/png',
-        // @ts-expect-error: form_factor is valid per W3C spec but not yet in Next.js types
         form_factor: 'narrow',
         label: 'ADOFOM Privacy Policy',
       },
