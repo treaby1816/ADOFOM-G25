@@ -94,9 +94,9 @@
       "form_factor": "narrow"
     },
     {
-      "src": "/screenshots/screenshot11.jpg",
+      "src": "/screenshots/screenshot11.png",
       "sizes": "1024x481",
-      "type": "image/jpeg",
+      "type": "image/png",
       "form_factor": "wide"
     }
   ]
