@@ -32,7 +32,7 @@ export default function Footer() {
                     </Link>
                     <span>&middot;</span>
                     <a
-                        href="https://treabyn.com"
+                        href="https://my-portfolio-v1-c1lt.vercel.app/"
                         target="_blank"
                         rel="noopener noreferrer nofollow"
                         className="text-emerald-600 dark:text-emerald-400 font-black tracking-wider hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"

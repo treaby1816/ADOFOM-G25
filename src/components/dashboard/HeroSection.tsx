@@ -21,10 +21,10 @@ export default function HeroSection({ totalOfficers, totalMdas }: HeroSectionPro
           </div>
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-[1.1] py-2 overflow-visible">
-          Administrative <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-100 drop-shadow-sm inline-block px-2 pb-2 -mx-2 -mb-2 overflow-visible">
-            Officers E-Platform
+        <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-[1.1] py-2 overflow-visible">
+          Administrative Officers <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-100 drop-shadow-sm inline-block px-2 pb-2 -mx-2 -mb-2 overflow-visible whitespace-nowrap text-4xl sm:text-5xl md:text-6xl">
+            E-Platform
           </span>
         </h1>
         

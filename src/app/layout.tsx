@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
   description: "Secure digital platform for the Administrative Officers' Forum, Ondo State. An independent initiative by Treabyn Inc. supporting cadre communication and directory access.",
   keywords: ["ADOFOM", "Ondo State", "Administrative Officers", "Cadre Directory", "Civil Service", "Nigeria", "Treabyn"],
-  authors: [{ name: "Treabyn Inc.", url: "https://treabyn.com" }],
+  authors: [{ name: "Treabyn Inc.", url: "https://my-portfolio-v1-c1lt.vercel.app/" }],
   creator: "Treabyn Inc.",
   openGraph: {
     type: "website",
