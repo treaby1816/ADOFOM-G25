@@ -36,8 +36,11 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Public routes that don't require authentication
-  const publicPaths = ['/', '/login', '/signup', '/auth/callback', '/pending-approval', '/reset-password']
-  const isPublicPath = publicPaths.includes(request.nextUrl.pathname)
+  const publicPaths = ['/', '/login', '/signup', '/auth/callback', '/pending-approval', '/reset-password', '/about', '/privacy-policy']
+  
+  // Also allow static PWA assets
+  const isPwaAsset = request.nextUrl.pathname.match(/\.(webmanifest|json|js|png|ico|svg|jpg)$/) || request.nextUrl.pathname.startsWith('/icons/');
+  const isPublicPath = publicPaths.includes(request.nextUrl.pathname) || isPwaAsset;
 
   if (!user && !isPublicPath) {
     // Redirect to login only if accessing a protected route
