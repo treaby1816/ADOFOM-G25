@@ -3,6 +3,8 @@
   "name": "ADOFOM E-PLATFORM",
   "short_name": "ADOFOM",
   "description": "Secure digital platform for the Administrative Officers Forum, Ondo State. An independent initiative by Treabyn Inc.",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -90,6 +92,12 @@
       "sizes": "613x1280",
       "type": "image/jpeg",
       "form_factor": "narrow"
+    },
+    {
+      "src": "/screenshots/screenshot11.jpg",
+      "sizes": "1024x481",
+      "type": "image/jpeg",
+      "form_factor": "wide"
     }
   ]
 }
