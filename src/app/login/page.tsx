@@ -8,6 +8,7 @@ import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff, Arrow
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
 const REMEMBER_ME_KEY = 'adofom_remember_email'
+const REMEMBER_ME_PWD_KEY = 'adofom_remember_pwd'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -22,12 +23,16 @@ export default function LoginPage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Restore saved email from localStorage
+    // Restore saved credentials from storage
     try {
       const savedEmail = localStorage.getItem(REMEMBER_ME_KEY)
+      const savedPwd = sessionStorage.getItem(REMEMBER_ME_PWD_KEY)
       if (savedEmail) {
         setEmail(savedEmail)
         setRememberMe(true)
+      }
+      if (savedPwd) {
+        setPassword(savedPwd)
       }
     } catch {}
 
@@ -85,12 +90,14 @@ export default function LoginPage() {
         return
       }
 
-      // Save or clear remembered email
+      // Save or clear remembered credentials
       try {
         if (rememberMe) {
           localStorage.setItem(REMEMBER_ME_KEY, email)
+          sessionStorage.setItem(REMEMBER_ME_PWD_KEY, password)
         } else {
           localStorage.removeItem(REMEMBER_ME_KEY)
+          sessionStorage.removeItem(REMEMBER_ME_PWD_KEY)
         }
       } catch {}
 
@@ -368,6 +375,9 @@ export default function LoginPage() {
                   <span className="text-xs font-medium text-slate-400 group-hover:text-slate-300 transition-colors">
                     Remember me
                   </span>
+                  {rememberMe && (
+                    <span className="text-[10px] font-bold text-yellow-500/70 ml-1">(email + password)</span>
+                  )}
                 </label>
 
                 <button
