@@ -17,9 +17,6 @@ export default function HeroSection({ totalOfficers, totalMdas }: HeroSectionPro
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-16 text-center w-full z-10">
         <div className="flex items-center justify-center gap-4 mb-8">
           <div className="w-20 h-20 rounded-full flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ backgroundColor: "white" }}>
-            <img src="/Ondo-Logo.png" alt="Ondo State" className="w-full h-full object-cover rounded-full bg-white" />
-          </div>
-          <div className="w-20 h-20 rounded-full flex items-center justify-center border border-white/20 shadow-2xl animate-float p-1 overflow-hidden" style={{ backgroundColor: "white", animationDelay: "500ms" }}>
             <img src="/logo2.jpg" alt="Secondary Logo" className="w-full h-full object-cover rounded-full bg-white" />
           </div>
         </div>
@@ -27,7 +24,7 @@ export default function HeroSection({ totalOfficers, totalMdas }: HeroSectionPro
         <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-6 leading-[1.1] py-2 overflow-visible">
           Administrative <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-green-200 to-teal-100 drop-shadow-sm inline-block px-2 pb-2 -mx-2 -mb-2 overflow-visible">
-            Officers Directory
+            Officers E-Platform
           </span>
         </h1>
         

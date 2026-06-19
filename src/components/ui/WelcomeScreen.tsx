@@ -82,7 +82,7 @@ export default function WelcomeScreen() {
 
         <div className="max-w-xl w-full space-y-4 md:space-y-8 z-10 text-center md:text-left">
           {/* Logo Section */}
-          <div className="flex justify-center items-center gap-4 md:gap-8 w-full">
+          <div className="flex justify-center md:justify-start items-center gap-4 md:gap-8 w-full">
             {/* Logo 1: ADOFOM */}
             <div className="relative group">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-yellow-400 via-yellow-600 to-emerald-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 animate-pulse" />
@@ -90,19 +90,6 @@ export default function WelcomeScreen() {
                 <Image 
                   src="/logo2.jpg" 
                   alt="ADOFOM Official Logo" 
-                  fill
-                  className="object-cover transform group-hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-            </div>
-
-            {/* Logo 2: Ondo State Seal */}
-            <div className="relative group">
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-emerald-500 via-green-600 to-yellow-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 animate-pulse delay-700" />
-              <div className="relative w-14 h-14 md:w-28 md:h-28 rounded-full shadow-xl overflow-hidden border border-white/20 animate-float bg-white/5 backdrop-blur-sm" style={{ animationDelay: "1s" }}>
-                <Image 
-                  src="/ondo-seal.png" 
-                  alt="Ondo State Seal" 
                   fill
                   className="object-cover transform group-hover:scale-105 transition-transform duration-700"
                 />

@@ -164,7 +164,7 @@ export default function NotificationBell({
                     {/* Footer */}
                     <div className="bg-slate-50 dark:bg-zinc-800/50 px-4 py-3 text-center border-t border-slate-200 dark:border-zinc-800">
                         <p className="text-xs text-slate-500 dark:text-zinc-400 font-medium">
-                            Ondo State Admin Directory
+                            ADOFOM E-Platform
                         </p>
                     </div>
                 </div>

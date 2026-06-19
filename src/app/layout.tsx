@@ -8,36 +8,35 @@ import { Toaster } from "sonner";
 import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://adofom.vercel.app"),
+  metadataBase: new URL("https://www.adofom.com.ng"),
   title: {
-    default: "Ondo State Admin Directory",
-    template: "%s | ADOFOM Portal"
+    default: "ADOFOM E-Platform",
+    template: "%s | ADOFOM"
   },
-  description: "Official staff directory for the Ondo State Administrative Officers Cadre. Browse profiles, contact officers, and celebrate birthdays with professional excellence.",
-  keywords: ["Ondo State", "Admin Directory", "Administrative Officers", "ADOFOM", "Civil Service", "Nigeria"],
-  authors: [{ name: "Ondo State Government" }],
-  creator: "Ondo State Administrative Officers Cadre",
+  description: "Secure digital platform for the Administrative Officers' Forum, Ondo State. An independent initiative by Treabyn Inc. supporting cadre communication and directory access.",
+  keywords: ["ADOFOM", "Ondo State", "Administrative Officers", "Cadre Directory", "Civil Service", "Nigeria", "Treabyn"],
+  authors: [{ name: "Treabyn Inc.", url: "https://treabyn.com" }],
+  creator: "Treabyn Inc.",
   openGraph: {
     type: "website",
     locale: "en_NG",
-    url: "https://directory.ondostate.gov.ng",
-    title: "Ondo State Administrative Officers Directory",
-    description: "The official portal for the Administrative Officers Cadre. Discover, connect, and collaborate with excellence.",
-    siteName: "ADOFOM Portal",
+    url: "https://www.adofom.com.ng",
+    title: "ADOFOM E-Platform",
+    description: "Secure platform for the Administrative Officers\' Forum, Ondo State. An independent initiative by Treabyn Inc.",
+    siteName: "ADOFOM E-Platform",
     images: [{
       url: "/logo2.jpg",
       width: 800,
       height: 600,
-      alt: "Ondo State Administrative Officers Directory Logo",
+      alt: "ADOFOM E-Platform Logo",
     }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ondo State Admin Directory",
-    description: "Official staff directory for the Ondo State Administrative Officers Cadre.",
+    title: "ADOFOM E-Platform",
+    description: "Secure cadre directory and communication platform for Ondo State Administrative Officers. Independent initiative by Treabyn Inc.",
     images: ["/logo2.jpg"],
   },
-  manifest: "/manifest.json",
   icons: {
     icon: "/favicon.ico",
     apple: "/icons/icon-192.png",
@@ -61,7 +60,7 @@ export default function RootLayout({
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="manifest" href="/manifest.webmanifest" />
       </head>
       <body 
         className="antialiased min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors duration-300 selection:bg-emerald-500/30 selection:text-emerald-900 dark:selection:text-emerald-100"

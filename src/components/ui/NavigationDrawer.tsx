@@ -489,6 +489,33 @@ export default function NavigationDrawer({ isAdmin: isAdminProp, officers, filte
                 {/* Divider */}
                 <div className="h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-4" />
 
+                {/* Legal / Info */}
+                <div className="px-4 py-3 space-y-2">
+                    <Link
+                        href="/about"
+                        onClick={() => setIsOpen(false)}
+                        className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/5 transition-all duration-200 group"
+                    >
+                        <div className="p-1.5 bg-white/5 group-hover:bg-white/10 rounded-lg transition-colors">
+                            <Info size={14} className="text-white/60 group-hover:text-white" />
+                        </div>
+                        <span className="text-xs font-medium">About ADOFOM</span>
+                    </Link>
+                    <Link
+                        href="/privacy-policy"
+                        onClick={() => setIsOpen(false)}
+                        className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/5 transition-all duration-200 group"
+                    >
+                        <div className="p-1.5 bg-white/5 group-hover:bg-white/10 rounded-lg transition-colors">
+                            <ShieldCheck size={14} className="text-white/60 group-hover:text-white" />
+                        </div>
+                        <span className="text-xs font-medium">Privacy Policy</span>
+                    </Link>
+                </div>
+
+                {/* Divider */}
+                <div className="h-px bg-gradient-to-r from-transparent via-white/15 to-transparent mx-4" />
+
                 {/* Sign Out */}
                 <div className="p-3">
                     <button
