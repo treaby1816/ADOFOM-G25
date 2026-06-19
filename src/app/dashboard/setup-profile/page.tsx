@@ -396,7 +396,7 @@ export default function SetupProfilePage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                       <Award size={14} /> Professional Certificate (Optional)
@@ -407,22 +407,24 @@ export default function SetupProfilePage() {
                       value={formData.professional_certificate}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
-                      placeholder="e.g. CIPM, ICAN"
+                      placeholder="e.g. CIPM, ICAN, ACCA, COREN"
                     />
+                    <p className="text-[10px] text-slate-500">Acronyms accepted — separate multiple certificates with commas</p>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                       <Briefcase size={14} /> Professional Bodies (Optional)
                     </label>
-                    <input
-                      type="text"
+                    <textarea
                       name="professional_bodies"
+                      rows={3}
                       value={formData.professional_bodies}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500"
-                      placeholder="e.g. NIM, CIPM"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white placeholder-slate-500 resize-none outline-none"
+                      placeholder="e.g. Nigerian Institute of Management, Chartered Institute of Personnel Management of Nigeria"
                     />
+                    <p className="text-[10px] text-slate-500">Use full body name — separate multiple bodies with commas</p>
                   </div>
                 </div>
 

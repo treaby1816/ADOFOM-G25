@@ -438,13 +438,15 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                             <label className={labelClass}>
                                 <Award size={12} className="text-emerald-500" /> Professional Certificate (Optional)
                             </label>
-                            <input type="text" {...register("professional_certificate")} className={inputClass} placeholder="e.g. CIPM, ICAN" />
+                            <input type="text" {...register("professional_certificate")} className={inputClass} placeholder="e.g. CIPM, ICAN, ACCA, COREN" />
+                            <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-1">Acronyms accepted — separate with commas</p>
                         </div>
                         <div>
                             <label className={labelClass}>
                                 <Briefcase size={12} className="text-emerald-500" /> Professional Bodies (Optional)
                             </label>
-                            <input type="text" {...register("professional_bodies")} className={inputClass} placeholder="e.g. NIM, CIPM" />
+                            <textarea {...register("professional_bodies")} className={`${inputClass} resize-none h-20`} placeholder="e.g. Nigerian Institute of Management, Chartered Institute of Personnel Management of Nigeria" />
+                            <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-1">Full body name — separate multiple with commas</p>
                         </div>
                     </div>
                     
