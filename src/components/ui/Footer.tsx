@@ -31,14 +31,11 @@ export default function Footer() {
                         Privacy Policy
                     </Link>
                     <span>&middot;</span>
-                    <a
-                        href="https://my-portfolio-v1-c1lt.vercel.app/"
-                        target="_blank"
-                        rel="noopener noreferrer nofollow"
-                        className="text-emerald-600 dark:text-emerald-400 font-black tracking-wider hover:text-emerald-700 dark:hover:text-emerald-300 transition-colors"
+                    <span
+                        className="text-emerald-600 dark:text-emerald-400 font-black tracking-wider transition-colors"
                     >
                         Treabyn Inc
-                    </a>
+                    </span>
                 </div>
             </div>
         </footer>
