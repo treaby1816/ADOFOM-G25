@@ -82,7 +82,7 @@ export default function WelcomeScreen() {
 
         <div className="max-w-xl w-full space-y-4 md:space-y-8 z-10 text-center md:text-left">
           {/* Logo Section */}
-          <div className="flex justify-center md:justify-start items-center gap-4 md:gap-8 w-full">
+          <div className="flex justify-center items-center gap-4 md:gap-8 w-full">
             {/* Logo 1: ADOFOM */}
             <div className="relative group">
               <div className="absolute -inset-1.5 bg-gradient-to-r from-yellow-400 via-yellow-600 to-emerald-500 rounded-full blur opacity-30 group-hover:opacity-60 transition duration-1000 animate-pulse" />
