@@ -111,12 +111,18 @@ export default function SignupPage() {
         // - Creates a new profile for unknown emails
         // We just need to decide where to redirect.
 
+        // If Email Confirmation is turned ON in Supabase, data.session will be null
+        if (!data.session) {
+          setMessage({ type: 'success', text: 'Registration successful! Please check your email inbox (and spam folder) to confirm your account before logging in.' });
+          return;
+        }
+
         if (isApprovedOfficer) {
           setMessage({ type: 'success', text: 'Welcome back! Redirecting to Dashboard...' });
-          setTimeout(() => router.push('/'), 1500);
+          setTimeout(() => window.location.href = '/', 1500);
         } else {
           setMessage({ type: 'success', text: 'Account created! Setting up your profile...' });
-          setTimeout(() => router.push('/dashboard/setup-profile'), 1500);
+          setTimeout(() => window.location.href = '/dashboard/setup-profile', 1500);
         }
       }
     } catch (err: any) {
