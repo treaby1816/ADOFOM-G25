@@ -1,7 +1,7 @@
 // Service Worker — ADOFOM E-Platform
 // Cache-first strategy with offline fallback
 
-const CACHE_NAME = 'adofom-v1';
+const CACHE_NAME = 'adofom-v2';
 const OFFLINE_URL = '/offline.html';
 const PRECACHE_URLS = [
   '/',
