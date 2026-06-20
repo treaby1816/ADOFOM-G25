@@ -51,6 +51,8 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
+import CustomSplashScreen from "@/components/ui/CustomSplashScreen";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -67,6 +69,7 @@ export default function RootLayout({
         className="antialiased min-h-screen bg-slate-50 dark:bg-zinc-950 text-slate-900 dark:text-zinc-100 transition-colors duration-300 selection:bg-emerald-500/30 selection:text-emerald-900 dark:selection:text-emerald-100"
         suppressHydrationWarning
       >
+        <CustomSplashScreen />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange={false}>
           <AuthGuardLayout>
             <div className="flex flex-col min-h-screen">
