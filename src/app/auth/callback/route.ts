@@ -62,8 +62,9 @@ export async function GET(request: Request) {
       }
     }
     
-    // Redirect to the root directory
-    return NextResponse.redirect(`${origin}/`)
+    // Redirect to the requested path or root directory
+    const next = searchParams.get('next') || '/'
+    return NextResponse.redirect(`${origin}${next}`)
   }
 
   // return the user to an error page with some instructions
