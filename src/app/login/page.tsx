@@ -135,8 +135,7 @@ export default function LoginPage() {
 
       // 3. All clear → Main directory
       setMessage({ type: 'success', text: 'Login successful. Redirecting...' })
-      router.push('/')
-      router.refresh()
+      window.location.href = '/'
 
     } catch (err: any) {
       console.error('Login Handler Error:', err)
