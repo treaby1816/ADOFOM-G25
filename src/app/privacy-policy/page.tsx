@@ -41,43 +41,47 @@ export default function PrivacyPolicyPage() {
               body: 'The App is designed to provide secure access to an administrative officers\u2019 directory, support internal communication within the cadre, facilitate professional networking among members, and offer authenticated access to cadre-related information.'
             },
             {
-              num: '3', title: 'User Accounts and Authentication',
+              num: '3', title: 'Account Registration and Verification',
+              body: 'Access to certain features of the App requires users to create an account by providing information such as: Full Name, Email Address, Phone Number, Ministry/Department, and other professional details required for verification. All registration requests are subject to administrative review and approval. Information submitted during registration is used solely for identity verification, account management, and platform access control. Account activation is not automatic — it is granted only after confirmation by the platform administrator, in order to maintain the integrity and security of the cadre community.'
+            },
+            {
+              num: '4', title: 'User Accounts and Authentication',
               body: 'The App uses Supabase for secure login and authentication. When users register or log in, the App may collect and process: full name, email address, username or staff identifier, and password (stored securely using industry-standard encryption). Passwords are never stored in plain text. Login activity (such as timestamps) may be logged for security purposes.'
             },
             {
-              num: '4', title: 'Information Displayed in the App',
+              num: '5', title: 'Information Displayed in the App',
               body: 'Depending on your access level, the App may display professional directory information including: names of administrative officers, job titles and designations, ministries/departments or units, official office contact numbers, official email addresses, and profile photographs (if provided or authorised). This information is used strictly for professional and administrative networking within the cadre.'
             },
             {
-              num: '5', title: 'Data Collection and Usage',
+              num: '6', title: 'Data Collection and Usage',
               body: 'The App collects only the information necessary to create and manage authenticated user accounts, provide secure login access, display relevant directory information, and improve internal communication among members. The App does not collect unnecessary personal data and does not track users for advertising or commercial purposes.'
             },
             {
-              num: '6', title: 'Data Storage and Security',
+              num: '7', title: 'Data Storage and Security',
               body: 'We implement robust technical safeguards including encrypted password storage, secure authentication systems, and Row Level Security (RLS) to control access to directory data. While we strive to protect your personal information, no digital system is completely secure, and we cannot guarantee absolute protection against unauthorised access.'
             },
             {
-              num: '7', title: 'Data Sharing',
+              num: '8', title: 'Data Sharing',
               body: 'The App does not sell, rent, or trade user data. Information is only accessible to authorised, logged-in users within the platform and is used strictly for cadre-related communication. We do not share personal data with third-party advertisers or data brokers.'
             },
             {
-              num: '8', title: 'Data Source and Accuracy',
+              num: '9', title: 'Data Source and Accuracy',
               body: 'Information displayed in the App may be sourced from internal administrative records, official cadre listings, or verified contributions directly from members. We strive to ensure accuracy but do not guarantee that all directory information is always current or error-free.'
             },
             {
-              num: '9', title: 'Third-Party Services',
+              num: '10', title: 'Third-Party Services',
               body: 'The App does not intentionally use third-party advertising or analytics services. If such services are introduced in future updates, this Privacy Policy will be amended accordingly.'
             },
             {
-              num: '10', title: 'User Rights',
+              num: '11', title: 'User Rights',
               body: 'Users maintain the right to request access to their personal account information, request correction of inaccurate directory data, and request deletion of their account (subject to administrative requirements). Requests can be made via the contact information below.'
             },
             {
-              num: '11', title: 'Consent',
+              num: '12', title: 'Consent',
               body: 'By creating an account or using the App, you agree to the terms outlined in this Privacy Policy. If you do not agree, you should not use the App.'
             },
             {
-              num: '12', title: 'Changes to This Privacy Policy',
+              num: '13', title: 'Changes to This Privacy Policy',
               body: 'This Privacy Policy may be updated from time to time. Updates will be posted within the App and on its official hosting page.'
             },
           ].map(({ num, title, body }) => (

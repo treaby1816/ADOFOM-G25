@@ -4,8 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import {
     X, Save, Loader2, Camera, User, Briefcase,
-    MapPin, Cake, Heart, Phone, Mail, Award, FileText, CheckCircle2,
-    Facebook, Twitter, Instagram, Share2
+    MapPin, Cake, Heart, Phone, Award, FileText, CheckCircle2,
+    Facebook, Twitter, Instagram, Share2, Link as LinkIcon
 } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { createClient } from "@/utils/supabase/client";
@@ -38,6 +38,7 @@ interface ProfileFormValues {
     induction_year?: string;
     professional_certificate?: string;
     professional_bodies?: string;
+    portfolio_url?: string;
 }
 
 export default function EditProfileFormModal({ officer, onSave, onClose }: EditProfileFormModalProps) {
@@ -60,6 +61,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
             induction_year: officer.induction_year || "",
             professional_certificate: officer.professional_certificate || "",
             professional_bodies: officer.professional_bodies || "",
+            portfolio_url: officer.portfolio_url || "",
         }
     });
 
@@ -228,6 +230,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 induction_year: data.induction_year?.trim() || "",
                 professional_certificate: data.professional_certificate?.trim() || "",
                 professional_bodies: data.professional_bodies?.trim() || "",
+                portfolio_url: data.portfolio_url?.trim() || "",
             };
 
 
@@ -448,6 +451,14 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                             <textarea {...register("professional_bodies")} className={`${inputClass} resize-none h-20`} placeholder="e.g. Nigerian Institute of Management, Chartered Institute of Personnel Management of Nigeria" />
                             <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-1">Full body name — separate multiple with commas</p>
                         </div>
+                    </div>
+
+                    <div>
+                        <label className={labelClass}>
+                            <LinkIcon size={12} className="text-emerald-500" /> Portfolio / Personal Website (Optional)
+                        </label>
+                        <input type="url" {...register("portfolio_url")} className={inputClass} placeholder="https://yourportfolio.com or LinkedIn, GitHub, etc." />
+                        <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-1">Link to your professional portfolio, personal site, or work profile</p>
                     </div>
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

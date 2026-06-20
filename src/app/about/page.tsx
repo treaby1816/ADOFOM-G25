@@ -80,6 +80,20 @@ export default function AboutPage() {
           </ul>
         </div>
 
+        {/* Access & Registration */}
+        <div className="bg-white dark:bg-zinc-900 rounded-[2rem] border border-slate-200 dark:border-zinc-800 shadow-lg p-8 space-y-3">
+          <h2 className="text-xl font-black text-slate-800 dark:text-zinc-100">Access & Registration</h2>
+          <div className="flex gap-3 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/50 rounded-2xl p-4">
+            <Lock className="text-emerald-600 dark:text-emerald-400 mt-0.5 flex-shrink-0" size={18} />
+            <p className="text-sm text-slate-700 dark:text-zinc-300 leading-relaxed">
+              Access to the <strong>ADOFOM E-PLATFORM</strong> is restricted to authorized users.
+              New users may register through the platform, but account activation is subject to
+              <strong> administrative review and approval</strong> to maintain the integrity and
+              security of the community.
+            </p>
+          </div>
+        </div>
+
         {/* Key Features */}
         <div className="bg-white dark:bg-zinc-900 rounded-[2rem] border border-slate-200 dark:border-zinc-800 shadow-lg p-8 space-y-4">
           <h2 className="text-xl font-black text-slate-800 dark:text-zinc-100">Key Features</h2>

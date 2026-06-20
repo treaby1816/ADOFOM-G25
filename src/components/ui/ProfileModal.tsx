@@ -1,6 +1,6 @@
 "use client";
 
-import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award, Pencil, Eye, Facebook, Twitter, Instagram } from "lucide-react";
+import { Phone, Mail, MessageCircle, X, Briefcase, MapPin, Cake, Heart, Award, Pencil, Eye, Facebook, Twitter, Instagram, ExternalLink } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
@@ -284,6 +284,22 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                                         </div>
                                     )}
                                 </div>
+                            </div>
+                        )}
+
+                        {/* Portfolio Link */}
+                        {currentOfficer.portfolio_url && (
+                            <div className="mb-7">
+                                <a
+                                    href={currentOfficer.portfolio_url.startsWith('http') ? currentOfficer.portfolio_url : `https://${currentOfficer.portfolio_url}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-3 w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-green-500 hover:from-emerald-500 hover:to-green-400 text-white font-bold text-sm shadow-md hover:shadow-lg hover:shadow-emerald-500/30 hover:-translate-y-1 active:scale-95 transition-all duration-300"
+                                    title="View Portfolio"
+                                >
+                                    <ExternalLink size={16} />
+                                    View Professional Portfolio
+                                </a>
                             </div>
                         )}
 

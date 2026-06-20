@@ -7,7 +7,6 @@ import Link from "next/link";
 import { normalizeLGA, normalizeMDA, formatBirthday } from "@/lib/dataConsolidation";
 import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
 import { Officer } from "@/types/officer";
-import { cookies } from "next/headers";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -18,15 +17,13 @@ export default async function DashboardPage(props: {
     const searchParams = (props.searchParams ? await props.searchParams : {}) || {};
     const supabase = await createClient();
 
-    // 1. Auth check
+    // 1. Auth check — always use getUser() as single source of truth
+    // Never rely on cookies alone: they can linger after sign-out and cause
+    // blank personalized dashboard bug on Android and Desktop.
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError) console.warn("Auth error:", authError.message);
 
-    // Determine if it's a completely unauthenticated cold load
-    const cookieStore = await cookies();
-    const hasAuthCookie = cookieStore.getAll().some(c => c.name.includes('-auth-token'));
-
-    if (!user && !hasAuthCookie) {
+    if (!user) {
       return (
         <div className="animate-fade-in">
           <WelcomeScreen />

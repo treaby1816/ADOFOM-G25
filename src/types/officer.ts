@@ -20,6 +20,7 @@ export interface Officer {
     induction_year?: string;
     professional_certificate?: string;
     professional_bodies?: string;
+    portfolio_url?: string;
     is_admin?: boolean;
     is_approved?: boolean;
     needs_password_change?: boolean;

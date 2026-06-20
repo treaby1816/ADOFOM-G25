@@ -6,12 +6,8 @@ import { createClient } from "@/utils/supabase/client";
 import SplashScreen from "@/components/ui/SplashScreen";
 
 export default function AuthGuardLayout({ children }: { children: React.ReactNode }) {
-  // If auth cookie exists, skip loading/splash — render immediately
-  const hasAuthCookie = typeof window !== 'undefined' && (() => {
-    try { return document.cookie.includes('-auth-token'); } catch { return false; }
-  })();
-  const [loading, setLoading] = useState(!hasAuthCookie);
-  const [showSplash, setShowSplash] = useState(!hasAuthCookie);
+  const [loading, setLoading] = useState(true);
+  const [showSplash, setShowSplash] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   const supabase = createClient();
