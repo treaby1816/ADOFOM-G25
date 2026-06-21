@@ -29,7 +29,12 @@ export async function GET(request: Request) {
     )
     
     // IMPORTANT: Wait for the session to be established and cookies written
-    const { data: { user } } = await supabase.auth.exchangeCodeForSession(code)
+    const { data: { user }, error } = await supabase.auth.exchangeCodeForSession(code)
+    
+    if (error) {
+      console.error("Auth Callback Error:", error.message)
+      return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(error.message)}`)
+    }
     
     if (user?.email) {
       const email = user.email.toLowerCase()
