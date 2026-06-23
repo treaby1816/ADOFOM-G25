@@ -94,10 +94,13 @@ export default function DashboardClient({
     return initialBirthdayOfficers.filter(o => !dismissedIds.includes(o.id));
   });
 
-  // Sync search input with URL if URL changes externally
+  // Sync search input with URL if URL changes externally (e.g. browser back button or clear filters)
+  // This prevents the "cursor jumping" bug where typing is interrupted by the server echoing the query back.
   useEffect(() => {
-    setSearchInput(queryParam);
-  }, [queryParam]);
+    if (queryParam !== debouncedSearch) {
+      setSearchInput(queryParam || "");
+    }
+  }, [queryParam, debouncedSearch]);
 
   // When props change (Server Component re-rendered), update local state
   useEffect(() => {
