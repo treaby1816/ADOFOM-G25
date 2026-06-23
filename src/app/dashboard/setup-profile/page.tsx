@@ -344,7 +344,9 @@ export default function SetupProfilePage() {
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
                     >
                       <option value="" className="bg-slate-900">Select Level</option>
-                      {Array.from({ length: 10 }, (_, i) => String(i + 8).padStart(2, '0')).map(level => (
+                      {Array.from({ length: 10 }, (_, i) => String(i + 8).padStart(2, '0'))
+                        .filter(level => level !== '08' && level !== '11')
+                        .map(level => (
                         <option key={level} value={`GL ${level}`} className="bg-slate-900">GL {level}</option>
                       ))}
                       <option value="Retired" className="bg-slate-900 text-yellow-500 font-bold">Retired</option>
@@ -363,7 +365,7 @@ export default function SetupProfilePage() {
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
                     >
                       <option value="" className="bg-slate-900">Select Year</option>
-                      {Array.from({ length: 41 }, (_, i) => String(2040 - i)).map(year => (
+                      {Array.from({ length: 2026 - 1960 + 1 }, (_, i) => String(2026 - i)).map(year => (
                         <option key={year} value={year} className="bg-slate-900">{year} Set</option>
                       ))}
                     </select>

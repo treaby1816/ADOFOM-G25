@@ -23,13 +23,9 @@ export default function InstallPWA() {
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIOS(isIosDevice);
 
-    // If iOS and not installed, show custom prompt after a delay
-    if (isIosDevice && !isAppStandalone) {
-      const hasDismissed = localStorage.getItem("adofom_pwa_dismissed");
-      if (!hasDismissed) {
-        setTimeout(() => setIsVisible(true), 3000);
-      }
-    }
+    // iOS does not support programmatic install prompts. 
+    // Showing a popup with a fake button causes user confusion, so we disable it for iOS completely.
+    if (isIosDevice) return;
 
     // Android / Chrome - Listen for native prompt
     const handler = (e: Event) => {
