@@ -49,11 +49,28 @@ export default function InstallPWA() {
   }, []);
 
   const onClickInstall = async () => {
-    if (!promptInstall) return;
-    promptInstall.prompt();
-    const { outcome } = await promptInstall.userChoice;
-    if (outcome === "accepted") {
+    if (!promptInstall) {
       setIsVisible(false);
+      return;
+    }
+
+    try {
+      // Show the native prompt synchronously during the user gesture
+      promptInstall.prompt();
+      
+      // Wait for the user to respond to the prompt
+      const { outcome } = await promptInstall.userChoice;
+      
+      // Regardless of outcome (accepted or dismissed), hide the custom banner
+      setIsVisible(false);
+      
+      // The beforeinstallprompt event can only be used once
+      setPromptInstall(null);
+    } catch (err) {
+      console.error("PWA Install error:", err);
+      // If the prompt fails (e.g. was already consumed), hide our custom banner so it isn't stuck
+      setIsVisible(false);
+      setPromptInstall(null);
     }
   };
 
