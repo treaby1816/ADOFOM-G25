@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useTransition } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import ProfileCard from "@/components/ui/ProfileCard";
 import ProfileModal from "@/components/ui/ProfileModal";
