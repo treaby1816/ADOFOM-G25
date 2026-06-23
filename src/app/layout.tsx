@@ -52,6 +52,7 @@ export const viewport: Viewport = {
 };
 
 import CustomSplashScreen from "@/components/ui/CustomSplashScreen";
+import InstallPWA from "@/components/ui/InstallPWA";
 
 export default function RootLayout({
   children,
@@ -80,6 +81,7 @@ export default function RootLayout({
             </div>
           </AuthGuardLayout>
         </ThemeProvider>
+        <InstallPWA />
         <Toaster richColors position="top-center" theme="dark" />
         <Analytics />
 
