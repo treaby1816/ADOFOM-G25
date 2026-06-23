@@ -84,6 +84,7 @@ export default function DashboardClient({
   // Local state for immediate UI feedback (search input)
   const [searchInput, setSearchInput] = useState(queryParam);
   const debouncedSearch = useDebounce(searchInput, 500);
+  const lastPushedSearch = useRef(queryParam);
 
   const [officers, setOfficers] = useState<Officer[]>(initialOfficers);
   const [allOfficers, setAllOfficers] = useState<Officer[]>(initialAllOfficers);
@@ -97,10 +98,11 @@ export default function DashboardClient({
   // Sync search input with URL if URL changes externally (e.g. browser back button or clear filters)
   // This prevents the "cursor jumping" bug where typing is interrupted by the server echoing the query back.
   useEffect(() => {
-    if (queryParam !== debouncedSearch) {
+    if (queryParam !== lastPushedSearch.current) {
       setSearchInput(queryParam || "");
+      lastPushedSearch.current = queryParam || "";
     }
-  }, [queryParam, debouncedSearch]);
+  }, [queryParam]);
 
   // When props change (Server Component re-rendered), update local state
   useEffect(() => {
@@ -138,7 +140,8 @@ export default function DashboardClient({
 
   // Handle debounced search
   useEffect(() => {
-    if (debouncedSearch !== queryParam) {
+    if (debouncedSearch !== queryParam && debouncedSearch !== lastPushedSearch.current) {
+      lastPushedSearch.current = debouncedSearch;
       updateFilters({ q: debouncedSearch });
     }
   }, [debouncedSearch, queryParam, updateFilters]);
