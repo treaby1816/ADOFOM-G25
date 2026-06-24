@@ -441,14 +441,9 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                         </div>
                         <div>
                             <label className={labelClass}>
-                                <MapPin size={12} className="text-emerald-500" /> Local Government (LGA)
+                                <MapPin size={12} className="text-emerald-500" /> LGA <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>
                             </label>
-                            <select {...register("lga")} className={`${inputClass} appearance-none`}>
-                                <option value="">-- Select LGA --</option>
-                                {ONDO_LGAS.map(lga => (
-                                    <option key={lga} value={lga}>{lga}</option>
-                                ))}
-                            </select>
+                            <input type="text" {...register("lga")} readOnly className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50 dark:bg-zinc-800/50`} />
                         </div>
                     </div>
 
