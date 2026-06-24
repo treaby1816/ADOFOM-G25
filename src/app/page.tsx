@@ -67,8 +67,8 @@ export default async function DashboardPage(props: {
 
     const [profileResult, globalResult, bdayResult] = await Promise.all([
       user ? supabase.from("administrative_officers").select("id, is_admin, is_approved").eq("id", user.id).maybeSingle() : Promise.resolve({ data: null }),
-      supabase.from("administrative_officers").select("*").limit(2000), 
-      supabase.from("administrative_officers").select("*").or(bdayOrFilter)
+      supabase.from("administrative_officers").select("*").eq("is_approved", true).limit(2000),
+      supabase.from("administrative_officers").select("*").eq("is_approved", true).or(bdayOrFilter)
     ]);
 
     const allOfficers = (globalResult.data || []) as Officer[];
@@ -85,7 +85,7 @@ export default async function DashboardPage(props: {
     }
 
     // 4. Server-side Query for Main Grid Data
-    let query = supabase.from("administrative_officers").select("*", { count: "exact" });
+    let query = supabase.from("administrative_officers").select("*", { count: "exact" }).eq("is_approved", true);
 
     if (queryParam) {
       query = query.ilike("full_name", `%${queryParam}%`);
