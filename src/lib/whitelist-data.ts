@@ -1,6 +1,6 @@
 export const WHITELIST_OFFICERS: Record<string, any> = {
   "olubisosea@gmail.com": {
-    "full_name": "Olubisose Afolabi",
+    "full_name": "OLUBISOSE, Afolabi",
     "email_address": "olubisosea@gmail.com",
     "phone_number": "2348111119726",
     "current_mda": "Ministry of Economic planning and budget",
@@ -9,7 +9,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "pelumifakinlede@outlook.com": {
-    "full_name": "Fakinlede Pelumi Seun",
+    "full_name": "FAKINLEDE, Pelumi",
     "email_address": "pelumifakinlede@outlook.com",
     "phone_number": "2347030899505",
     "current_mda": "Hospital Management Board",
@@ -144,7 +144,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "nittygirl4real@gmail.com": {
-    "full_name": "Oladure  Olanireti Folake",
+    "full_name": "OLADURE, Olanireti Folake",
     "email_address": "nittygirl4real@gmail.com",
     "phone_number": "2348061665905",
     "current_mda": "Subeb",
@@ -307,7 +307,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "alabimayode999@gmail.com": {
-    "full_name": "Alabi Oluwamayode Oluwakemi",
+    "full_name": "ALABI, Oluwamayode Oluwakemi",
     "email_address": "alabimayode999@gmail.com",
     "phone_number": "2347066030391",
     "current_mda": "SUBEB",
@@ -460,7 +460,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ebikedasanami@gmail.com": {
-    "full_name": "Sanami Ebikeda",
+    "full_name": "SANAMI, Ebikeda",
     "email_address": "ebikedasanami@gmail.com",
     "phone_number": "2349034646815",
     "current_mda": "Ministry of Information and Orientation",
@@ -523,7 +523,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "fagbaanu@gmail.com": {
-    "full_name": "Fagbamila, Aanuoluwapo Opeyemi",
+    "full_name": "FAGBAMILA, Aanuoluwapo",
     "email_address": "fagbaanu@gmail.com",
     "phone_number": "2349036511970",
     "current_mda": "Ministry of Lands and Housing",
@@ -685,7 +685,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "debayodan@gmail.com": {
-    "full_name": "Adebayo Daniel Olorunyomi",
+    "full_name": "ADEBAYO, Daniel",
     "email_address": "debayodan@gmail.com",
     "phone_number": "2347062410670",
     "current_mda": "Budget Office",
@@ -739,7 +739,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "chencocomputers17@gmail.com": {
-    "full_name": "Omore Olumide Victor",
+    "full_name": "OMORE, Olumide Victor",
     "email_address": "chencocomputers17@gmail.com",
     "phone_number": "2347031970904",
     "current_mda": "Ondo State Hospitals Management Board",
@@ -861,7 +861,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
   }
 ,
   "samolade2003@gmail.com": {
-    "full_name": "Ogunlade Samuel Somo",
+    "full_name": "OGUNLADE, Samuel Somo",
     "email_address": "samolade2003@gmail.com",
     "is_approved": false
   },
@@ -871,17 +871,17 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "natorogun@gmail.com": {
-    "full_name": "OROGUN Nathaniel",
+    "full_name": "OROGUN, Nathaniel",
     "email_address": "natorogun@gmail.com",
     "is_approved": false
   },
   "bidemi.nelson@gmail.com": {
-    "full_name": "Familoni Nelson Abidemi",
+    "full_name": "FAMILONI, Nelson Abidemi",
     "email_address": "bidemi.nelson@gmail.com",
     "is_approved": false
   },
   "adeteye2015@gmail.com": {
-    "full_name": "oshodi Michael Adeteye",
+    "full_name": "OSHODI, Michael Adeteye",
     "email_address": "adeteye2015@gmail.com",
     "is_approved": false
   },
@@ -891,12 +891,12 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "riccardo2k6@gmail.com": {
-    "full_name": "Aina Richard",
+    "full_name": "AINA, Richard",
     "email_address": "riccardo2k6@gmail.com",
     "is_approved": false
   },
   "baloguntoyin07@gmail.com": {
-    "full_name": "Balogun, Stella Toyin",
+    "full_name": "BALOGUN, Stella Toyin",
     "email_address": "baloguntoyin07@gmail.com",
     "is_approved": false
   },
@@ -916,12 +916,12 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "ajibadeolakunle3@gmail.com": {
-    "full_name": "Ajibade Olakunle Bankole",
+    "full_name": "AJIBADE, Olakunle Bankole",
     "email_address": "ajibadeolakunle3@gmail.com",
     "is_approved": false
   },
   "foluksdarasimi@gmail.com": {
-    "full_name": "Foluke Seyi-Olakanye",
+    "full_name": "FOLUKE, Seyi-olakanye",
     "email_address": "foluksdarasimi@gmail.com",
     "is_approved": false
   },
@@ -931,12 +931,12 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "warrybae@gmail.com": {
-    "full_name": "Ojumu Blessing",
+    "full_name": "OJUMU, Blessing",
     "email_address": "warrybae@gmail.com",
     "is_approved": false
   },
   "olafisoyeo@gmail.com": {
-    "full_name": "Olafisoye Olawole",
+    "full_name": "OLAFISOYE, Olawole",
     "email_address": "olafisoyeo@gmail.com",
     "is_approved": false
   },
@@ -946,42 +946,42 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "bukolakomolafe789@gmail.com": {
-    "full_name": "Komolafe Bukola",
+    "full_name": "KOMOLAFE, Bukola",
     "email_address": "bukolakomolafe789@gmail.com",
     "is_approved": false
   },
   "akinolataiwo1001@gmail.com": {
-    "full_name": "AKINOLA Taiwo",
+    "full_name": "AKINOLA, Taiwo",
     "email_address": "akinolataiwo1001@gmail.com",
     "is_approved": false
   },
   "sheriffadeyemo@gmail.com": {
-    "full_name": "ADEYEMO Sheriff",
+    "full_name": "ADEYEMO, Sheriff",
     "email_address": "sheriffadeyemo@gmail.com",
     "is_approved": false
   },
   "michaelpeace2015@gmail.com": {
-    "full_name": "Afariogun Michael Olugbenga",
+    "full_name": "AFARIOGUN, Michael Olugbenga",
     "email_address": "michaelpeace2015@gmail.com",
     "is_approved": false
   },
   "adegokeabimbola90@gmail.com": {
-    "full_name": "Adegoke Folasade Abimbola Mrs",
+    "full_name": "ADEGOKE, Folasade Abimbola Mrs",
     "email_address": "adegokeabimbola90@gmail.com",
     "is_approved": false
   },
   "femiwebs1989@gmail.com": {
-    "full_name": "Edema John",
+    "full_name": "EDEMA, John",
     "email_address": "femiwebs1989@gmail.com",
     "is_approved": false
   },
   "bolajioke2@gmail.com": {
-    "full_name": "OBIDEYI,Stella Bolaji",
+    "full_name": "OBIDEYI, Stella Bolaji",
     "email_address": "bolajioke2@gmail.com",
     "is_approved": false
   },
   "aomolabake@gmail.com": {
-    "full_name": "ADEOLA Omolabake",
+    "full_name": "ADEOLA, Omolabake",
     "email_address": "aomolabake@gmail.com",
     "is_approved": false
   },
@@ -1016,17 +1016,17 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "edemakayode@gmail.com": {
-    "full_name": "Edema, Kayode Smart",
+    "full_name": "EDEMA, Kayode Smart",
     "email_address": "edemakayode@gmail.com",
     "is_approved": false
   },
   "jigbekele@gmail.com": {
-    "full_name": "Jatuwase Igbekele Hosea  Esq",
+    "full_name": "JATUWASE, Igbekele Hosea Esq",
     "email_address": "jigbekele@gmail.com",
     "is_approved": false
   },
   "frekolad25@gmail.com": {
-    "full_name": "Oladiran Fredrick Olawale",
+    "full_name": "OLADIRAN, Fredrick Olawale",
     "email_address": "frekolad25@gmail.com",
     "is_approved": false
   },
@@ -1036,7 +1036,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "dejiageh@yahoo.com": {
-    "full_name": "AGEH Ayodeji",
+    "full_name": "AGEH, Ayodeji",
     "email_address": "dejiageh@yahoo.com",
     "is_approved": false
   },
@@ -1051,62 +1051,62 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "foldara@gmail.com": {
-    "full_name": "Tunde-Daramola Foluke",
+    "full_name": "TUNDE-DARAMOLA, Foluke",
     "email_address": "foldara@gmail.com",
     "is_approved": false
   },
   "akinyeleoluwatosin1996@gmail.com": {
-    "full_name": "Akinyele Oluwatosin",
+    "full_name": "AKINYELE, Oluwatosin",
     "email_address": "akinyeleoluwatosin1996@gmail.com",
     "is_approved": false
   },
   "bukieadetan1@gmail.com": {
-    "full_name": "Adetan Olubukola Ibironke",
+    "full_name": "ADETAN, Olubukola Ibironke",
     "email_address": "bukieadetan1@gmail.com",
     "is_approved": false
   },
   "donfemiobideyi@gmail.com": {
-    "full_name": "Obideyi, Olufemi",
+    "full_name": "OBIDEYI, Olufemi",
     "email_address": "donfemiobideyi@gmail.com",
     "is_approved": false
   },
   "ajibolaabidakun@mail.com": {
-    "full_name": "AJIBOLA,ABIDAKUN",
+    "full_name": "AJIBOLA, Abidakun",
     "email_address": "ajibolaabidakun@mail.com",
     "is_approved": false
   },
   "topekolawoles@gmail.com": {
-    "full_name": "Kolawole Olatope",
+    "full_name": "KOLAWOLE, Olatope",
     "email_address": "topekolawoles@gmail.com",
     "is_approved": false
   },
   "ogungbademorenikeji@gmail.com": {
-    "full_name": "Akinseye, Morenikeji",
+    "full_name": "AKINSEYE, Morenikeji",
     "email_address": "ogungbademorenikeji@gmail.com",
     "is_approved": false
   },
   "phummyoni@gmail.com": {
-    "full_name": "Oni, Olufunmilayo",
+    "full_name": "ONI, Olufunmilayo",
     "email_address": "phummyoni@gmail.com",
     "is_approved": false
   },
   "gbemmychristianah@gmail.com": {
-    "full_name": "Omopariola Gbemisola Christianah",
+    "full_name": "OMOPARIOLA, Gbemisola Christianah",
     "email_address": "gbemmychristianah@gmail.com",
     "is_approved": false
   },
   "rolandtolisa@gmail.com": {
-    "full_name": "Olisa, Roland",
+    "full_name": "OLISA, Roland",
     "email_address": "rolandtolisa@gmail.com",
     "is_approved": false
   },
   "ericoluwasinmi@gmail.com": {
-    "full_name": "Apata, Eric Oluwasinmi",
+    "full_name": "APATA, Eric Oluwasinmi",
     "email_address": "ericoluwasinmi@gmail.com",
     "is_approved": false
   },
   "stevetosin941@gmail.com": {
-    "full_name": "OMOEKO, TOSIN",
+    "full_name": "OMOEKO, Tosin",
     "email_address": "stevetosin941@gmail.com",
     "is_approved": false
   },
@@ -1116,12 +1116,12 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "eunishad2006@gmail.com": {
-    "full_name": "Ogunmola Eunice",
+    "full_name": "OGUNMOLA, Eunice",
     "email_address": "eunishad2006@gmail.com",
     "is_approved": false
   },
   "akinseyeolusola2018@gmail.com": {
-    "full_name": "AKINSEYE Olusola Firopo",
+    "full_name": "AKINSEYE, Olusola Firopo",
     "email_address": "akinseyeolusola2018@gmail.com",
     "is_approved": false
   },
@@ -1131,42 +1131,42 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "josephogunsusi8@gmail.com": {
-    "full_name": "Ogunsusi Joseph",
+    "full_name": "OGUNSUSI, Joseph",
     "email_address": "josephogunsusi8@gmail.com",
     "is_approved": false
   },
   "folasadeale@gmail.com": {
-    "full_name": "folasade ale",
+    "full_name": "FOLASADE, Ale",
     "email_address": "folasadeale@gmail.com",
     "is_approved": false
   },
   "bosunadu24@gmail.com": {
-    "full_name": "Adu, Olatubosun Joseph",
+    "full_name": "ADU, Olatubosun Joseph",
     "email_address": "bosunadu24@gmail.com",
     "is_approved": false
   },
   "segunakosh@gmail.com": {
-    "full_name": "Akosile Oladele Olusegun",
+    "full_name": "AKOSILE, Oladele Olusegun",
     "email_address": "segunakosh@gmail.com",
     "is_approved": false
   },
   "prettysuzzie30@gmail.com": {
-    "full_name": "Olaolu-Ikoto Abimbola",
+    "full_name": "OLAOLU-IKOTO, Abimbola",
     "email_address": "prettysuzzie30@gmail.com",
     "is_approved": false
   },
   "ebiwonjumiademola@gmail.com": {
-    "full_name": "Ademola Abiola Ebiwonjumi",
+    "full_name": "ADEMOLA, Abiola Ebiwonjumi",
     "email_address": "ebiwonjumiademola@gmail.com",
     "is_approved": false
   },
   "femiisgodly@gmail.com": {
-    "full_name": "Isimijola Akeem",
+    "full_name": "ISIMIJOLA, Akeem",
     "email_address": "femiisgodly@gmail.com",
     "is_approved": false
   },
   "adebola.ajagunna@gmail.com": {
-    "full_name": "AJAGUNNA ADEBOLA AKEEM",
+    "full_name": "AJAGUNNA, Adebola Akeem",
     "email_address": "adebola.ajagunna@gmail.com",
     "is_approved": false
   }
