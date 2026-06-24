@@ -859,4 +859,315 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "email_address": "omolaji.femi@gmail.com",
     "is_approved": false
   }
+,
+  "samolade2003@gmail.com": {
+    "full_name": "Ogunlade Samuel Somo",
+    "email_address": "samolade2003@gmail.com",
+    "is_approved": false
+  },
+  "bifoluojumu@gmail.com": {
+    "full_name": "OJUMU, Glory Taiwo",
+    "email_address": "bifoluojumu@gmail.com",
+    "is_approved": false
+  },
+  "natorogun@gmail.com": {
+    "full_name": "OROGUN Nathaniel",
+    "email_address": "natorogun@gmail.com",
+    "is_approved": false
+  },
+  "bidemi.nelson@gmail.com": {
+    "full_name": "Familoni Nelson Abidemi",
+    "email_address": "bidemi.nelson@gmail.com",
+    "is_approved": false
+  },
+  "adeteye2015@gmail.com": {
+    "full_name": "oshodi Michael Adeteye",
+    "email_address": "adeteye2015@gmail.com",
+    "is_approved": false
+  },
+  "yinkakinwe77@gmail.com": {
+    "full_name": "AKINWE, Adeyinka Adeyemi",
+    "email_address": "yinkakinwe77@gmail.com",
+    "is_approved": false
+  },
+  "riccardo2k6@gmail.com": {
+    "full_name": "Aina Richard",
+    "email_address": "riccardo2k6@gmail.com",
+    "is_approved": false
+  },
+  "baloguntoyin07@gmail.com": {
+    "full_name": "Balogun, Stella Toyin",
+    "email_address": "baloguntoyin07@gmail.com",
+    "is_approved": false
+  },
+  "akinduro.oluwabusayomi@gmail.com": {
+    "full_name": "AKINDURO, Busayo",
+    "email_address": "akinduro.oluwabusayomi@gmail.com",
+    "is_approved": false
+  },
+  "basikay2@gmail.com": {
+    "full_name": "IKUSEMIJU, Ayokunle Oluwadamilare",
+    "email_address": "basikay2@gmail.com",
+    "is_approved": false
+  },
+  "jummy_stella@yahoo.com": {
+    "full_name": "OLANIRAN-OJO, Jumoke Stella",
+    "email_address": "jummy_stella@yahoo.com",
+    "is_approved": false
+  },
+  "ajibadeolakunle3@gmail.com": {
+    "full_name": "Ajibade Olakunle Bankole",
+    "email_address": "ajibadeolakunle3@gmail.com",
+    "is_approved": false
+  },
+  "foluksdarasimi@gmail.com": {
+    "full_name": "Foluke Seyi-Olakanye",
+    "email_address": "foluksdarasimi@gmail.com",
+    "is_approved": false
+  },
+  "tayoogundare9@gmail.com": {
+    "full_name": "OGUNDARE, Temitayo",
+    "email_address": "tayoogundare9@gmail.com",
+    "is_approved": false
+  },
+  "warrybae@gmail.com": {
+    "full_name": "Ojumu Blessing",
+    "email_address": "warrybae@gmail.com",
+    "is_approved": false
+  },
+  "olafisoyeo@gmail.com": {
+    "full_name": "Olafisoye Olawole",
+    "email_address": "olafisoyeo@gmail.com",
+    "is_approved": false
+  },
+  "olumuyiwaakinkuolie@gmail.com": {
+    "full_name": "AKINKUOLIE, Olumuyiwa",
+    "email_address": "olumuyiwaakinkuolie@gmail.com",
+    "is_approved": false
+  },
+  "bukolakomolafe789@gmail.com": {
+    "full_name": "Komolafe Bukola",
+    "email_address": "bukolakomolafe789@gmail.com",
+    "is_approved": false
+  },
+  "akinolataiwo1001@gmail.com": {
+    "full_name": "AKINOLA Taiwo",
+    "email_address": "akinolataiwo1001@gmail.com",
+    "is_approved": false
+  },
+  "sheriffadeyemo@gmail.com": {
+    "full_name": "ADEYEMO Sheriff",
+    "email_address": "sheriffadeyemo@gmail.com",
+    "is_approved": false
+  },
+  "michaelpeace2015@gmail.com": {
+    "full_name": "Afariogun Michael Olugbenga",
+    "email_address": "michaelpeace2015@gmail.com",
+    "is_approved": false
+  },
+  "adegokeabimbola90@gmail.com": {
+    "full_name": "Adegoke Folasade Abimbola Mrs",
+    "email_address": "adegokeabimbola90@gmail.com",
+    "is_approved": false
+  },
+  "femiwebs1989@gmail.com": {
+    "full_name": "Edema John",
+    "email_address": "femiwebs1989@gmail.com",
+    "is_approved": false
+  },
+  "bolajioke2@gmail.com": {
+    "full_name": "OBIDEYI,Stella Bolaji",
+    "email_address": "bolajioke2@gmail.com",
+    "is_approved": false
+  },
+  "aomolabake@gmail.com": {
+    "full_name": "ADEOLA Omolabake",
+    "email_address": "aomolabake@gmail.com",
+    "is_approved": false
+  },
+  "sademonehin@gmail.com": {
+    "full_name": "MONEHIN, Modupe",
+    "email_address": "sademonehin@gmail.com",
+    "is_approved": false
+  },
+  "jokesajokes@gmail.com": {
+    "full_name": "AYOMIDE, Adejoke Christianah",
+    "email_address": "jokesajokes@gmail.com",
+    "is_approved": false
+  },
+  "boderemmy@gmail.com": {
+    "full_name": "OLABODE, Aderemi",
+    "email_address": "boderemmy@gmail.com",
+    "is_approved": false
+  },
+  "delenagbeys@gmail.com": {
+    "full_name": "AKINNAGBE, Akinbamidele",
+    "email_address": "delenagbeys@gmail.com",
+    "is_approved": false
+  },
+  "ehinmeroobafemi@gmail.com": {
+    "full_name": "EHINMERO, Obafemi",
+    "email_address": "ehinmeroobafemi@gmail.com",
+    "is_approved": false
+  },
+  "georgeasonja@gmail.com": {
+    "full_name": "ASONJA, George",
+    "email_address": "georgeasonja@gmail.com",
+    "is_approved": false
+  },
+  "edemakayode@gmail.com": {
+    "full_name": "Edema, Kayode Smart",
+    "email_address": "edemakayode@gmail.com",
+    "is_approved": false
+  },
+  "jigbekele@gmail.com": {
+    "full_name": "Jatuwase Igbekele Hosea  Esq",
+    "email_address": "jigbekele@gmail.com",
+    "is_approved": false
+  },
+  "frekolad25@gmail.com": {
+    "full_name": "Oladiran Fredrick Olawale",
+    "email_address": "frekolad25@gmail.com",
+    "is_approved": false
+  },
+  "folawemifunmi@gmail.com": {
+    "full_name": "AKINSELI, Folawe",
+    "email_address": "folawemifunmi@gmail.com",
+    "is_approved": false
+  },
+  "dejiageh@yahoo.com": {
+    "full_name": "AGEH Ayodeji",
+    "email_address": "dejiageh@yahoo.com",
+    "is_approved": false
+  },
+  "joelolushile@gmail.com": {
+    "full_name": "ALE, Joel Olugbenga",
+    "email_address": "joelolushile@gmail.com",
+    "is_approved": false
+  },
+  "tiwaevelyn@gmail.com": {
+    "full_name": "OLUWATOBI-OMITA, Evelyn",
+    "email_address": "tiwaevelyn@gmail.com",
+    "is_approved": false
+  },
+  "foldara@gmail.com": {
+    "full_name": "Tunde-Daramola Foluke",
+    "email_address": "foldara@gmail.com",
+    "is_approved": false
+  },
+  "akinyeleoluwatosin1996@gmail.com": {
+    "full_name": "Akinyele Oluwatosin",
+    "email_address": "akinyeleoluwatosin1996@gmail.com",
+    "is_approved": false
+  },
+  "bukieadetan1@gmail.com": {
+    "full_name": "Adetan Olubukola Ibironke",
+    "email_address": "bukieadetan1@gmail.com",
+    "is_approved": false
+  },
+  "donfemiobideyi@gmail.com": {
+    "full_name": "Obideyi, Olufemi",
+    "email_address": "donfemiobideyi@gmail.com",
+    "is_approved": false
+  },
+  "ajibolaabidakun@mail.com": {
+    "full_name": "AJIBOLA,ABIDAKUN",
+    "email_address": "ajibolaabidakun@mail.com",
+    "is_approved": false
+  },
+  "topekolawoles@gmail.com": {
+    "full_name": "Kolawole Olatope",
+    "email_address": "topekolawoles@gmail.com",
+    "is_approved": false
+  },
+  "ogungbademorenikeji@gmail.com": {
+    "full_name": "Akinseye, Morenikeji",
+    "email_address": "ogungbademorenikeji@gmail.com",
+    "is_approved": false
+  },
+  "phummyoni@gmail.com": {
+    "full_name": "Oni, Olufunmilayo",
+    "email_address": "phummyoni@gmail.com",
+    "is_approved": false
+  },
+  "gbemmychristianah@gmail.com": {
+    "full_name": "Omopariola Gbemisola Christianah",
+    "email_address": "gbemmychristianah@gmail.com",
+    "is_approved": false
+  },
+  "rolandtolisa@gmail.com": {
+    "full_name": "Olisa, Roland",
+    "email_address": "rolandtolisa@gmail.com",
+    "is_approved": false
+  },
+  "ericoluwasinmi@gmail.com": {
+    "full_name": "Apata, Eric Oluwasinmi",
+    "email_address": "ericoluwasinmi@gmail.com",
+    "is_approved": false
+  },
+  "stevetosin941@gmail.com": {
+    "full_name": "OMOEKO, TOSIN",
+    "email_address": "stevetosin941@gmail.com",
+    "is_approved": false
+  },
+  "omirinsundaylade1976@gmail.com": {
+    "full_name": "OMIRIN, Sunday",
+    "email_address": "omirinsundaylade1976@gmail.com",
+    "is_approved": false
+  },
+  "eunishad2006@gmail.com": {
+    "full_name": "Ogunmola Eunice",
+    "email_address": "eunishad2006@gmail.com",
+    "is_approved": false
+  },
+  "akinseyeolusola2018@gmail.com": {
+    "full_name": "AKINSEYE Olusola Firopo",
+    "email_address": "akinseyeolusola2018@gmail.com",
+    "is_approved": false
+  },
+  "topsyleb@gmail.com": {
+    "full_name": "LEBILE, Temitope Oluseye",
+    "email_address": "topsyleb@gmail.com",
+    "is_approved": false
+  },
+  "josephogunsusi8@gmail.com": {
+    "full_name": "Ogunsusi Joseph",
+    "email_address": "josephogunsusi8@gmail.com",
+    "is_approved": false
+  },
+  "folasadeale@gmail.com": {
+    "full_name": "folasade ale",
+    "email_address": "folasadeale@gmail.com",
+    "is_approved": false
+  },
+  "bosunadu24@gmail.com": {
+    "full_name": "Adu, Olatubosun Joseph",
+    "email_address": "bosunadu24@gmail.com",
+    "is_approved": false
+  },
+  "segunakosh@gmail.com": {
+    "full_name": "Akosile Oladele Olusegun",
+    "email_address": "segunakosh@gmail.com",
+    "is_approved": false
+  },
+  "prettysuzzie30@gmail.com": {
+    "full_name": "Olaolu-Ikoto Abimbola",
+    "email_address": "prettysuzzie30@gmail.com",
+    "is_approved": false
+  },
+  "ebiwonjumiademola@gmail.com": {
+    "full_name": "Ademola Abiola Ebiwonjumi",
+    "email_address": "ebiwonjumiademola@gmail.com",
+    "is_approved": false
+  },
+  "femiisgodly@gmail.com": {
+    "full_name": "Isimijola Akeem",
+    "email_address": "femiisgodly@gmail.com",
+    "is_approved": false
+  },
+  "adebola.ajagunna@gmail.com": {
+    "full_name": "AJAGUNNA ADEBOLA AKEEM",
+    "email_address": "adebola.ajagunna@gmail.com",
+    "is_approved": false
+  }
 };
