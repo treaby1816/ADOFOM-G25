@@ -18,7 +18,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "bolayosoye@gmail.com": {
-    "full_name": "Akinyosoye Bolanle A",
+    "full_name": "AKINYOSOYE, Bolanle A",
     "email_address": "bolayosoye@gmail.com",
     "phone_number": "2347035179178",
     "current_mda": "Ministry of Finance",
@@ -27,7 +27,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "temilolaodunayo@yahoo.com": {
-    "full_name": "Dada Odunayo Lola",
+    "full_name": "DADA, Odunayo Lola",
     "email_address": "temilolaodunayo@yahoo.com",
     "phone_number": "2348065140543",
     "current_mda": "Office of Establishment and Training",
@@ -36,7 +36,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "gbadebooyewo@yahoo.com": {
-    "full_name": "Oyewo Gbadebo Sheun",
+    "full_name": "OYEWO, Gbadebo Sheun",
     "email_address": "gbadebooyewo@yahoo.com",
     "phone_number": "2348135233523",
     "current_mda": "Board of Adult, Technical & Vocational Education ",
@@ -45,7 +45,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "akinbinutemitopeisaac@gmail.com": {
-    "full_name": "AKINBINU ISAAC TEMITOPE",
+    "full_name": "AKINBINU, Isaac Temitope",
     "email_address": "akinbinutemitopeisaac@gmail.com",
     "phone_number": "2349064547375",
     "current_mda": "CIVIL SERVICE COMMISSION",
@@ -54,7 +54,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ogunsuliretimilehin@gmail.com": {
-    "full_name": "Ogunsulire Timilehin",
+    "full_name": "OGUNSULIRE, Timilehin",
     "email_address": "ogunsuliretimilehin@gmail.com",
     "phone_number": "2348067653895",
     "current_mda": "Cabinet and Special Services Department",
@@ -63,7 +63,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "oluwatoyinloto@gmail.com": {
-    "full_name": "Loto Oluwatoyin Amuwa",
+    "full_name": "LOTO, Oluwatoyin Amuwa",
     "email_address": "oluwatoyinloto@gmail.com",
     "phone_number": "2348132282257",
     "current_mda": "Ministry of Information and Orientation",
@@ -72,7 +72,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ayobamijoshua01@gmail.com": {
-    "full_name": "Oshodi Ayobami",
+    "full_name": "OSHODI, Ayobami",
     "email_address": "ayobamijoshua01@gmail.com",
     "phone_number": "2347032035758",
     "current_mda": "TESCOM",
@@ -81,7 +81,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "balogunolamilekan93@gmail.com": {
-    "full_name": "Balogun Olalekan Ebenezer",
+    "full_name": "BALOGUN, Olalekan Ebenezer",
     "email_address": "balogunolamilekan93@gmail.com",
     "phone_number": "2347089097550",
     "current_mda": "Ministry of Health",
@@ -90,7 +90,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "deleishola9@gmail.com": {
-    "full_name": "ISOLA Olabamidele Wasiu",
+    "full_name": "ISOLA, Olabamidele Wasiu",
     "email_address": "deleishola9@gmail.com",
     "phone_number": "2348064838812",
     "current_mda": "Civil Service Commission",
@@ -99,7 +99,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ajekunrin1@gmail.com": {
-    "full_name": "Abegunde Oluwatosin Israel",
+    "full_name": "ABEGUNDE, Oluwatosin Israel",
     "email_address": "ajekunrin1@gmail.com",
     "phone_number": "2347064414741",
     "current_mda": "Ondo State Teaching Service Commission",
@@ -108,7 +108,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "consolationiog2015@gmail.com": {
-    "full_name": "Oyenusi Eunice",
+    "full_name": "OYENUSI, Eunice",
     "email_address": "consolationiog2015@gmail.com",
     "phone_number": "2348036303935",
     "current_mda": "State Operation Coordinating Unit",
@@ -117,7 +117,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "fisscom215@gmail.com": {
-    "full_name": "Adewusi Mary Olufisayo",
+    "full_name": "ADEWUSI, Mary Olufisayo",
     "email_address": "fisscom215@gmail.com",
     "phone_number": "2348066644130",
     "current_mda": "Government House and Protocol",
@@ -126,7 +126,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "atereolubunmi@gmail.com": {
-    "full_name": "ATERE OLUBUNMI MOYOMOLA",
+    "full_name": "ATERE, Olubunmi Moyomola",
     "email_address": "atereolubunmi@gmail.com",
     "phone_number": "2348035633920",
     "current_mda": "TEACHING SERVICE COMMISSION",
@@ -135,7 +135,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ogunleyemichaelom@gmail.com": {
-    "full_name": "Ogunleye Michael",
+    "full_name": "OGUNLEYE, Michael",
     "email_address": "ogunleyemichaelom@gmail.com",
     "phone_number": "2348145477009",
     "current_mda": "Ministry of Local Government and Chieftaincy Affairs",
@@ -153,7 +153,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "itorodaniel@gmail.com": {
-    "full_name": "Itoro Daniel Oweike",
+    "full_name": "ITORO, Daniel Oweike",
     "email_address": "itorodaniel@gmail.com",
     "phone_number": "2348076955802",
     "current_mda": "Ministry of Agriculture and Forestry",
@@ -162,7 +162,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "dennisduebo@gmail.com": {
-    "full_name": "Duebo O. Dennis",
+    "full_name": "DUEBO, O. Dennis",
     "email_address": "dennisduebo@gmail.com",
     "phone_number": "2348039623754",
     "current_mda": "Economic Planning and Coordinating Office, Ministry of Economic Planning & Budget",
@@ -171,7 +171,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "bensonomotere81@gmail.com": {
-    "full_name": "OMOTERE BENSON AGBOOLA",
+    "full_name": "OMOTERE, Benson Agboola",
     "email_address": "bensonomotere81@gmail.com",
     "phone_number": "2348036265308",
     "current_mda": "DEPARTMENT OF PUBLIC SERVICE REFORM & DEVELOPMENT (DPSRD)",
@@ -190,7 +190,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_admin": true
   },
   "okearinola1@gmail.com": {
-    "full_name": "OKE Arinola Oluwabukola",
+    "full_name": "OKE, Arinola Oluwabukola",
     "email_address": "okearinola1@gmail.com",
     "phone_number": "2348039631736",
     "current_mda": "Ondo State Primary Health Care Development Agency",
@@ -199,7 +199,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "olaimoluemmanuel@gmail.com": {
-    "full_name": "Olaimolu Emmanuel Diekolola",
+    "full_name": "OLAIMOLU, Emmanuel Diekolola",
     "email_address": "olaimoluemmanuel@gmail.com",
     "phone_number": "2347060410235",
     "current_mda": "Service Matters Department",
@@ -208,7 +208,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "oluwatosinakinyele03@gmail.com": {
-    "full_name": "Akinyele Oluwatosin",
+    "full_name": "AKINYELE, Oluwatosin",
     "email_address": "oluwatosinakinyele03@gmail.com",
     "phone_number": "2347035185493",
     "current_mda": "Ondo State Anti-Land Grabbing Taskforce",
@@ -217,7 +217,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "olanrewajupreciousa@gmail.com": {
-    "full_name": "Olanrewaju Precious Ayomide",
+    "full_name": "OLANREWAJU, Precious Ayomide",
     "email_address": "olanrewajupreciousa@gmail.com",
     "phone_number": "2348140707916",
     "current_mda": "Teaching Service Commission",
@@ -226,7 +226,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "dayobenlaw2@gmail.com": {
-    "full_name": "Doko Benjamin Temidayo",
+    "full_name": "DOKO, Benjamin Temidayo",
     "email_address": "dayobenlaw2@gmail.com",
     "phone_number": "2348062630503",
     "current_mda": "Ondo State Contributory Health Commission",
@@ -235,7 +235,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "yetundeoluwasola@gmail.com": {
-    "full_name": "Oluwasola Yetunde",
+    "full_name": "OLUWASOLA, Yetunde",
     "email_address": "yetundeoluwasola@gmail.com",
     "phone_number": "2348166198912",
     "current_mda": "Agency against Gender Based Violence",
@@ -244,7 +244,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "akinmibiolaayokunle@gmail.com": {
-    "full_name": "Akin-Mibiola Ayokunle",
+    "full_name": "AKIN-MIBIOLA, Ayokunle",
     "email_address": "akinmibiolaayokunle@gmail.com",
     "phone_number": "2348160132030",
     "current_mda": "SUBEB",
@@ -253,7 +253,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "jumyyety@gmail.com": {
-    "full_name": "Sanyade Jumoke Yetunde",
+    "full_name": "SANYADE, Jumoke Yetunde",
     "email_address": "jumyyety@gmail.com",
     "phone_number": "2348066244431",
     "current_mda": "Ministry of Agriculture",
@@ -262,7 +262,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "thompsonisraeloyindamola@gmail.com": {
-    "full_name": "Thompson -Israel, Oyindamola Sadiat ",
+    "full_name": "THOMPSON -ISRAEL, Oyindamola Sadiat",
     "email_address": "thompsonisraeloyindamola@gmail.com",
     "phone_number": "2348062613045",
     "current_mda": "State Information Technology Akure (SITA)",
@@ -271,7 +271,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "feyisayohappiness599@gmail.com": {
-    "full_name": "Wolemiwa Feyisayo Happiness",
+    "full_name": "WOLEMIWA, Feyisayo Happiness",
     "email_address": "feyisayohappiness599@gmail.com",
     "phone_number": "2348164019120",
     "current_mda": "Service Matters",
@@ -280,7 +280,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "akinrinwoyeisaiah@gmail.com": {
-    "full_name": "AKINRINWOYE Isaiah",
+    "full_name": "AKINRINWOYE, Isaiah",
     "email_address": "akinrinwoyeisaiah@gmail.com",
     "phone_number": "2348061298199",
     "current_mda": "POLITICAL AND ECONOMIC AFFAIRS DEPARTMENT",
@@ -289,7 +289,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "bola644736@gmail.com": {
-    "full_name": "Bolarinwa Taye Tope",
+    "full_name": "BOLARINWA, Taye Tope",
     "email_address": "bola644736@gmail.com",
     "phone_number": "2348064473606",
     "current_mda": "Regional Integration and Diaspora Relations",
@@ -298,7 +298,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "piridhino71@gmail.com": {
-    "full_name": "Pirisola Ayokunle M.",
+    "full_name": "PIRISOLA, Ayokunle M.",
     "email_address": "piridhino71@gmail.com",
     "phone_number": "2349034017033",
     "current_mda": "Ministry of Economic Planning and Budget",
@@ -316,7 +316,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ayodejiakinyelure017@gmail.com": {
-    "full_name": "Akinyelure Ayodeji",
+    "full_name": "AKINYELURE, Ayodeji",
     "email_address": "ayodejiakinyelure017@gmail.com",
     "phone_number": "2348122684367",
     "current_mda": "Office of Establishment and Training",
@@ -325,7 +325,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "adetulaol@gmail.com": {
-    "full_name": "Aderoboye Adetula Olamide",
+    "full_name": "ADEROBOYE, Adetula Olamide",
     "email_address": "adetulaol@gmail.com",
     "phone_number": "2348032138749",
     "current_mda": "Ondo State Waste Management Authority",
@@ -334,7 +334,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "funmiliz09@gmail.com": {
-    "full_name": "Ekundayo Elizabeth Olufunmi",
+    "full_name": "EKUNDAYO, Elizabeth Olufunmi",
     "email_address": "funmiliz09@gmail.com",
     "phone_number": "2348088773666",
     "current_mda": "Hospital Management Board",
@@ -343,7 +343,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "kehindesandra98@gmail.com": {
-    "full_name": "Kehinde Sandra Abimbola",
+    "full_name": "KEHINDE, Sandra Abimbola",
     "email_address": "kehindesandra98@gmail.com",
     "phone_number": "2348146875237",
     "current_mda": "Ministry of Education",
@@ -352,7 +352,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "olabisiolajumoke24@gmail.com": {
-    "full_name": "Arajulu Olabisi Deborah",
+    "full_name": "ARAJULU, Olabisi Deborah",
     "email_address": "olabisiolajumoke24@gmail.com",
     "phone_number": "2349030102513",
     "current_mda": "Ministry of Agriculture and FORESTRY",
@@ -361,7 +361,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "omoniyi.akinrogunde@gmail.com": {
-    "full_name": "Akinrogunde, Omoniyi Adetayo ",
+    "full_name": "AKINROGUNDE, Omoniyi Adetayo",
     "email_address": "omoniyi.akinrogunde@gmail.com",
     "phone_number": "2348060763364",
     "current_mda": "Civil Service Commission",
@@ -370,7 +370,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "adinlewaadebukola@gmail.com": {
-    "full_name": "Adinlewa , Adebukola Olufunmilayo",
+    "full_name": "ADINLEWA, Adebukola Olufunmilayo",
     "email_address": "adinlewaadebukola@gmail.com",
     "phone_number": "2348063913443",
     "current_mda": "Ministry of Women Affairs and Social Development",
@@ -379,7 +379,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "adetitideby2019@gmail.com": {
-    "full_name": "Babatunde Deborah Titilayo",
+    "full_name": "BABATUNDE, Deborah Titilayo",
     "email_address": "adetitideby2019@gmail.com",
     "phone_number": "2348062597644",
     "current_mda": "Ministry of Energy and Mineral Resources",
@@ -388,7 +388,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "oluseunoniyi@gmail.com": {
-    "full_name": "Oniyi Oluwaseun Esther",
+    "full_name": "ONIYI, Oluwaseun Esther",
     "email_address": "oluseunoniyi@gmail.com",
     "phone_number": "2348138029561",
     "current_mda": "Board for Adult, Technical and Vocational Education (BATVE)",
@@ -397,7 +397,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "lagbotoba@gmail.com": {
-    "full_name": "Agbotoba Omolola",
+    "full_name": "AGBOTOBA, Omolola",
     "email_address": "lagbotoba@gmail.com",
     "phone_number": "2349063942319",
     "current_mda": "Office of Establishment and Training",
@@ -406,7 +406,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "olayeletitilope@gmail.com": {
-    "full_name": "Jubril Olayele Olaoluwa",
+    "full_name": "JUBRIL, Olayele Olaoluwa",
     "email_address": "olayeletitilope@gmail.com",
     "phone_number": "2348057610551",
     "current_mda": "Ministry of Environment",
@@ -415,7 +415,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "temidayopitt@gmail.com": {
-    "full_name": "Pitt Temidayo",
+    "full_name": "PITT, Temidayo",
     "email_address": "temidayopitt@gmail.com",
     "phone_number": "2348145407594",
     "current_mda": "Ministry of Health",
@@ -424,7 +424,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ezekieljegede@rocketmail.com": {
-    "full_name": " JEGEDE, Ezekiel Ayoola",
+    "full_name": "JEGEDE, Ezekiel Ayoola",
     "email_address": "ezekieljegede@rocketmail.com",
     "phone_number": "2348062488199",
     "current_mda": "Ondo State Pension Transitional Department",
@@ -433,7 +433,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "easymodak86@gmail.com": {
-    "full_name": "Akeju Modupe Moyinoluwa",
+    "full_name": "AKEJU, Modupe Moyinoluwa",
     "email_address": "easymodak86@gmail.com",
     "phone_number": "2348064836911",
     "current_mda": "Ministry of Women Affairs and Social Development",
@@ -442,7 +442,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "olutolatemi2017@gmail.com": {
-    "full_name": "Olutola Temidayo Victoria",
+    "full_name": "OLUTOLA, Temidayo Victoria",
     "email_address": "olutolatemi2017@gmail.com",
     "phone_number": "2348135101298",
     "current_mda": "Ministry of Education",
@@ -451,7 +451,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "alabi136@gmail.com": {
-    "full_name": "Alabi Saheed Onimisi",
+    "full_name": "ALABI, Saheed Onimisi",
     "email_address": "alabi136@gmail.com",
     "phone_number": "2348039287976",
     "current_mda": "Performance and Project Implementation Monitoring Unit",
@@ -469,7 +469,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ibukunrach3@gmail.com": {
-    "full_name": "Ajibola Ibukun Rachael",
+    "full_name": "AJIBOLA, Ibukun Rachael",
     "email_address": "ibukunrach3@gmail.com",
     "phone_number": "2348062191966",
     "current_mda": "Ministry of Youth and Sports Development",
@@ -478,7 +478,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "tezzy4joy@gmail.com": {
-    "full_name": "KOLAWOLE Ayọdeji Josiah",
+    "full_name": "KOLAWOLE, Ayọdeji Josiah",
     "email_address": "tezzy4joy@gmail.com",
     "phone_number": "2348149391011",
     "current_mda": "Ministry of Physical Planning and Urban Development",
@@ -487,7 +487,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "roselinemasebinu@gmail.com": {
-    "full_name": "AKEREDOLU ROSELINE OLUWAKEMI",
+    "full_name": "AKEREDOLU, Roseline Oluwakemi",
     "email_address": "roselinemasebinu@gmail.com",
     "phone_number": "2348064860691",
     "current_mda": "MINISTRY OF WATER RESOURCES, PUBLIC SANITATION AND HYGIENE ",
@@ -496,7 +496,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "mcfamowalex@yahoo.com": {
-    "full_name": "Famusudo Olawale",
+    "full_name": "FAMUSUDO, Olawale",
     "email_address": "mcfamowalex@yahoo.com",
     "phone_number": "2348138596736",
     "current_mda": "Ministry of Agriculture & Forestry (Agric Subsector)",
@@ -505,7 +505,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "nkayblessing@gmail.com": {
-    "full_name": "Owolabi Nkechi Blessing",
+    "full_name": "OWOLABI, Nkechi Blessing",
     "email_address": "nkayblessing@gmail.com",
     "phone_number": "2348035632934",
     "current_mda": "Ondo State Community and Social Development Agency Alagbaka",
@@ -514,7 +514,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "taiwodamilaremoses@gmail.com": {
-    "full_name": "Taiwo Damilare Moses",
+    "full_name": "TAIWO, Damilare Moses",
     "email_address": "taiwodamilaremoses@gmail.com",
     "phone_number": "2348162301772",
     "current_mda": "Civil Service Commission",
@@ -532,7 +532,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "vivianolarewaju@gmail.com": {
-    "full_name": "Olarewaju Kemisola Vivian",
+    "full_name": "OLAREWAJU, Kemisola Vivian",
     "email_address": "vivianolarewaju@gmail.com",
     "phone_number": "2348102320365",
     "current_mda": "Ondo State Waste Management Authority",
@@ -541,7 +541,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "badejo007@gmail.com": {
-    "full_name": "Badejo Adedayo Emmanuel",
+    "full_name": "BADEJO, Adedayo Emmanuel",
     "email_address": "badejo007@gmail.com",
     "phone_number": "2347039583371",
     "current_mda": "MINISTRY OF CULTURE AND TOURISM",
@@ -550,7 +550,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "faruq.sanni.adeyanju@gmail.com": {
-    "full_name": "Sanni, Faruq Adeyanju ",
+    "full_name": "SANNI, Faruq Adeyanju",
     "email_address": "faruq.sanni.adeyanju@gmail.com",
     "phone_number": "2348132720367",
     "current_mda": "Ministry of Regional Integration and Diaspora Relations",
@@ -559,7 +559,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "blessingogunduyi1620@gmail.com": {
-    "full_name": "Ogunduyi Blessing Innameneze",
+    "full_name": "OGUNDUYI, Blessing Innameneze",
     "email_address": "blessingogunduyi1620@gmail.com",
     "phone_number": "2347037618307",
     "current_mda": "Ondo State Primary Health Care Development Agency",
@@ -568,7 +568,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "titilolaorims@gmail.com": {
-    "full_name": "Orimoloye Titilola Catherine",
+    "full_name": "ORIMOLOYE, Titilola Catherine",
     "email_address": "titilolaorims@gmail.com",
     "phone_number": "2347030253993",
     "current_mda": "Cabinet and Special Services Department",
@@ -577,7 +577,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "olisaaderinsola@gmail.com": {
-    "full_name": "Olisa Aderinsola Adekoya",
+    "full_name": "OLISA, Aderinsola Adekoya",
     "email_address": "olisaaderinsola@gmail.com",
     "phone_number": "2348111012568",
     "current_mda": "Public and Intergovernmental Relations",
@@ -586,7 +586,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "holamide055@gmail.com": {
-    "full_name": "Imoru Wemimo Patience",
+    "full_name": "IMORU, Wemimo Patience",
     "email_address": "holamide055@gmail.com",
     "phone_number": "2348034446096",
     "current_mda": "The Office of Establishment and Training",
@@ -595,7 +595,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "olaamudatoluwanimi@gmail.com": {
-    "full_name": "Ola-Amuda, Toluwanimi O. ",
+    "full_name": "OLA-AMUDA, Toluwanimi O.",
     "email_address": "olaamudatoluwanimi@gmail.com",
     "phone_number": "2348166296525",
     "current_mda": "Service Matters",
@@ -604,7 +604,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "solomonakinfulie@gmail.com": {
-    "full_name": "Akinfulie Blessing Solomon",
+    "full_name": "AKINFULIE, Blessing Solomon",
     "email_address": "solomonakinfulie@gmail.com",
     "phone_number": "2348069807953",
     "current_mda": "PSTI",
@@ -613,7 +613,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ajayiayorinde2013@gmail.com": {
-    "full_name": "Ajayi ,Ayorinde ",
+    "full_name": "AJAYI, Ayorinde",
     "email_address": "ajayiayorinde2013@gmail.com",
     "phone_number": "2349030888814",
     "current_mda": "office of Establishment and Training",
@@ -622,7 +622,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "yopemie@gmail.com": {
-    "full_name": "Akeredolu, Titilope Oluwaseyi Opeyemi",
+    "full_name": "AKEREDOLU, Titilope Oluwaseyi Opeyemi",
     "email_address": "yopemie@gmail.com",
     "phone_number": "2348061551978",
     "current_mda": "Ministry of Commerce, Industry & Cooperative Services",
@@ -631,7 +631,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "oluwaseunmodupe18@gmail.com": {
-    "full_name": "Durojaiye Oluwaseun Modupe",
+    "full_name": "DUROJAIYE, Oluwaseun Modupe",
     "email_address": "oluwaseunmodupe18@gmail.com",
     "phone_number": "2347055277837",
     "current_mda": "General Administration Department (GAD)",
@@ -640,7 +640,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "olarewajuadenike8@gmail.com": {
-    "full_name": "Orogun Adenike Adesola",
+    "full_name": "OROGUN, Adenike Adesola",
     "email_address": "olarewajuadenike8@gmail.com",
     "phone_number": "2347030485152",
     "current_mda": "Ministry of Culture and Tourism",
@@ -649,7 +649,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "asonjakehinde16@gmail.com": {
-    "full_name": "Asonja Kehinde Imisioluwa",
+    "full_name": "ASONJA, Kehinde Imisioluwa",
     "email_address": "asonjakehinde16@gmail.com",
     "phone_number": "2349068766758",
     "current_mda": "Ministry of Local Government and Chieftaincy Affairs",
@@ -658,7 +658,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "faturotivincenttemitope@gmail.com": {
-    "full_name": "Faturoti Vincent Temitope",
+    "full_name": "FATUROTI, Vincent Temitope",
     "email_address": "faturotivincenttemitope@gmail.com",
     "phone_number": "2348146314637",
     "current_mda": "Cabinet and Special Services Department",
@@ -667,7 +667,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ayooluwabamidele571@gmail.com": {
-    "full_name": "Bamidele Damilola Ayooluwa",
+    "full_name": "BAMIDELE, Damilola Ayooluwa",
     "email_address": "ayooluwabamidele571@gmail.com",
     "phone_number": "2347032480682",
     "current_mda": "Admin cadre",
@@ -676,7 +676,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "omoseyinojom@gmail.com": {
-    "full_name": "OMOSEYIN-OJO OLUWAMAYOWA",
+    "full_name": "OMOSEYIN-OJO, Oluwamayowa",
     "email_address": "omoseyinojom@gmail.com",
     "phone_number": "2348067978494",
     "current_mda": "Civil Service Commission",
@@ -694,7 +694,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "prettydebbie2009@yahoo.com": {
-    "full_name": "Awosemo Deborah Olubunmi",
+    "full_name": "AWOSEMO, Deborah Olubunmi",
     "email_address": "prettydebbie2009@yahoo.com",
     "phone_number": "2348032156258",
     "current_mda": "Ministry of Agriculture and Forestry (Forestry and produce subsector)",
@@ -703,7 +703,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "patrickarewa024@gmail.com": {
-    "full_name": "AREWA Bamidele Patrick",
+    "full_name": "AREWA, Bamidele Patrick",
     "email_address": "patrickarewa024@gmail.com",
     "phone_number": "2348061135980",
     "current_mda": "Cabinet and Special Services",
@@ -712,7 +712,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "agnes.omoolorun25@gmail.com": {
-    "full_name": "Ọmọọlọrun Agnes",
+    "full_name": "ỌMỌỌLỌRUN, Agnes",
     "email_address": "agnes.omoolorun25@gmail.com",
     "phone_number": "2348143596628",
     "current_mda": "BUDGET OFFICE",
@@ -721,7 +721,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ibukun4eva@gmail.com": {
-    "full_name": "Ibukun, Akindele Joshua",
+    "full_name": "IBUKUN, Akindele Joshua",
     "email_address": "ibukun4eva@gmail.com",
     "phone_number": "2348037554309",
     "current_mda": "Ministry of Women Affairs and Social Development",
@@ -730,7 +730,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "yetundekayode1@gmail.com": {
-    "full_name": "Ogunmola Yetunde Olubusola",
+    "full_name": "OGUNMOLA, Yetunde Olubusola",
     "email_address": "yetundekayode1@gmail.com",
     "phone_number": "2348034205717",
     "current_mda": "Civil Service Commission",
@@ -748,7 +748,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ayoyinkaaladejana@gmail.com": {
-    "full_name": "Aladejana Ayoyinka",
+    "full_name": "ALADEJANA, Ayoyinka",
     "email_address": "ayoyinkaaladejana@gmail.com",
     "phone_number": "2348137876272",
     "current_mda": "-Surveyor General's Office",
@@ -757,7 +757,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ruthdada18@gmail.com": {
-    "full_name": "Dada Ruth Erioluwa",
+    "full_name": "DADA, Ruth Erioluwa",
     "email_address": "ruthdada18@gmail.com",
     "phone_number": "2347033343864",
     "current_mda": "Directorate of Rural and Community Development",
@@ -766,7 +766,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "yinkasunmola@gmail.com": {
-    "full_name": "Sunmola, Adeyinka",
+    "full_name": "SUNMOLA, Adeyinka",
     "email_address": "yinkasunmola@gmail.com",
     "phone_number": "2348063121944",
     "current_mda": "Ministry of Works and Infrastructure",
@@ -775,7 +775,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "ftchetto@yahoo.com": {
-    "full_name": "FAKOMOGBON OLUWAFEMI",
+    "full_name": "FAKOMOGBON, Oluwafemi",
     "email_address": "ftchetto@yahoo.com",
     "phone_number": "2348062647251",
     "current_mda": "MINISTRY OF PHYSICAL PLANNING & URBAN DEVELOPMENT",
@@ -784,7 +784,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "darephilip85@gmail.com": {
-    "full_name": "DARE BAYODE PHILIP",
+    "full_name": "DARE, Bayode Philip",
     "email_address": "darephilip85@gmail.com",
     "phone_number": "2347031223590",
     "current_mda": "Office of Establishments and Training",
@@ -793,7 +793,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "oluwatosinaugustine@gmail.com": {
-    "full_name": "ADEOYE Augustine Oluwatosin",
+    "full_name": "ADEOYE, Augustine Oluwatosin",
     "email_address": "oluwatosinaugustine@gmail.com",
     "phone_number": "2347030709967",
     "current_mda": "L-PRES PROJECT",
@@ -802,7 +802,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "kemifamuti08@gmail.com": {
-    "full_name": "FAMUTI Oluwakemi Funmi",
+    "full_name": "FAMUTI, Oluwakemi Funmi",
     "email_address": "kemifamuti08@gmail.com",
     "phone_number": "2348060723769",
     "current_mda": "General Administration Department",
@@ -811,7 +811,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "omololaakinmaameji@gmail.com": {
-    "full_name": "AKINMAMEJI Ebunoluwa Omolola",
+    "full_name": "AKINMAMEJI, Ebunoluwa Omolola",
     "email_address": "omololaakinmaameji@gmail.com",
     "phone_number": "2348064181135",
     "current_mda": "Public and Intergovernmental Relations",
@@ -820,7 +820,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "omosuleogodounla@gmail.com": {
-    "full_name": "OGODONLA Omosule Olawale",
+    "full_name": "OGODONLA, Omosule Olawale",
     "email_address": "omosuleogodounla@gmail.com",
     "phone_number": "2348055750933",
     "current_mda": "Ministry of Lands & Housing",
@@ -829,7 +829,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "fowobiabosede@gmail.com": {
-    "full_name": "OLUFOWOBI ABOSEDE MOBOLAJI",
+    "full_name": "OLUFOWOBI, Abosede Mobolaji",
     "email_address": "fowobiabosede@gmail.com",
     "phone_number": "2348111988604",
     "current_mda": "GENERAL ADMINISTRATION DEPARTMENT",
@@ -838,7 +838,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "adelayipelumi@gmail.com": {
-    "full_name": "ADELAYI Blessing Oluwapelumi",
+    "full_name": "ADELAYI, Blessing Oluwapelumi",
     "email_address": "adelayipelumi@gmail.com",
     "phone_number": "2347067119849",
     "current_mda": "TESCOM",
@@ -847,7 +847,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": true
   },
   "olowofoyekujames@gmail.com": {
-    "full_name": "OLOWOFOYEKU Ose James",
+    "full_name": "OLOWOFOYEKU, Ose James",
     "email_address": "olowofoyekujames@gmail.com",
     "phone_number": "2348139496611",
     "current_mda": "RAAMP",
