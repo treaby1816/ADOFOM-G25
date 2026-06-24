@@ -14,6 +14,7 @@ import {
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 import { normalizeMDA, normalizeLGA, ONDO_LGAS, ONDO_MDAS } from '@/lib/dataConsolidation'
 import BirthdaySelect, { parseBirthdayValue, formatBirthdayValue, isValidBirthday } from '@/components/ui/BirthdaySelect'
+import SearchableCombobox from '@/components/ui/SearchableCombobox'
 
 export default function SetupProfilePage() {
   const [formData, setFormData] = useState({
@@ -322,18 +323,15 @@ export default function SetupProfilePage() {
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                       <Building2 size={14} /> Current MDA
                     </label>
-                    <select
+                    <SearchableCombobox
                       name="current_mda"
-                      required
                       value={formData.current_mda}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
-                    >
-                      <option value="" className="bg-slate-900">-- Select MDA --</option>
-                      {ONDO_MDAS.map(mda => (
-                        <option key={mda} value={mda} className="bg-slate-900">{mda}</option>
-                      ))}
-                    </select>
+                      onChange={(val) => setFormData(prev => ({ ...prev, current_mda: val }))}
+                      options={ONDO_MDAS}
+                      placeholder="Search MDA or type to add new..."
+                      required
+                    />
+                    <p className="text-[10px] text-slate-500">Can&apos;t find your MDA? Type it in and it will be saved as a new entry.</p>
                   </div>
 
                   <div className="space-y-2">
