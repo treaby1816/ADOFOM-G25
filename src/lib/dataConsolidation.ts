@@ -2,6 +2,7 @@
 // Handles standardizing LGA names to the 18 official LGAs in Ondo State
 // and merging synonymous MDA names.
 
+
 export const ONDO_LGAS = [
     "Akoko North-East",
     "Akoko North-West",
@@ -254,6 +255,67 @@ const MDA_MAPPING: Record<string, string> = {
     "admin cadre": "Unknown MDA",
     "admin. cadre": "Unknown MDA",
 };
+
+/**
+ * Canonical list of all MDAs in Ondo State Government for use in dropdowns.
+ * Derived from the unique canonical values in MDA_MAPPING above.
+ * This prevents free-text entry and eliminates duplicates at source.
+ */
+export const ONDO_MDAS: string[] = [
+    "Agency Against Gender-Based Violence",
+    "Board for Adult, Technical and Vocational Education",
+    "Board of Internal Revenue",
+    "Budget Office",
+    "Cabinet and Special Services Department",
+    "Civil Service Commission",
+    "Department of Public Service Reform and Development",
+    "Directorate of Rural and Community Development",
+    "General Administration Department",
+    "Government House and Protocol",
+    "Hospitals Management Board",
+    "Local Government Service Commission",
+    "Ministry of Agriculture and Forestry",
+    "Ministry of Commerce, Industry and Cooperative Services",
+    "Ministry of Culture and Tourism",
+    "Ministry of Economic Planning and Budget",
+    "Ministry of Education",
+    "Ministry of Energy and Mineral Resources",
+    "Ministry of Environment",
+    "Ministry of Finance",
+    "Ministry of Health",
+    "Ministry of Justice",
+    "Ministry of Lands and Housing",
+    "Ministry of Local Government and Chieftaincy Affairs",
+    "Ministry of Physical Planning and Urban Development",
+    "Ministry of Regional Integration and Diaspora Relations",
+    "Ministry of Water Resources, Public Sanitation and Hygiene",
+    "Ministry of Women Affairs and Social Development",
+    "Ministry of Works and Infrastructure",
+    "Ministry of Youth and Sports Development",
+    "Office of Establishments and Training",
+    "Office of the Deputy Governor",
+    "Office of the Governor",
+    "Ondo State Anti-Land Grabbing Taskforce",
+    "Ondo State Community and Social Development Agency",
+    "Ondo State Contributory Health Commission",
+    "Ondo State Pension Transitional Department",
+    "Ondo State Primary Health Care Development Agency",
+    "Ondo State Waste Management Authority",
+    "Performance and Project Implementation Monitoring Unit",
+    "Political and Economic Affairs Department",
+    "Public and Intergovernmental Relations",
+    "RAAMP",
+    "Regional Integration and Diaspora Relations",
+    "Service Matters Department",
+    "State Information Technology Agency",
+    "State Operation Coordinating Unit",
+    "SUBEB",
+    "Surveyor General's Office",
+    "Teaching Service Commission",
+    "TESCOM",
+    "L-PRES Project",
+    "PSTI",
+].sort();
 
 // Check direct mapping
 export function normalizeMDA(mdaName: string | null | undefined): string {

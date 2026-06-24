@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
-import { normalizeMDA, normalizeLGA } from '@/lib/dataConsolidation'
+import { normalizeMDA, normalizeLGA, ONDO_LGAS, ONDO_MDAS } from '@/lib/dataConsolidation'
 import BirthdaySelect, { parseBirthdayValue, formatBirthdayValue, isValidBirthday } from '@/components/ui/BirthdaySelect'
 
 export default function SetupProfilePage() {
@@ -318,18 +318,22 @@ export default function SetupProfilePage() {
                     />
                   </div>
 
-                  <div className="space-y-2">
+                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                       <Building2 size={14} /> Current MDA
                     </label>
-                    <input
-                      type="text"
+                    <select
                       name="current_mda"
                       required
                       value={formData.current_mda}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white"
-                    />
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
+                    >
+                      <option value="" className="bg-slate-900">-- Select MDA --</option>
+                      {ONDO_MDAS.map(mda => (
+                        <option key={mda} value={mda} className="bg-slate-900">{mda}</option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="space-y-2">
@@ -375,14 +379,18 @@ export default function SetupProfilePage() {
                     <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                       <MapPin size={14} /> Local Government (LGA)
                     </label>
-                    <input
-                      type="text"
+                    <select
                       name="lga"
                       required
                       value={formData.lga}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white"
-                    />
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
+                    >
+                      <option value="" className="bg-slate-900">-- Select LGA --</option>
+                      {ONDO_LGAS.map(lga => (
+                        <option key={lga} value={lga} className="bg-slate-900">{lga}</option>
+                      ))}
+                    </select>
                   </div>
 
                   <div className="space-y-2">
