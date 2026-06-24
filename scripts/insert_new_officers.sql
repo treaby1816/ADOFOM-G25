@@ -61,7 +61,7 @@ FROM (
   UNION ALL
   SELECT gen_random_uuid() as id, 'michaelpeace2015@gmail.com'::text as email_address, 'AFARIOGUN, Michael Olugbenga'::text as full_name, false as is_approved, true as must_change_password, 'Pending Setup'::text as current_mda, '00000000000'::text as phone_number, 'Pending'::text as grade_level, 'Pending'::text as lga, '01-01'::text as birth_month_day
   UNION ALL
-  SELECT gen_random_uuid() as id, 'adegokeabimbola90@gmail.com'::text as email_address, 'ADEGOKE, Folasade Abimbola Mrs'::text as full_name, false as is_approved, true as must_change_password, 'Pending Setup'::text as current_mda, '00000000000'::text as phone_number, 'Pending'::text as grade_level, 'Pending'::text as lga, '01-01'::text as birth_month_day
+  SELECT gen_random_uuid() as id, 'adegokeabimbola90@gmail.com'::text as email_address, 'ADEGOKE, Folasade Abimbola'::text as full_name, false as is_approved, true as must_change_password, 'Pending Setup'::text as current_mda, '00000000000'::text as phone_number, 'Pending'::text as grade_level, 'Pending'::text as lga, '01-01'::text as birth_month_day
   UNION ALL
   SELECT gen_random_uuid() as id, 'olubisosea@gmail.com'::text as email_address, 'OLUBISOSE, Afolabi'::text as full_name, false as is_approved, true as must_change_password, 'Pending Setup'::text as current_mda, '00000000000'::text as phone_number, 'Pending'::text as grade_level, 'Pending'::text as lga, '01-01'::text as birth_month_day
   UNION ALL

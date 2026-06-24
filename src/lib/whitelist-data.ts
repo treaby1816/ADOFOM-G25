@@ -966,7 +966,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "is_approved": false
   },
   "adegokeabimbola90@gmail.com": {
-    "full_name": "ADEGOKE, Folasade Abimbola Mrs",
+    "full_name": "ADEGOKE, Folasade Abimbola",
     "email_address": "adegokeabimbola90@gmail.com",
     "is_approved": false
   },

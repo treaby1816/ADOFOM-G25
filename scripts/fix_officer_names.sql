@@ -586,9 +586,9 @@ UPDATE public.administrative_officers
     AND full_name IS DISTINCT FROM 'AFARIOGUN, Michael Olugbenga';
 
 UPDATE public.administrative_officers
-  SET full_name = 'ADEGOKE, Folasade Abimbola Mrs'
+  SET full_name = 'ADEGOKE, Folasade Abimbola'
   WHERE email_address = 'adegokeabimbola90@gmail.com'
-    AND full_name IS DISTINCT FROM 'ADEGOKE, Folasade Abimbola Mrs';
+    AND full_name IS DISTINCT FROM 'ADEGOKE, Folasade Abimbola';
 
 UPDATE public.administrative_officers
   SET full_name = 'EDEMA, John'
