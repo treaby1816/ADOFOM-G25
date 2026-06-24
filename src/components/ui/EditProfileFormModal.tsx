@@ -9,9 +9,10 @@ import {
 } from "lucide-react";
 import { Officer } from "@/types/officer";
 import { createClient } from "@/utils/supabase/client";
-import { normalizeMDA, normalizeLGA } from "@/lib/dataConsolidation";
+import { normalizeMDA, normalizeLGA, ONDO_LGAS, ONDO_MDAS } from "@/lib/dataConsolidation";
 import { WHITELIST_OFFICERS } from "@/lib/whitelist-data";
 import BirthdaySelect, { parseBirthdayValue, formatBirthdayValue, isValidBirthday } from "@/components/ui/BirthdaySelect";
+import SearchableCombobox from "@/components/ui/SearchableCombobox";
 import { GraduationCap } from "lucide-react";
 
 interface EditProfileFormModalProps {
@@ -399,7 +400,15 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                             <label className={labelClass}>
                                 <Briefcase size={12} className="text-emerald-500" /> Current MDA
                             </label>
-                            <input type="text" {...register("current_mda", { required: "MDA is required" })} className={inputClass} placeholder="Ministry/Department/Agency" />
+                            <SearchableCombobox
+                                name="current_mda"
+                                value={watch("current_mda")}
+                                onChange={(val) => setValue("current_mda", val, { shouldValidate: true })}
+                                options={ONDO_MDAS}
+                                placeholder="Search MDA or type to add new..."
+                                required
+                            />
+                            <p className="text-[10px] text-slate-400 dark:text-zinc-500 mt-1">Can&apos;t find your MDA? Type it in to add.</p>
                             {errors.current_mda && <span className="text-[10px] text-red-500 mt-1">{errors.current_mda.message}</span>}
                         </div>
                         <div>
@@ -432,9 +441,14 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                         </div>
                         <div>
                             <label className={labelClass}>
-                                <MapPin size={12} className="text-emerald-500" /> LGA <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>
+                                <MapPin size={12} className="text-emerald-500" /> Local Government (LGA)
                             </label>
-                            <input type="text" {...register("lga")} readOnly className={`${inputClass} opacity-70 cursor-not-allowed bg-slate-100/50`} />
+                            <select {...register("lga")} className={`${inputClass} appearance-none`}>
+                                <option value="">-- Select LGA --</option>
+                                {ONDO_LGAS.map(lga => (
+                                    <option key={lga} value={lga}>{lga}</option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
