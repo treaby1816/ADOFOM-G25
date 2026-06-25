@@ -204,7 +204,8 @@ export default function SetupProfilePage() {
           await supabase.from('notifications').insert({
             title: '🎉 New Officer Auto-Approved',
             message: `${formattedName || 'A new officer'} (${user.email}) has registered and their profile is now live.`,
-            type: 'admin',
+            type: 'system',
+            link: '/',
             is_read: false,
           })
         } else {
