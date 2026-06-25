@@ -139,7 +139,7 @@ export default async function DashboardPage(props: {
       processedData = processedData.filter(o => o.birth_month_day.startsWith(monthParam.substring(0, 3)));
     }
 
-    const uniqueMdasCount = new Set(allOfficers.map(o => normalizeMDA(o.current_mda)).filter(mda => mda && mda !== "Unknown MDA")).size;
+    const uniqueMdasCount = new Set(allOfficers.map(o => normalizeMDA(o.current_mda)).filter(mda => mda && mda !== "Unknown MDA" && mda !== "Pending Setup")).size;
     const totalOfficersCount = allOfficers.length;
 
     return (
