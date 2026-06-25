@@ -205,7 +205,7 @@ export default function SetupProfilePage() {
             title: '🎉 New Officer Auto-Approved',
             message: `${formattedName || 'A new officer'} (${user.email}) has registered and their profile is now live.`,
             type: 'system',
-            link: '/',
+            link: `/?profileId=${user.id}`,
             is_read: false,
           })
         } else {

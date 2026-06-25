@@ -59,6 +59,27 @@ const dismissBirthdays = (ids: string[]) => {
   }
 };
 
+const getDismissedNotifications = (): string[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = localStorage.getItem("adofom_dismissed_notifications");
+    return stored ? JSON.parse(stored) : [];
+  } catch (e) {
+    return [];
+  }
+};
+
+const dismissNotifications = (ids: string[]) => {
+  if (typeof window === 'undefined') return;
+  try {
+    const current = getDismissedNotifications();
+    const updatedIds = Array.from(new Set([...current, ...ids]));
+    localStorage.setItem("adofom_dismissed_notifications", JSON.stringify(updatedIds));
+  } catch (e) {
+    console.error(e);
+  }
+};
+
 export default function NotificationDrawer() {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -81,7 +102,9 @@ export default function NotificationDrawer() {
       .limit(20)
 
     if (!error && data) {
-      const mappedData = data.map((n: any) => ({
+      const dismissedIds = getDismissedNotifications();
+      const activeData = data.filter((n: any) => !dismissedIds.includes(n.id));
+      const mappedData = activeData.map((n: any) => ({
         ...n,
         link: n.type === 'admin' ? '/admin/approvals' : n.link
       }))
@@ -197,8 +220,11 @@ export default function NotificationDrawer() {
       setBirthdayAlerts(prev => prev.filter(n => n.id !== id))
       return
     }
-    await supabase.from('notifications').update({ is_read: true }).eq('id', id)
-    setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
+    
+    // For regular notifications, we dismiss locally instead of updating the DB globally
+    // so that other officers don't lose their notifications!
+    dismissNotifications([id]);
+    setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
   const [isConfirmOpen, setIsConfirmOpen] = useState(false)
@@ -207,20 +233,25 @@ export default function NotificationDrawer() {
   // 4. Clear All Function
   const executeClearAll = async () => {
     setIsClearing(true)
-    // Direct database delete instead of relying on RPC
-    const { error } = await supabase.from('notifications').delete().not('id', 'is', null)
     
-    if (!error) {
-      const bdayIds = birthdayAlerts.map(n => n.id.replace('bday-', ''));
-      dismissBirthdays(bdayIds);
-      setNotifications([]) // Optimistic UI update
-      setNewsAlerts([])    // Also clear news alerts
-      setBirthdayAlerts([]) // Also clear birthday alerts
-      toast.success("Notifications cleared!")
-    } else {
-      console.error("Error clearing notifications:", error.message)
-      toast.error("Permission Denied: Could not clear notifications.")
+    // Dismiss all currently visible regular notifications locally
+    const notifIds = notifications.map(n => n.id);
+    if (notifIds.length > 0) {
+      dismissNotifications(notifIds);
     }
+    
+    // Dismiss birthdays locally
+    const bdayIds = birthdayAlerts.map(n => n.id.replace('bday-', ''));
+    if (bdayIds.length > 0) {
+      dismissBirthdays(bdayIds);
+    }
+    
+    // Optimistic UI update
+    setNotifications([])
+    setNewsAlerts([])
+    setBirthdayAlerts([])
+    
+    toast.success("Notifications cleared!")
     setIsClearing(false)
     setIsConfirmOpen(false)
   }
