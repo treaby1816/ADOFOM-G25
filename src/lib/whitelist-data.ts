@@ -508,7 +508,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "full_name": "OWOLABI, Nkechi Blessing",
     "email_address": "nkayblessing@gmail.com",
     "phone_number": "2348035632934",
-    "current_mda": "Ondo State Community and Social Development Agency Alagbaka",
+    "current_mda": "Ondo State Community and Social Development Agency",
     "grade_level": "Senior Administration Officer 10/3",
     "lga": "Akure South",
     "is_approved": true
