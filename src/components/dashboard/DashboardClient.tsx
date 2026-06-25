@@ -12,6 +12,8 @@ import { Officer } from "@/types/officer";
 import { Users, ChevronLeft, ChevronRight, AlertCircle, Search as SearchIcon } from "lucide-react";
 import BirthdayBanner from "@/components/ui/BirthdayBanner";
 import { useDebounce } from "@/hooks/useDebounce";
+import { createClient } from "@/utils/supabase/client";
+import { normalizeLGA, normalizeMDA, formatBirthday } from "@/lib/dataConsolidation";
 
 const ITEMS_PER_PAGE = 20;
 
@@ -149,19 +151,52 @@ export default function DashboardClient({
   const totalPages = Math.ceil(initialTotalCount / ITEMS_PER_PAGE);
 
   // Automatically open profile if profileId query param is present
+  // Falls back to a live DB fetch if the officer isn't in the cached allOfficers list
   const profileIdParam = searchParams.get("profileId") || "";
   useEffect(() => {
-    if (profileIdParam && allOfficers.length > 0) {
-      const officer = allOfficers.find(o => o.id === profileIdParam);
-      if (officer) {
-        setSelectedOfficer(officer);
-        // Clear parameter from URL
-        const params = new URLSearchParams(searchParams.toString());
-        params.delete("profileId");
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-      }
+    if (!profileIdParam) return;
+
+    const clearProfileParam = () => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("profileId");
+      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    };
+
+    // 1. Try to find in already-loaded officers first (fast path)
+    const found = allOfficers.find(o => o.id === profileIdParam);
+    if (found) {
+      setSelectedOfficer(found);
+      clearProfileParam();
+      return;
     }
-  }, [profileIdParam, allOfficers, router, pathname, searchParams]);
+
+    // 2. Fallback: fetch live from DB (handles newly-approved officers not yet in cache)
+    const supabase = createClient();
+    supabase
+      .from('administrative_officers')
+      .select('*')
+      .eq('id', profileIdParam)
+      .eq('is_approved', true)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) {
+          const normalized = {
+            ...data,
+            lga: normalizeLGA(data.lga),
+            current_mda: normalizeMDA(data.current_mda),
+            birth_month_day: formatBirthday(data.birth_month_day),
+          } as Officer;
+          setSelectedOfficer(normalized);
+          // Also add to allOfficers so the card appears in the grid
+          setAllOfficers(prev => {
+            if (prev.find(o => o.id === normalized.id)) return prev;
+            return [normalized, ...prev];
+          });
+        }
+        clearProfileParam();
+      });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileIdParam]);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 -mt-8 relative z-20">

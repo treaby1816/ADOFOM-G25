@@ -162,11 +162,14 @@ export default function ApprovalsPage() {
       // If we just approved them, send a system notification to everyone!
       if (!currentStatus) {
          try {
-            const surname = fullName ? fullName.split(',')[0].trim() : 'a new officer';
+            const surname = fullName ? fullName.split(',')[0].trim() : 'A New Officer';
+            const otherNames = fullName ? fullName.split(',').slice(1).join(',').trim() : '';
+            const displayName = otherNames ? `${surname}, ${otherNames}` : surname;
             await supabase.from('notifications').insert({
-              title: '🎉 New Officer Approved',
-              message: `Please welcome ${surname} to the Ondo State Admin Directory!`,
+              title: '👋 New Officer Onboarded',
+              message: `${displayName} has been verified and added to the directory. Tap to view their profile.`,
               type: 'system',
+              link: `/?profileId=${id}`,
               is_read: false
             })
          } catch (e) {

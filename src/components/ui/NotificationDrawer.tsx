@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { Bell, X, Cake, BellRing, ShieldAlert, Info, Check, Trash2, Newspaper } from 'lucide-react'
+import { Bell, X, Cake, BellRing, ShieldAlert, Info, Check, Trash2, Newspaper, UserPlus } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
@@ -59,22 +59,24 @@ const dismissBirthdays = (ids: string[]) => {
   }
 };
 
-const getDismissedNotifications = (): string[] => {
+const getDismissedNotifications = (userId: string): string[] => {
   if (typeof window === 'undefined') return [];
   try {
-    const stored = localStorage.getItem("adofom_dismissed_notifications");
+    const key = `adofom_dismissed_notifications_${userId}`;
+    const stored = localStorage.getItem(key);
     return stored ? JSON.parse(stored) : [];
   } catch (e) {
     return [];
   }
 };
 
-const dismissNotifications = (ids: string[]) => {
+const dismissNotifications = (ids: string[], userId: string) => {
   if (typeof window === 'undefined') return;
   try {
-    const current = getDismissedNotifications();
+    const key = `adofom_dismissed_notifications_${userId}`;
+    const current = getDismissedNotifications(userId);
     const updatedIds = Array.from(new Set([...current, ...ids]));
-    localStorage.setItem("adofom_dismissed_notifications", JSON.stringify(updatedIds));
+    localStorage.setItem(key, JSON.stringify(updatedIds));
   } catch (e) {
     console.error(e);
   }
@@ -86,15 +88,23 @@ export default function NotificationDrawer() {
   const [notifications, setNotifications] = useState<AppNotification[]>([])
   const [newsAlerts, setNewsAlerts] = useState<AppNotification[]>([])
   const [birthdayAlerts, setBirthdayAlerts] = useState<AppNotification[]>([])
+  const [currentUserId, setCurrentUserId] = useState<string>('')
   const supabase = createClient()
   const router = useRouter()
 
   useEffect(() => {
     setMounted(true)
+    // Get the current user ID so dismiss keys are user-scoped
+    supabase.auth.getUser().then(({ data }) => {
+      if (data?.user?.id) setCurrentUserId(data.user.id)
+    })
   }, [])
 
   // 1. Fetch real notifications from the notifications table
   const fetchNotifications = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    const userId = user?.id || '';
+
     const { data, error } = await supabase
       .from('notifications')
       .select('*')
@@ -102,7 +112,7 @@ export default function NotificationDrawer() {
       .limit(20)
 
     if (!error && data) {
-      const dismissedIds = getDismissedNotifications();
+      const dismissedIds = getDismissedNotifications(userId);
       const activeData = data.filter((n: any) => !dismissedIds.includes(n.id));
       const mappedData = activeData.map((n: any) => ({
         ...n,
@@ -223,7 +233,7 @@ export default function NotificationDrawer() {
     
     // For regular notifications, we dismiss locally instead of updating the DB globally
     // so that other officers don't lose their notifications!
-    dismissNotifications([id]);
+    dismissNotifications([id], currentUserId);
     setNotifications(prev => prev.filter(n => n.id !== id))
   }
 
@@ -237,7 +247,7 @@ export default function NotificationDrawer() {
     // Dismiss all currently visible regular notifications locally
     const notifIds = notifications.map(n => n.id);
     if (notifIds.length > 0) {
-      dismissNotifications(notifIds);
+      dismissNotifications(notifIds, currentUserId);
     }
     
     // Dismiss birthdays locally
@@ -338,10 +348,12 @@ export default function NotificationDrawer() {
                       n.link ? 'cursor-pointer' : ''
                     } ${
                       n.type === 'news' 
-                        ? 'bg-blue-500/10 border-blue-500/20 shadow-lg hover:bg-blue-500/15' 
-                        : n.is_read 
-                          ? 'bg-white/5 border-white/5 opacity-60' 
-                          : 'bg-white/10 border-white/20 shadow-lg hover:bg-white/15'
+                        ? 'bg-blue-500/10 border-blue-500/20 shadow-lg hover:bg-blue-500/15'
+                        : n.type === 'system' && n.link?.includes('profileId')
+                          ? 'bg-emerald-500/10 border-emerald-500/20 shadow-lg hover:bg-emerald-500/15'
+                          : n.is_read 
+                            ? 'bg-white/5 border-white/5 opacity-60' 
+                            : 'bg-white/10 border-white/20 shadow-lg hover:bg-white/15'
                     }`}
                     onClick={() => n.link && handleNotificationClick(n)}
                   >
@@ -349,7 +361,8 @@ export default function NotificationDrawer() {
                       <div className="mt-1">
                         {n.type === 'birthday' && <Cake className="text-pink-400" size={18} />}
                         {n.type === 'admin' && <ShieldAlert className="text-amber-400" size={18} />}
-                        {n.type === 'system' && <Info className="text-blue-400" size={18} />}
+                        {n.type === 'system' && n.link?.includes('profileId') && <UserPlus className="text-emerald-400" size={18} />}
+                        {n.type === 'system' && !n.link?.includes('profileId') && <Info className="text-blue-400" size={18} />}
                         {n.type === 'news' && <Newspaper className="text-blue-400" size={18} />}
                       </div>
                       <div className="flex-1">
