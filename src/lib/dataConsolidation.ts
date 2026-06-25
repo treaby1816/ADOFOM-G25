@@ -251,6 +251,8 @@ const MDA_MAPPING: Record<string, string> = {
     "department of public service reform and development": "Department of Public Service Reform and Development",
     "dpsrd": "Department of Public Service Reform and Development",
     
+    "ondo state community and social development agency alagbaka": "Ondo State Community and Social Development Agency",
+    
     // Explicit exclusions (map to Unknown MDA to hide from dropdown)
     "admin cadre": "Unknown MDA",
     "admin. cadre": "Unknown MDA",
