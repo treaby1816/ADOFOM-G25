@@ -39,7 +39,7 @@ export default function SearchAndFilter({
     const displayLgas = ONDO_LGAS.length > 0 ? ONDO_LGAS : [...new Set(officers.map((o) => (o.lga || "").trim()))].filter(Boolean).sort();
     
     // Normalize MDAs to ensure duplicates are merged in the dropdown
-    const uniqueMdas = [...new Set(officers.map((o) => normalizeMDA(o.current_mda)))].filter(mda => mda && mda !== "Unknown MDA").sort();
+    const uniqueMdas = [...new Set(officers.map((o) => normalizeMDA(o.current_mda)))].filter(mda => mda && mda !== "Unknown MDA" && mda !== "Pending Setup").sort();
     
     // Extract unique Induction Years
     const uniqueSets = [...new Set(officers.map((o) => o.induction_year))].filter(Boolean).sort((a, b) => Number(b) - Number(a)); // Sort descending (newest first)
