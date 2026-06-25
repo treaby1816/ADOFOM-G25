@@ -21,6 +21,7 @@ export interface Officer {
     professional_certificate?: string;
     professional_bodies?: string;
     portfolio_url?: string;
+    service_status?: string;
     is_admin?: boolean;
     is_approved?: boolean;
     needs_password_change?: boolean;

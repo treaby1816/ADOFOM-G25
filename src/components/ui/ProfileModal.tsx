@@ -248,6 +248,15 @@ export default function ProfileModal({ officer, onClose, onOfficerUpdated }: Pro
                                     <Award size={16} className="text-emerald-500" />
                                     {currentOfficer.grade_level}
                                 </span>
+                                {currentOfficer.service_status && (
+                                    <>
+                                        <div className="w-1 h-4 bg-slate-200 dark:bg-zinc-600 rounded-full hidden sm:block" />
+                                        <span className="flex items-center gap-2">
+                                            <Award size={16} className="text-amber-500" />
+                                            {currentOfficer.service_status}
+                                        </span>
+                                    </>
+                                )}
                                 {currentOfficer.induction_year && (
                                     <>
                                         <div className="w-1 h-4 bg-slate-200 dark:bg-zinc-600 rounded-full hidden sm:block" />

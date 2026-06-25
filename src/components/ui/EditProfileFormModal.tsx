@@ -40,6 +40,7 @@ interface ProfileFormValues {
     professional_certificate?: string;
     professional_bodies?: string;
     portfolio_url?: string;
+    service_status?: string;
 }
 
 export default function EditProfileFormModal({ officer, onSave, onClose }: EditProfileFormModalProps) {
@@ -63,6 +64,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
             professional_certificate: officer.professional_certificate || "",
             professional_bodies: officer.professional_bodies || "",
             portfolio_url: officer.portfolio_url || "",
+            service_status: officer.service_status || "",
         }
     });
 
@@ -232,6 +234,7 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                 professional_certificate: data.professional_certificate?.trim() || "",
                 professional_bodies: data.professional_bodies?.trim() || "",
                 portfolio_url: data.portfolio_url?.trim() || "",
+                service_status: data.service_status?.trim() || "",
             };
 
 
@@ -430,6 +433,19 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>
+                                <Award size={12} className="text-emerald-500" /> Service Status (Optional)
+                            </label>
+                            <select {...register("service_status")} className={`${inputClass} appearance-none`}>
+                                <option value="" className="bg-slate-900">Select Status</option>
+                                <option value="Head of Service" className="bg-slate-900 font-bold text-amber-500">Head of Service</option>
+                                <option value="Permanent Secretary" className="bg-slate-900 font-bold text-amber-500">Permanent Secretary</option>
+                                <option value="Administrative Secretary" className="bg-slate-900 font-bold text-emerald-500">Administrative Secretary</option>
+                                <option value="Director" className="bg-slate-900 font-bold text-blue-500">Director</option>
+                                <option value="Deputy Director" className="bg-slate-900 font-bold text-sky-500">Deputy Director</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className={labelClass}>
                                 <Briefcase size={12} className="text-emerald-500" /> ADOFOM Set (Induction Year)
                             </label>
                             <select {...register("induction_year")} className={`${inputClass} appearance-none`}>
@@ -439,6 +455,9 @@ export default function EditProfileFormModal({ officer, onSave, onClose }: EditP
                                 ))}
                             </select>
                         </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label className={labelClass}>
                                 <MapPin size={12} className="text-emerald-500" /> LGA <span className="text-[8px] text-slate-400 font-normal ml-1">(Locked)</span>

@@ -110,11 +110,15 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
                     <p className="text-sm font-bold text-green-700 dark:text-emerald-300 bg-green-50/80 dark:bg-emerald-950/50 inline-block px-4 py-1 rounded-full border border-green-100/50 dark:border-emerald-800/50 shadow-sm">
                         {officer.current_mda}
                     </p>
-                    {officer.induction_year && (
+                    {officer.service_status ? (
+                        <p className="text-[10px] uppercase tracking-widest font-bold text-amber-600 dark:text-amber-400">
+                            {officer.service_status}
+                        </p>
+                    ) : officer.induction_year ? (
                         <p className="text-[10px] uppercase tracking-widest font-bold text-emerald-600 dark:text-emerald-400">
                             {officer.induction_year} SET
                         </p>
-                    )}
+                    ) : null}
                 </div>
             </div>
 

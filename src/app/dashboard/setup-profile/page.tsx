@@ -29,7 +29,8 @@ export default function SetupProfilePage() {
     photo_url: '',
     induction_year: '',
     professional_certificate: '',
-    professional_bodies: ''
+    professional_bodies: '',
+    service_status: ''
   })
 
   const [birthday, setBirthday] = useState('')
@@ -87,7 +88,8 @@ export default function SetupProfilePage() {
             photo_url: existingProfile.photo_url || '',
             induction_year: existingProfile.induction_year || '',
             professional_certificate: existingProfile.professional_certificate || '',
-            professional_bodies: existingProfile.professional_bodies || ''
+            professional_bodies: existingProfile.professional_bodies || '',
+            service_status: existingProfile.service_status || ''
           })
           
           if (existingProfile.birth_month_day) {
@@ -360,6 +362,25 @@ export default function SetupProfilePage() {
                         <option key={level} value={`GL ${level}`} className="bg-slate-900">GL {level}</option>
                       ))}
                       <option value="Retired" className="bg-slate-900 text-yellow-500 font-bold">Retired</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                      <Award size={14} /> Service Status (Optional)
+                    </label>
+                    <select
+                      name="service_status"
+                      value={formData.service_status}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl focus:ring-2 focus:ring-yellow-500 transition-all text-sm text-white appearance-none"
+                    >
+                      <option value="" className="bg-slate-900">Select Status</option>
+                      <option value="Head of Service" className="bg-slate-900 font-bold text-amber-500">Head of Service</option>
+                      <option value="Permanent Secretary" className="bg-slate-900 font-bold text-amber-500">Permanent Secretary</option>
+                      <option value="Administrative Secretary" className="bg-slate-900 font-bold text-emerald-500">Administrative Secretary</option>
+                      <option value="Director" className="bg-slate-900 font-bold text-blue-500">Director</option>
+                      <option value="Deputy Director" className="bg-slate-900 font-bold text-sky-500">Deputy Director</option>
                     </select>
                   </div>
 
