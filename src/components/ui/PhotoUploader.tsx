@@ -49,14 +49,14 @@ export default function PhotoUploader({ onUploadComplete, currentPhotoUrl }: Pho
 
       // Upload to Supabase Storage
       const { error: uploadError, data } = await supabase.storage
-        .from('avatars')
+        .from('officer-photos')
         .upload(filePath, file)
 
       if (uploadError) throw uploadError
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
-        .from('avatars')
+        .from('officer-photos')
         .getPublicUrl(filePath)
 
       onUploadComplete(publicUrl)

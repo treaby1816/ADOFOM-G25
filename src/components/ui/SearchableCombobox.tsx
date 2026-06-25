@@ -108,12 +108,13 @@ export default function SearchableCombobox({
       {/* Dropdown */}
       {isOpen && (
         <div className="absolute z-50 mt-1 w-full bg-slate-900 border border-white/10 rounded-xl shadow-2xl overflow-hidden">
-          <ul className="max-h-56 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-700">
+          <ul className="max-h-56 overflow-y-auto overscroll-contain touch-pan-y scrollbar-thin scrollbar-thumb-slate-700">
             {/* "Add new" option at the top when typed value is not in list */}
             {isNewValue && (
               <li>
                 <button
                   type="button"
+                  onMouseDown={(e) => { e.preventDefault(); handleAddNew(); }}
                   onClick={handleAddNew}
                   className="w-full flex items-center gap-2 px-4 py-3 text-sm text-yellow-400 hover:bg-yellow-500/10 transition-colors text-left border-b border-white/5"
                 >
@@ -129,6 +130,7 @@ export default function SearchableCombobox({
                 <li key={option}>
                   <button
                     type="button"
+                    onMouseDown={(e) => { e.preventDefault(); handleSelect(option); }}
                     onClick={() => handleSelect(option)}
                     className={`w-full flex items-center justify-between gap-2 px-4 py-2.5 text-sm transition-colors text-left ${
                       value === option

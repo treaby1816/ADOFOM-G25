@@ -320,6 +320,10 @@ export default function ApprovalsPage() {
                             <div className="flex items-center gap-2 text-emerald-400 text-[10px] font-black uppercase tracking-wider bg-emerald-400/10 px-3 py-1 rounded-full border border-emerald-400/20 w-fit">
                               <CheckCircle2 size={12} /> Approved
                             </div>
+                          ) : officer.current_mda === 'Pending Setup' ? (
+                            <div className="flex items-center gap-2 text-slate-400 text-[10px] font-black uppercase tracking-wider bg-slate-500/10 px-3 py-1 rounded-full border border-slate-500/20 w-fit">
+                              <AlertTriangle size={12} /> Awaiting Reg.
+                            </div>
                           ) : (
                             <div className="flex items-center gap-2 text-yellow-500 text-[10px] font-black uppercase tracking-wider bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20 w-fit">
                               <Clock size={12} /> Pending
@@ -330,14 +334,19 @@ export default function ApprovalsPage() {
                       <td className="px-6 py-5 text-right">
                         <button
                           onClick={() => toggleApproval(officer.id, officer.is_approved, officer.email_address, officer.full_name)}
-                          disabled={processingId === officer.id}
-                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 ${officer.is_approved
-                            ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
-                            : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
+                          disabled={processingId === officer.id || officer.current_mda === 'Pending Setup'}
+                          className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 disabled:opacity-50 ${
+                            officer.current_mda === 'Pending Setup'
+                              ? 'bg-slate-500/10 text-slate-500 border border-slate-500/20'
+                              : officer.is_approved
+                              ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                              : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20'
                             }`}
                         >
                           {processingId === officer.id ? (
                             <Loader2 size={16} className="animate-spin" />
+                          ) : officer.current_mda === 'Pending Setup' ? (
+                            <><Clock size={16} /> Waiting</>
                           ) : officer.is_approved ? (
                             <><UserX size={16} /> Revoke</>
                           ) : (
