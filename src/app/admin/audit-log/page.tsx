@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import {
   ShieldAlert, Loader2, ChevronLeft, Search,
   FileText, RefreshCw, Download, AlertTriangle,
-  Pencil, Trash2, Plus, Filter
+  Pencil, Trash2, Plus, Filter, Radio
 } from 'lucide-react'
 import Link from 'next/link'
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
@@ -65,6 +65,9 @@ export default function AuditLogPage() {
   const [actionFilter, setActionFilter] = useState<'ALL' | 'INSERT' | 'UPDATE' | 'DELETE'>('ALL')
   const [tableFilter, setTableFilter] = useState<string>('ALL')
   const [expandedId, setExpandedId] = useState<number | null>(null)
+  const [isLive, setIsLive] = useState(false)
+  const [newEventIds, setNewEventIds] = useState<Set<number>>(new Set())
+  const flashTimeouts = useRef<Map<number, ReturnType<typeof setTimeout>>>(new Map())
 
   const router = useRouter()
   const supabase = useMemo(() => createClient(), [])
@@ -127,17 +130,47 @@ export default function AuditLogPage() {
     if (isAuthorized) fetchLogs()
   }, [isAuthorized, fetchLogs])
 
-  // Realtime subscription for live updates
+  // Flash a new entry highlight, then remove it after 4s
+  const flashEntry = useCallback((id: number) => {
+    setNewEventIds(prev => new Set(prev).add(id))
+    const existing = flashTimeouts.current.get(id)
+    if (existing) clearTimeout(existing)
+    const t = setTimeout(() => {
+      setNewEventIds(prev => { const next = new Set(prev); next.delete(id); return next })
+      flashTimeouts.current.delete(id)
+    }, 4000)
+    flashTimeouts.current.set(id, t)
+  }, [])
+
+  // Realtime subscription for live updates — INSERT, UPDATE, DELETE
   useEffect(() => {
     if (!isAuthorized) return
     const channel = supabase
       .channel('audit-log-realtime')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'audit_logs' }, (payload) => {
-        setLogs((prev) => [payload.new as AuditLog, ...prev])
+        const entry = payload.new as AuditLog
+        setLogs(prev => [entry, ...prev])
+        flashEntry(entry.id)
       })
-      .subscribe()
-    return () => { supabase.removeChannel(channel) }
-  }, [supabase, isAuthorized])
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'audit_logs' }, (payload) => {
+        const entry = payload.new as AuditLog
+        setLogs(prev => prev.map(l => l.id === entry.id ? entry : l))
+        flashEntry(entry.id)
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'audit_logs' }, (payload) => {
+        const old = payload.old as AuditLog
+        setLogs(prev => prev.filter(l => l.id !== old.id))
+      })
+      .subscribe((status) => {
+        setIsLive(status === 'SUBSCRIBED')
+      })
+    return () => {
+      supabase.removeChannel(channel)
+      setIsLive(false)
+      flashTimeouts.current.forEach(clearTimeout)
+      flashTimeouts.current.clear()
+    }
+  }, [supabase, isAuthorized, flashEntry])
 
   const uniqueTables = useMemo(() => ['ALL', ...Array.from(new Set(logs.map(l => l.table_name)))], [logs])
 
@@ -210,9 +243,19 @@ export default function AuditLogPage() {
             </Link>
             <h1 className="text-3xl font-black text-white uppercase tracking-tight flex items-center gap-3">
               <FileText className="text-yellow-500" /> Audit Log
+              {isLive ? (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-[10px] font-black text-emerald-400 uppercase tracking-widest">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  LIVE
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-500/10 border border-slate-500/30 rounded-full text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                  <Radio size={10} /> Connecting...
+                </span>
+              )}
             </h1>
             <p className="text-slate-400 text-sm mt-1">
-              Immutable record of all data changes — {logs.length} events total
+              Immutable record of all data changes — {logs.length} events total · Real-time updates active
             </p>
           </div>
 
@@ -324,12 +367,17 @@ export default function AuditLogPage() {
                     const style = ACTION_STYLES[log.action_type] || ACTION_STYLES.UPDATE
                     const isExpanded = expandedId === log.id
                     const displayName = getDisplayName(log.new_data || log.old_data)
+                    const isNew = newEventIds.has(log.id)
 
                     return (
                       <>
                         <tr
                           key={log.id}
-                          className="hover:bg-white/[0.03] transition-colors cursor-pointer"
+                          className={`transition-all duration-700 cursor-pointer ${
+                            isNew
+                              ? 'bg-yellow-500/10 border-l-2 border-yellow-500'
+                              : 'hover:bg-white/[0.03]'
+                          }`}
                           onClick={() => setExpandedId(isExpanded ? null : log.id)}
                         >
                           <td className="px-5 py-4">
