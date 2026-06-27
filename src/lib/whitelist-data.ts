@@ -1169,7 +1169,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "full_name": "AJAGUNNA, Adebola Akeem",
     "email_address": "adebola.ajagunna@gmail.com",
     "is_approved": false
-  }
+  },
   "adeteye2015@gmail.com": {
     full_name: "OSHODI, Michael Adeteye",
     is_approved: true,
