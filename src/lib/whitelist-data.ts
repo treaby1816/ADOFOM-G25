@@ -880,11 +880,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "email_address": "bidemi.nelson@gmail.com",
     "is_approved": false
   },
-  "adeteye2015@gmail.com": {
-    "full_name": "OSHODI, Michael Adeteye",
-    "email_address": "adeteye2015@gmail.com",
-    "is_approved": false
-  },
+
   "yinkakinwe77@gmail.com": {
     "full_name": "AKINWE, Adeyinka Adeyemi",
     "email_address": "yinkakinwe77@gmail.com",
@@ -1165,11 +1161,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "email_address": "femiisgodly@gmail.com",
     "is_approved": false
   },
-  "adebola.ajagunna@gmail.com": {
-    "full_name": "AJAGUNNA, Adebola Akeem",
-    "email_address": "adebola.ajagunna@gmail.com",
-    "is_approved": false
-  },
+
   "adeteye2015@gmail.com": {
     full_name: "OSHODI, Michael Adeteye",
     is_approved: true,
