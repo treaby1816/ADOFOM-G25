@@ -213,6 +213,7 @@ const MDA_MAPPING: Record<string, string> = {
     "governor's office": "Office of the Governor",
     "governors office": "Office of the Governor",
     "the governor's office": "Office of the Governor",
+    "governor's ofice": "Office of the Governor",
 
     "office of the deputy governor": "Office of the Deputy Governor",
     "deputy governor's office": "Office of the Deputy Governor",
