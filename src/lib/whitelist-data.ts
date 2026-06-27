@@ -1170,4 +1170,164 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "email_address": "adebola.ajagunna@gmail.com",
     "is_approved": false
   }
+  "adeteye2015@gmail.com": {
+    full_name: "OSHODI, Michael Adeteye",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "adebola.ajagunna@gmail.com": {
+    full_name: "AJAGUNNA, Adebola",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "bosunwater@gmail.com": {
+    full_name: "OGUNDIPE, Olatunbosun",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "tokunboayejoto@yahoo.com": {
+    full_name: "AYEJOTO, Michael Tokunbo",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "talktobosun@yahoo.com": {
+    full_name: "OGUNBODEDE, Olatunbosun",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "ayorindeikuejamofo1976@gmail.com": {
+    full_name: "IKUEJAMOFO, Ayorinde",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "morayobayophilip@gmail.com": {
+    full_name: "BAYO-PHILIP, Morayo",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "akinwolereolakunle1980@gmail.com": {
+    full_name: "AKINWOLERE, Olakunle Akinfolarin",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "ronkiedoos@yahoo.com": {
+    full_name: "FILANI, Ronke",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "blessedty8@gmail.com": {
+    full_name: "ARIJELOYE, Oluwatoyin",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "falodunayodeji8@gmail.com": {
+    full_name: "FALODUN, Isreal Ayodeji",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "olamisegbeadelanke@gmail.com": {
+    full_name: "OLAMISEGBE, Adelanke Adetunji",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "olaiyapooluremi@gmail.com": {
+    full_name: "OLAIYAPO, Oluremi",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "roifayodele@gmail.com": {
+    full_name: "FEMI-AYODELE, Rachael Oludaisi Iyadunni",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "olasehindedada@gmail.com": {
+    full_name: "DADA, Olasehinde Yekeen",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "orunkofrederick@yahoo.com": {
+    full_name: "ORUNKO, Adelakun Frederick",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "akinbodennis@gmail.com": {
+    full_name: "AKINBO, Dennis",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "fabmuyideen05@gmail.com": {
+    full_name: "FABUNMI, T. Muyideen",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "adesekogoluwatoyin@gmail.com": {
+    full_name: "ADESEKO, Oluwatoyin Grace",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "ogunsuyigoodluck2@gmail.com": {
+    full_name: "OGUNSUYI, Opeyemi Francisca",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "omomowofestus@gmail.com": {
+    full_name: "ADEWALE, Omomowo",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "eyitayomoses8@gail.com": {
+    full_name: "MOSES, Eyitayo Funmilayo",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "adesolaakinosin@gmail.com": {
+    full_name: "ADEYELU-AKINOSIN, Adesola",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "oakinmoye86@gmail.com": {
+    full_name: "OLADELE, Fredrick Akinmoye",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "osho.olubunmi@yahoo.com": {
+    full_name: "ADEDAYO-OSO, Olubunmi",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "ogundipebiola61@gmail.com": {
+    full_name: "OGUNDIPE, Funmilayo Biola",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "olowogorioye_ba@yahoo.com": {
+    full_name: "OLOWOGORIOYE, Babatunde Amos",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "solamercy1972@gmail.com": {
+    full_name: "LEBILE, Olusola",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "bogunmoniwo@gmail.com": {
+    full_name: "OGUNMONIWO, Etanami Ruth",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "yinkayode2001@gmail.com": {
+    full_name: "OGUNDELE, Kayode",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "foliksdave@gmail.com": {
+    full_name: "SANNI, Folake Iyabo",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "delejem@gmail.com": {
+    full_name: "JEMILUGBA, Ayodele Dada",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
 };
