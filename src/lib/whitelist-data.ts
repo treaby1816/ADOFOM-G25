@@ -1318,4 +1318,22 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     is_approved: true,
     current_mda: "Pending Setup",
   },
+  "alexmorganedge@gmail.com": {
+    full_name: "OLADELE-ADESANMI, Alex",
+    email_address: "alexmorganedge@gmail.com",
+    phone_number: "2347065035287",
+    current_mda: "Service Matters Department",
+    grade_level: "GL 09",
+    lga: "Ifedore",
+    is_approved: true,
+  },
+  "life_jotto4real@yahoo.com": {
+    full_name: "AYEJOTO, Mayowa John",
+    email_address: "life_jotto4real@yahoo.com",
+    phone_number: "2347031390319",
+    current_mda: "Ministry of Local Government and Chieftaincy Affairs",
+    grade_level: "GL. 10",
+    lga: "Akoko North west",
+    is_approved: true,
+  },
 };
