@@ -1051,11 +1051,7 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     "email_address": "foldara@gmail.com",
     "is_approved": false
   },
-  "akinyeleoluwatosin1996@gmail.com": {
-    "full_name": "AKINYELE, Oluwatosin",
-    "email_address": "akinyeleoluwatosin1996@gmail.com",
-    "is_approved": false
-  },
+
   "bukieadetan1@gmail.com": {
     "full_name": "ADETAN, Olubukola Ibironke",
     "email_address": "bukieadetan1@gmail.com",
