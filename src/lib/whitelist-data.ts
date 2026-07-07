@@ -1336,4 +1336,44 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     lga: "Akoko North west",
     is_approved: true,
   },
+  "igewale@gmail.com": {
+    full_name: "IGE, Olawale Babasola",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "lanreabiodun69@gmail.com": {
+    full_name: "ABIODUN, Lanre",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "oripelayesegun@gmail.com": {
+    full_name: "ORIPELAYE, 'Segun John",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "akinkuowosesan@gmail.com": {
+    full_name: "AKINKUOWO, Sesan",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "sirjohnson007@gmail.com": {
+    full_name: "JOHNSON-OYEKAN, Oluwole",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "tinnatei.22@gmail.com": {
+    full_name: "SOBIJOH, Tinnatei",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "kikekikky1@gmail.com": {
+    full_name: "OYEKAN, Kikelomo",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "akingbasote_osm@yahoo.com": {
+    full_name: "AKINGBASOTE, Oluwagbenga",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
 };
