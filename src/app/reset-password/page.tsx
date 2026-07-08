@@ -37,16 +37,10 @@ export default function ResetPasswordPage() {
         
         if (error) {
           console.error("Client-side exchange error:", error)
-          const isCrossBrowser = 
-            error.message.toLowerCase().includes('pkce') || 
-            error.message.toLowerCase().includes('flow state') ||
-            error.message.toLowerCase().includes('code verifier')
-
+          // Always show the raw error so we can diagnose exactly what Supabase reports
           setMessage({
             type: 'error',
-            text: isCrossBrowser 
-              ? 'Security verification failed. If you opened this link in a new browser/app, please COPY the link from your email and PASTE it into the original browser where you requested the reset.'
-              : `Reset link invalid: ${error.message}. Please request a new one.`
+            text: `Password reset failed: ${error.message}. Please request a new reset link.`
           })
           // Clean the URL so we don't keep trying
           window.history.replaceState({}, document.title, window.location.pathname)
