@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { createVanillaClient } from '@/utils/supabase/vanilla'
@@ -17,16 +17,20 @@ export default function ResetPasswordPage() {
   const [isSessionReady, setIsSessionReady] = useState(false)
   const router = useRouter()
 
+  const isExchanging = useRef(false)
+
   useEffect(() => {
     const supabase = createVanillaClient()
     let resolved = false
 
     const checkAndExchangeCode = async () => {
-      // 1. Check if there's a PKCE code in the URL
+      if (isExchanging.current) return
+      
       const params = new URLSearchParams(window.location.search)
       const code = params.get('code')
       
       if (code) {
+        isExchanging.current = true
         // Exchange the code on the client side, where the original code_verifier
         // from createBrowserClient is stored!
         const { error } = await supabase.auth.exchangeCodeForSession(code)
@@ -35,14 +39,17 @@ export default function ResetPasswordPage() {
           console.error("Client-side exchange error:", error)
           const isCrossBrowser = 
             error.message.toLowerCase().includes('pkce') || 
-            error.message.toLowerCase().includes('flow state')
+            error.message.toLowerCase().includes('flow state') ||
+            error.message.toLowerCase().includes('code verifier')
 
           setMessage({
             type: 'error',
             text: isCrossBrowser 
               ? 'Security verification failed. If you opened this link in a new browser/app, please COPY the link from your email and PASTE it into the original browser where you requested the reset.'
-              : 'Invalid or expired reset link. Please request a new one.'
+              : `Reset link invalid: ${error.message}. Please request a new one.`
           })
+          // Clean the URL so we don't keep trying
+          window.history.replaceState({}, document.title, window.location.pathname)
           return // Stop execution if exchange failed
         }
         
