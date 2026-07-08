@@ -16,7 +16,7 @@ export default function AuthGuardLayout({ children }: { children: React.ReactNod
     let isMounted = true;
 
     // Skip security check entirely for public routes — no session needed
-    const publicRoutes = ['/', '/login', '/signup', '/auth', '/about', '/privacy-policy'];
+    const publicRoutes = ['/', '/login', '/signup', '/auth', '/about', '/privacy-policy', '/reset-password'];
     const isPublic = publicRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
     if (isPublic) {
       setLoading(false);

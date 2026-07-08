@@ -22,6 +22,19 @@ export default function ResetPasswordPage() {
     const supabase = createClient()
     
     const checkSession = async () => {
+      // Handle PKCE code if present
+      const params = new URLSearchParams(window.location.search)
+      const code = params.get('code')
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        if (error) {
+          setMessage({ type: 'error', text: 'Invalid or expired reset link. Please request a new one.' })
+          return
+        }
+        // Remove code from URL to prevent re-exchange on refresh
+        window.history.replaceState({}, document.title, window.location.pathname)
+      }
+
       const { data: { session } } = await supabase.auth.getSession()
       if (session) {
         setIsSessionReady(true)

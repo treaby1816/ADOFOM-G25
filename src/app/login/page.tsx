@@ -23,6 +23,15 @@ export default function LoginPage() {
   const router = useRouter()
 
   useEffect(() => {
+    // Parse URL for any error messages (e.g. from auth callback)
+    const params = new URLSearchParams(window.location.search)
+    const urlError = params.get('error')
+    if (urlError) {
+      setMessage({ type: 'error', text: urlError })
+      // Clear the error from URL without refreshing
+      window.history.replaceState({}, document.title, window.location.pathname)
+    }
+
     // Restore saved credentials from storage
     try {
       const savedEmail = localStorage.getItem(REMEMBER_ME_KEY)

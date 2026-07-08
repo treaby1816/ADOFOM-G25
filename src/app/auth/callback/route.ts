@@ -72,6 +72,11 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}${next}`)
   }
 
+  const nextFallback = searchParams.get('next')
+  if (nextFallback) {
+    return NextResponse.redirect(`${origin}${nextFallback}`)
+  }
+
   // return the user to an error page with some instructions
   return NextResponse.redirect(`${origin}/login?error=Invalid+or+expired+magic+link`)
 }
