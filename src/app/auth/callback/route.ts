@@ -15,6 +15,14 @@ export async function GET(request: Request) {
     )
   }
 
+  // For password reset flows — skip server-side exchange entirely because of PKCE cookie drops.
+  // We forward the code to the client-side /reset-password page which uses localStorage.
+  const isPasswordReset = next === '/reset-password' || next.includes('reset-password')
+
+  if (isPasswordReset) {
+    return NextResponse.redirect(`${origin}/reset-password?code=${code}`)
+  }
+
   const cookieStore = await cookies()
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -35,28 +43,14 @@ export async function GET(request: Request) {
     }
   )
 
-  // Server-side PKCE exchange — @supabase/ssr stores the code_verifier in
-  // a cookie when resetPasswordForEmail() is called on the browser, so this
-  // server-side exchange will always find it regardless of the email app used.
+  // Server-side PKCE exchange for standard logins
   const { data: { user }, error } = await supabase.auth.exchangeCodeForSession(code)
 
   if (error) {
     console.error('Auth Callback Error:', error.message)
 
-    const isCrossBrowser =
-      error.message.toLowerCase().includes('pkce') ||
-      error.message.toLowerCase().includes('flow state') ||
-      error.message.toLowerCase().includes('code verifier')
-
-    const message = isCrossBrowser
-      ? 'Your reset link was opened in a different browser. Please copy the link from the email and paste it into the browser you used to request the reset.'
-      : 'Reset link is invalid or has expired. Please request a new one.'
-
-    return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(message)}`)
+    return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent('Authentication link is invalid or has expired. Please try again.')}`)
   }
-
-  // For password reset flows — skip profile sync and go directly to the reset page
-  const isPasswordReset = next === '/reset-password'
 
   if (!isPasswordReset && user?.email) {
     const email = user.email.toLowerCase()
