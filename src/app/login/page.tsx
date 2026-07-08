@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
+import { createVanillaClient } from '@/utils/supabase/vanilla'
 import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff, ArrowLeft, KeyRound, Loader2, ArrowRight } from 'lucide-react'
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
@@ -167,7 +168,10 @@ export default function LoginPage() {
     }
 
     try {
-      const supabase = createClient()
+      // Use the vanilla client. It stores the PKCE code_verifier in localStorage
+      // which completely avoids the cross-browser/same-browser cookie drop issues
+      // caused by @supabase/ssr.
+      const supabase = createVanillaClient()
       const cleanEmail = resetEmail.trim().toLowerCase()
       const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
         redirectTo: `${window.location.origin}/reset-password`,

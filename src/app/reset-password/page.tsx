@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
+import { createVanillaClient } from '@/utils/supabase/vanilla'
 import { Lock, Eye, EyeOff, CheckCircle2, AlertCircle, ArrowLeft, ShieldCheck, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -17,7 +18,7 @@ export default function ResetPasswordPage() {
   const router = useRouter()
 
   useEffect(() => {
-    const supabase = createClient()
+    const supabase = createVanillaClient()
     let resolved = false
 
     const checkAndExchangeCode = async () => {
@@ -107,7 +108,7 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      const supabase = createClient()
+      const supabase = createVanillaClient()
       
       const { error } = await supabase.auth.updateUser({ password })
 
