@@ -27,38 +27,55 @@ export default function ResetPasswordPage() {
       if (isExchanging.current) return
       
       const params = new URLSearchParams(window.location.search)
+      const tokenHash = params.get('token_hash')
+      const type = params.get('type')
       const code = params.get('code')
       
-      if (code) {
+      // PRIMARY PATH: token_hash (no PKCE, no storage needed at all)
+      if (tokenHash && type === 'recovery') {
         isExchanging.current = true
-        // Exchange the code on the client side, where the original code_verifier
-        // from createBrowserClient is stored!
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        const { error } = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: 'recovery',
+        })
         
         if (error) {
-          console.error("Client-side exchange error:", error)
-          // Always show the raw error so we can diagnose exactly what Supabase reports
+          console.error("verifyOtp error:", error)
           setMessage({
             type: 'error',
             text: `Password reset failed: ${error.message}. Please request a new reset link.`
           })
-          // Clean the URL so we don't keep trying
           window.history.replaceState({}, document.title, window.location.pathname)
-          return // Stop execution if exchange failed
+          return
         }
         
-        // Clean the URL so we don't try to exchange the same code again on refresh
+        window.history.replaceState({}, document.title, window.location.pathname)
+      }
+      // FALLBACK: PKCE code exchange (legacy links)
+      else if (code) {
+        isExchanging.current = true
+        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        
+        if (error) {
+          console.error("exchangeCode error:", error)
+          setMessage({
+            type: 'error',
+            text: `Password reset failed: ${error.message}. Please request a new reset link.`
+          })
+          window.history.replaceState({}, document.title, window.location.pathname)
+          return
+        }
+        
         window.history.replaceState({}, document.title, window.location.pathname)
       }
 
-      // 2. Check for an active session (either from the exchange above or an existing session)
+      // Check for an active session
       const { data: { session } } = await supabase.auth.getSession()
       
       if (session) {
         resolved = true
         setIsSessionReady(true)
       } else {
-        // 3. Fallback: listen for auth state changes just in case
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
           if ((event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') && session) {
             resolved = true
@@ -66,12 +83,11 @@ export default function ResetPasswordPage() {
           }
         })
 
-        // 4. Timeout if nothing happens
         setTimeout(() => {
           if (!resolved) {
             setMessage({
               type: 'error',
-              text: 'Your reset link has expired or is invalid. Please go back and request a new one.',
+              text: 'Invalid or expired reset link. Please request a new one.',
             })
           }
         }, 6000)
