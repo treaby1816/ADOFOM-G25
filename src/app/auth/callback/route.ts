@@ -49,6 +49,20 @@ export async function GET(request: Request) {
   if (error) {
     console.error('Auth Callback Error:', error.message)
 
+    const isPkceError = 
+      error.message.toLowerCase().includes('pkce') || 
+      error.message.toLowerCase().includes('flow state') || 
+      error.message.toLowerCase().includes('code verifier')
+
+    if (isPkceError) {
+      // The server doesn't have the code_verifier because our password reset 
+      // flow uses the vanilla client to store it in localStorage.
+      // We forward the code directly to the client-side reset page.
+      // If they are in the original browser, the exchange will succeed there.
+      // If they are in a different browser, it will show the proper instructions.
+      return NextResponse.redirect(`${origin}/reset-password?code=${code}`)
+    }
+
     return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent('Authentication link is invalid or has expired. Please try again.')}`)
   }
 
