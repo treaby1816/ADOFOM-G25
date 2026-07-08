@@ -20,8 +20,8 @@ export default function ResetPasswordPage() {
     const supabase = createClient()
     let resolved = false
 
-    // With implicit flow, Supabase automatically reads the #access_token hash
-    // and fires the PASSWORD_RECOVERY event — no manual code exchange needed.
+    // By the time the user lands here, /auth/callback has already exchanged
+    // the PKCE code and written session cookies. Just read the existing session.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if ((event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') && session) {
         resolved = true
@@ -29,7 +29,7 @@ export default function ResetPasswordPage() {
       }
     })
 
-    // Also check if there's already an active session (e.g. page refresh)
+    // Also check immediately in case the session is already active
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session && !resolved) {
         resolved = true
@@ -37,15 +37,15 @@ export default function ResetPasswordPage() {
       }
     })
 
-    // Timeout: if nothing fires after 5s, show an error
+    // After 6 seconds, if still no session, show a helpful error
     const timeout = setTimeout(() => {
       if (!resolved) {
         setMessage({
           type: 'error',
-          text: 'Invalid or expired reset link. Please go back and request a new one.',
+          text: 'Your reset link has expired or is invalid. Please go back and request a new one.',
         })
       }
-    }, 5000)
+    }, 6000)
 
     return () => {
       subscription.unsubscribe()

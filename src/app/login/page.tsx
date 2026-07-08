@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
-import { createImplicitFlowClient } from '@/utils/supabase/auth-client'
 import { Mail, Lock, ChevronRight, AlertCircle, CheckCircle2, Eye, EyeOff, ArrowLeft, KeyRound, Loader2, ArrowRight } from 'lucide-react'
 import { WHITELIST_OFFICERS } from '@/lib/whitelist-data'
 
@@ -168,12 +167,12 @@ export default function LoginPage() {
     }
 
     try {
-      // Use implicit-flow client so the reset link works in any browser/email app
-      // (avoids PKCE cross-browser 'code verifier not found' error)
-      const supabase = createImplicitFlowClient()
+      // Use standard PKCE client — @supabase/ssr stores the code_verifier in
+      // a cookie (not just localStorage) so the server-side callback can exchange it.
+      const supabase = createClient()
       const cleanEmail = resetEmail.trim().toLowerCase()
       const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
       })
 
       if (error) {
