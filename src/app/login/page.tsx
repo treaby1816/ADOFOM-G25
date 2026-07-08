@@ -174,7 +174,10 @@ export default function LoginPage() {
       const supabase = createVanillaClient()
       const cleanEmail = resetEmail.trim().toLowerCase()
       const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        // We MUST use /auth/callback because it is the whitelisted Site URL in Supabase.
+        // If we use /reset-password directly, Supabase rejects it and strips all query parameters!
+        // The callback route will catch the next=/reset-password and immediately forward it to the client.
+        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
       })
 
       if (error) {
