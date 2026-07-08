@@ -33,7 +33,13 @@ export async function GET(request: Request) {
     
     if (error) {
       console.error("Auth Callback Error:", error.message)
-      return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(error.message)}`)
+      
+      let errorMessage = error.message;
+      if (error.message.includes("PKCE")) {
+        errorMessage = "Security verification failed. If you opened this link in a new browser or email app, please copy the link and paste it into the original browser where you requested the reset.";
+      }
+      
+      return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(errorMessage)}`)
     }
     
     if (user?.email) {
