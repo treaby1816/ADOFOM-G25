@@ -58,9 +58,16 @@ export default function ResetPasswordPage() {
         
         if (error) {
           console.error("exchangeCode error:", error)
+          const isCrossBrowser = 
+            error.message.toLowerCase().includes('pkce') || 
+            error.message.toLowerCase().includes('flow state') ||
+            error.message.toLowerCase().includes('code verifier')
+
           setMessage({
             type: 'error',
-            text: `Password reset failed: ${error.message}. Please request a new reset link.`
+            text: isCrossBrowser 
+              ? 'Security verification failed. Since you opened this in an email app, please COPY the link from your email and PASTE it directly into your original browser.'
+              : `Password reset failed: ${error.message}. Please request a new reset link.`
           })
           window.history.replaceState({}, document.title, window.location.pathname)
           return
