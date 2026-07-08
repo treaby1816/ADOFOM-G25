@@ -167,12 +167,10 @@ export default function LoginPage() {
     }
 
     try {
-      // Use standard PKCE client — @supabase/ssr stores the code_verifier in
-      // a cookie (not just localStorage) so the server-side callback can exchange it.
       const supabase = createClient()
       const cleanEmail = resetEmail.trim().toLowerCase()
       const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+        redirectTo: `${window.location.origin}/reset-password`,
       })
 
       if (error) {

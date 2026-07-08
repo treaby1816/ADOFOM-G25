@@ -20,36 +20,72 @@ export default function ResetPasswordPage() {
     const supabase = createClient()
     let resolved = false
 
-    // By the time the user lands here, /auth/callback has already exchanged
-    // the PKCE code and written session cookies. Just read the existing session.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if ((event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') && session) {
+    const checkAndExchangeCode = async () => {
+      // 1. Check if there's a PKCE code in the URL
+      const params = new URLSearchParams(window.location.search)
+      const code = params.get('code')
+      
+      if (code) {
+        // Exchange the code on the client side, where the original code_verifier
+        // from createBrowserClient is stored!
+        const { error } = await supabase.auth.exchangeCodeForSession(code)
+        
+        if (error) {
+          console.error("Client-side exchange error:", error)
+          const isCrossBrowser = 
+            error.message.toLowerCase().includes('pkce') || 
+            error.message.toLowerCase().includes('flow state')
+
+          setMessage({
+            type: 'error',
+            text: isCrossBrowser 
+              ? 'Security verification failed. If you opened this link in a new browser/app, please COPY the link from your email and PASTE it into the original browser where you requested the reset.'
+              : 'Invalid or expired reset link. Please request a new one.'
+          })
+          return // Stop execution if exchange failed
+        }
+        
+        // Clean the URL so we don't try to exchange the same code again on refresh
+        window.history.replaceState({}, document.title, window.location.pathname)
+      }
+
+      // 2. Check for an active session (either from the exchange above or an existing session)
+      const { data: { session } } = await supabase.auth.getSession()
+      
+      if (session) {
         resolved = true
         setIsSessionReady(true)
-      }
-    })
-
-    // Also check immediately in case the session is already active
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session && !resolved) {
-        resolved = true
-        setIsSessionReady(true)
-      }
-    })
-
-    // After 6 seconds, if still no session, show a helpful error
-    const timeout = setTimeout(() => {
-      if (!resolved) {
-        setMessage({
-          type: 'error',
-          text: 'Your reset link has expired or is invalid. Please go back and request a new one.',
+      } else {
+        // 3. Fallback: listen for auth state changes just in case
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+          if ((event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') && session) {
+            resolved = true
+            setIsSessionReady(true)
+          }
         })
+
+        // 4. Timeout if nothing happens
+        setTimeout(() => {
+          if (!resolved) {
+            setMessage({
+              type: 'error',
+              text: 'Your reset link has expired or is invalid. Please go back and request a new one.',
+            })
+          }
+        }, 6000)
+
+        return subscription
       }
-    }, 6000)
+    }
+
+    const subPromise = checkAndExchangeCode()
 
     return () => {
-      subscription.unsubscribe()
-      clearTimeout(timeout)
+      subPromise.then(sub => {
+        if (sub && typeof sub.unsubscribe === 'function') {
+          sub.unsubscribe()
+        }
+      })
     }
   }, [])
 
