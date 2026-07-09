@@ -128,17 +128,34 @@ export default function AboutPage() {
         {/* Contact */}
         <div className="bg-white dark:bg-zinc-900 rounded-[2rem] border border-slate-200 dark:border-zinc-800 shadow-lg p-8 space-y-3">
           <h2 className="text-xl font-black text-slate-800 dark:text-zinc-100">Contact</h2>
-          <div className="text-sm text-slate-600 dark:text-zinc-400 space-y-1.5">
-            <p><span className="font-bold text-slate-700 dark:text-zinc-300">Developer:</span> Adewole Felix Bamidele</p>
-            <p><span className="font-bold text-slate-700 dark:text-zinc-300">Brand:</span> Treabyn Inc.</p>
-            <p>
-              <span className="font-bold text-slate-700 dark:text-zinc-300">Email:</span>{' '}
-              <a href="mailto:felixadewole16@gmail.com" className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold">
-                felixadewole16@gmail.com
-              </a>
-            </p>
-            <p><span className="font-bold text-slate-700 dark:text-zinc-300">Country:</span> Nigeria</p>
-          </div>
+            <div className="text-sm text-slate-600 dark:text-zinc-400 space-y-2">
+              <p>
+                <span className="font-bold text-slate-700 dark:text-zinc-300">Developer:</span>{' '}
+                <Link href="/?q=felixadewole16@gmail.com" className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold transition-colors">
+                  Adewole Felix Bamidele
+                </Link>
+              </p>
+              <p><span className="font-bold text-slate-700 dark:text-zinc-300">Brand:</span> Treabyn Inc.</p>
+              <p>
+                <span className="font-bold text-slate-700 dark:text-zinc-300">Portfolio:</span>{' '}
+                <a href="https://my-portfolio-v1-c1lt.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold transition-colors">
+                  my-portfolio-v1-c1lt.vercel.app
+                </a>
+              </p>
+              <p>
+                <span className="font-bold text-slate-700 dark:text-zinc-300">WhatsApp:</span>{' '}
+                <a href="https://wa.me/2348065136221" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold transition-colors">
+                  +234 806 513 6221
+                </a>
+              </p>
+              <p>
+                <span className="font-bold text-slate-700 dark:text-zinc-300">Email:</span>{' '}
+                <a href="mailto:felixadewole16@gmail.com" className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold transition-colors">
+                  felixadewole16@gmail.com
+                </a>
+              </p>
+              <p><span className="font-bold text-slate-700 dark:text-zinc-300">Country:</span> Nigeria</p>
+            </div>
         </div>
 
         <p className="text-center text-xs text-slate-400 dark:text-zinc-600 font-medium pb-6">

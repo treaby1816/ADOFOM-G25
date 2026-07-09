@@ -95,11 +95,29 @@ export default function PrivacyPolicyPage() {
 
           <section className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/50 rounded-2xl p-6 space-y-2">
             <h2 className="text-lg font-black text-slate-800 dark:text-zinc-100">13. Contact Information</h2>
-            <div className="text-sm text-slate-600 dark:text-zinc-400 space-y-1">
-              <p><strong>Developer:</strong> Adewole Felix Bamidele</p>
+            <div className="text-sm text-slate-600 dark:text-zinc-400 space-y-2">
+              <p>
+                <strong>Developer:</strong>{' '}
+                <Link href="/?q=felixadewole16@gmail.com" className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold transition-colors">
+                  Adewole Felix Bamidele
+                </Link>
+              </p>
               <p><strong>Brand:</strong> Treabyn Inc.</p>
-              <p><strong>Email:</strong>{' '}
-                <a href="mailto:felixadewole16@gmail.com" className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold">
+              <p>
+                <strong>Portfolio:</strong>{' '}
+                <a href="https://my-portfolio-v1-c1lt.vercel.app/" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold transition-colors">
+                  my-portfolio-v1-c1lt.vercel.app
+                </a>
+              </p>
+              <p>
+                <strong>WhatsApp:</strong>{' '}
+                <a href="https://wa.me/2348065136221" target="_blank" rel="noopener noreferrer" className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold transition-colors">
+                  +234 806 513 6221
+                </a>
+              </p>
+              <p>
+                <strong>Email:</strong>{' '}
+                <a href="mailto:felixadewole16@gmail.com" className="text-emerald-600 dark:text-emerald-400 hover:underline font-semibold transition-colors">
                   felixadewole16@gmail.com
                 </a>
               </p>

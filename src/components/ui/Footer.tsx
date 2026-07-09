@@ -23,11 +23,11 @@ export default function Footer() {
                 <div className="h-px w-16 bg-slate-200 dark:bg-zinc-800 rounded-full" />
 
                 <div className="flex items-center gap-4 text-[11px] font-medium text-slate-400 dark:text-zinc-500">
-                    <Link href="/about" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+                    <Link href="/about" className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline tracking-wide transition-colors">
                         About
                     </Link>
                     <span>&middot;</span>
-                    <Link href="/privacy-policy" className="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
+                    <Link href="/privacy-policy" className="text-emerald-600 dark:text-emerald-400 font-bold hover:underline tracking-wide transition-colors">
                         Privacy Policy
                     </Link>
                     <span>&middot;</span>
