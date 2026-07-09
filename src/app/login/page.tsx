@@ -125,7 +125,7 @@ export default function LoginPage() {
       try {
         const { data: profileData, error: profileError } = await supabase
           .from('administrative_officers')
-          .select('is_approved, needs_password_change')
+          .select('is_approved, needs_password_change, current_mda')
           .eq('id', data.user.id)
           .maybeSingle()
         
@@ -140,6 +140,13 @@ export default function LoginPage() {
       // 1. Must change password? → Force password change page
       if (profile?.needs_password_change === true) {
         router.push('/setup/update-password')
+        return
+      }
+
+      // 1.5. Incomplete profile? → Force setup page
+      // This catches users who bypassed setup due to the whitelist MDA bug
+      if (profile?.current_mda === 'Pending Setup' || !profile?.current_mda) {
+        router.push('/dashboard/setup-profile')
         return
       }
 

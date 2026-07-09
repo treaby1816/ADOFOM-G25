@@ -66,8 +66,8 @@ export default function SignupPage() {
       // Only truly approved officers bypass setup
       const isApprovedOfficer = 
         whitelistEntry?.is_approved === true &&
-        (dbData?.full_name && dbData?.full_name !== 'New User' && dbData?.current_mda) ||
-        (whitelistEntry?.is_approved === true && whitelistEntry?.full_name && whitelistEntry?.current_mda);
+        ((dbData?.full_name && dbData?.full_name !== 'New User' && dbData?.current_mda && dbData?.current_mda !== 'Pending Setup') ||
+        (whitelistEntry?.full_name && whitelistEntry?.current_mda && whitelistEntry?.current_mda !== 'Pending Setup'));
 
       // Step 2: Create Auth User
       const { data, error } = await supabase.auth.signUp({
