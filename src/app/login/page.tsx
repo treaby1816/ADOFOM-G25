@@ -87,7 +87,11 @@ export default function LoginPage() {
         if (error.message.toLowerCase().includes('email not confirmed')) {
           setMessage({ type: 'error', text: 'Please check your inbox and click the confirmation link to verify your email address before logging in.' })
         } else if (error.status === 400) {
-          setMessage({ type: 'error', text: `Login failed: ${error.message}` })
+          if (error.message.toLowerCase().includes('invalid login credentials')) {
+            setMessage({ type: 'error', text: 'Invalid email or password. If you have been authorized, please click "Create Account" below, or contact the Admin Secretariat.' })
+          } else {
+            setMessage({ type: 'error', text: `Login failed: ${error.message}` })
+          }
         } else if (error.status === 429) {
           setMessage({ type: 'error', text: 'Too many login attempts. Please try again later.' })
         } else {
