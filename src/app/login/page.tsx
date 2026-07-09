@@ -75,16 +75,17 @@ export default function LoginPage() {
 
     try {
       const supabase = createClient()
+      const cleanEmail = email.trim().toLowerCase()
 
       // Sign in with email and password — NO OTP, NO Magic Links
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: cleanEmail,
         password,
       })
 
       if (error) {
         if (error.status === 400) {
-          setMessage({ type: 'error', text: 'Invalid email or password. Please try again.' })
+          setMessage({ type: 'error', text: `Login failed: ${error.message}` })
         } else if (error.status === 429) {
           setMessage({ type: 'error', text: 'Too many login attempts. Please try again later.' })
         } else {
