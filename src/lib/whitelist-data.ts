@@ -1376,4 +1376,14 @@ export const WHITELIST_OFFICERS: Record<string, any> = {
     is_approved: true,
     current_mda: "Pending Setup",
   },
+  "odusanya.segun@yahoo.com": {
+    full_name: "ODUSANYA, Segun",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
+  "folayemijoshua@gmail.com": {
+    full_name: "ATUNSE, Folayemi Joshua",
+    is_approved: true,
+    current_mda: "Pending Setup",
+  },
 };
