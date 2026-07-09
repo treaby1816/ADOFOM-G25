@@ -78,7 +78,7 @@ export default function SetupProfilePage() {
           // Populate with DB data
           setFormData({
             full_name: existingProfile.full_name || '',
-            current_mda: existingProfile.current_mda || '',
+            current_mda: (existingProfile.current_mda && existingProfile.current_mda !== 'Pending Setup') ? existingProfile.current_mda : '',
             grade_level: existingProfile.grade_level || '',
             lga: existingProfile.lga || '',
             phone_number: existingProfile.phone_number || '',
@@ -103,7 +103,7 @@ export default function SetupProfilePage() {
           setFormData(prev => ({
             ...prev,
             full_name: whitelistEntry?.full_name || user.user_metadata?.full_name || '',
-            current_mda: whitelistEntry?.current_mda || '',
+            current_mda: (whitelistEntry?.current_mda && whitelistEntry?.current_mda !== 'Pending Setup') ? whitelistEntry.current_mda : '',
             grade_level: whitelistEntry?.grade_level || '',
             lga: whitelistEntry?.lga || '',
             phone_number: whitelistEntry?.phone_number || '',
@@ -248,12 +248,7 @@ export default function SetupProfilePage() {
   return (
     <div className="min-h-screen bg-hero-gradient py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-white/80 hover:text-gold-500 mb-6 transition-colors w-fit"
-        >
-          ← Back
-        </button>
+        {/* Back button hidden during mandatory setup to prevent users from escaping the flow */}
 
         <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl shadow-2xl overflow-hidden relative">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-500/0 via-yellow-500 to-yellow-500/0"></div>

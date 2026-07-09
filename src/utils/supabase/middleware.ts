@@ -60,10 +60,33 @@ export async function updateSession(request: NextRequest) {
   if (user && user.user_metadata?.needs_setup === true) {
       if (request.nextUrl.pathname !== '/dashboard/setup-profile' && 
           !request.nextUrl.pathname.startsWith('/_next') && 
-          !request.nextUrl.pathname.includes('api/auth')) {
+          !request.nextUrl.pathname.includes('api/')) {
           const url = request.nextUrl.clone()
           url.pathname = '/dashboard/setup-profile'
           return NextResponse.redirect(url)
+      }
+  }
+
+  // CATCH INCOMPLETE PROFILES: For users whose metadata was set incorrectly,
+  // check the DB to see if their profile still has 'Pending Setup' MDA
+  if (user && user.user_metadata?.needs_setup !== true) {
+      const isSetupPage = request.nextUrl.pathname === '/dashboard/setup-profile';
+      const isInternalPath = request.nextUrl.pathname.startsWith('/_next') || 
+                             request.nextUrl.pathname.includes('api/') ||
+                             isPublicPath;
+      
+      if (!isSetupPage && !isInternalPath) {
+          const { data: profile } = await supabase
+              .from('administrative_officers')
+              .select('current_mda')
+              .eq('id', user.id)
+              .maybeSingle();
+          
+          if (profile && (profile.current_mda === 'Pending Setup' || !profile.current_mda)) {
+              const url = request.nextUrl.clone()
+              url.pathname = '/dashboard/setup-profile'
+              return NextResponse.redirect(url)
+          }
       }
   }
 
