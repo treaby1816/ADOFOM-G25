@@ -94,6 +94,7 @@ export default function ProfileCard({ officer, onViewProfile }: ProfileCardProps
                             style={getCustomPositionStyle(officer.full_name, officer.photo_position)}
                             onError={() => setImgError(true)}
                             sizes="128px"
+                            unoptimized
                         />
                     )}
                 </div>
