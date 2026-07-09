@@ -84,7 +84,9 @@ export default function LoginPage() {
       })
 
       if (error) {
-        if (error.status === 400) {
+        if (error.message.toLowerCase().includes('email not confirmed')) {
+          setMessage({ type: 'error', text: 'Please check your inbox and click the confirmation link to verify your email address before logging in.' })
+        } else if (error.status === 400) {
           setMessage({ type: 'error', text: `Login failed: ${error.message}` })
         } else if (error.status === 429) {
           setMessage({ type: 'error', text: 'Too many login attempts. Please try again later.' })
