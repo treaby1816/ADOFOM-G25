@@ -75,11 +75,11 @@ export default function LoginPage() {
 
     try {
       const supabase = createClient()
-      const cleanEmail = email.trim().toLowerCase()
+      const loginEmail = email.trim().toLowerCase()
 
       // Sign in with email and password — NO OTP, NO Magic Links
       const { data, error } = await supabase.auth.signInWithPassword({
-        email: cleanEmail,
+        email: loginEmail,
         password,
       })
 
